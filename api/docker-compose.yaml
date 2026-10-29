@@ -1,0 +1,27 @@
+services:
+  # This service defines your PostgreSQL database container.
+  db:
+    image: postgres:15-alpine  # Use the official, lightweight Postgres image
+    container_name: recipehome-db
+    restart: unless-stopped   # Ensures the DB restarts if Docker restarts
+
+    # Environment variables for the PostgreSQL image to configure the DB
+    environment:
+      POSTGRES_DB: recipehome-db
+      POSTGRES_USER: recipehome
+      POSTGRES_PASSWORD: rhpassword
+
+    # Maps the container port 5432 to your host machine's port 5432
+    # This allows your local Spring Boot IDE run configuration to connect.
+    ports:
+      - "5432:5432"
+
+    # This creates a Docker volume to persist your data.
+    # Even if you stop and remove the container, your data remains in the volume.
+    volumes:
+      - recipehome_db_data:/var/lib/postgresql/data
+
+# Define the named volume for persistence
+volumes:
+  recipehome_db_data:
+    driver: local

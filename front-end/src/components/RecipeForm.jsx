@@ -3,6 +3,33 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { recipeApi } from '../services/api'
 import './RecipeForm.css'
 
+// Dropdown groups, in display order. Units come from GET /api/units.
+const UNIT_GROUPS = [
+  { category: 'VOLUME', label: 'Volume' },
+  { category: 'WEIGHT', label: 'Weight' },
+  { category: 'CONTAINER', label: 'Container' },
+  { category: 'COUNT', label: 'Count' },
+]
+
+// A package size is always a measurement, e.g. "15 ounce" in "1 (15-ounce) can".
+const PACKAGE_CATEGORIES = ['VOLUME', 'WEIGHT']
+
+function UnitOptions({ units, categories }) {
+  return UNIT_GROUPS
+    .filter(group => !categories || categories.includes(group.category))
+    .map(group => {
+      const options = units.filter(u => u.category === group.category)
+      if (options.length === 0) return null
+      return (
+        <optgroup key={group.category} label={group.label}>
+          {options.map(u => (
+            <option key={u.value} value={u.value}>{u.label}</option>
+          ))}
+        </optgroup>
+      )
+    })
+}
+
 function RecipeForm() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -20,7 +47,7 @@ function RecipeForm() {
   })
 
   const [ingredients, setIngredients] = useState([
-    { name: '', quantity: '', unit: '', rawText: '' }
+    { name: '', quantity: '', unit: '', packageQuantity: '', packageUnit: '', rawText: '' }
   ])
 
   const [steps, setSteps] = useState([
@@ -29,6 +56,15 @@ function RecipeForm() {
 
   const [equipment, setEquipment] = useState([''])
   const [categories, setCategories] = useState([''])
+
+  const [units, setUnits] = useState([])
+
+  // Load the valid units for the unit dropdowns
+  useEffect(() => {
+    recipeApi.getUnits()
+      .then(setUnits)
+      .catch(err => setError(`Could not load units: ${err.message}`))
+  }, [])
 
   // Populate form fields if imported data is present
   useEffect(() => {
@@ -48,6 +84,8 @@ function RecipeForm() {
             name: i.name || '',
             quantity: i.quantity !== null && i.quantity !== undefined ? String(i.quantity) : '',
             unit: i.unit || '',
+            packageQuantity: i.packageQuantity !== null && i.packageQuantity !== undefined ? String(i.packageQuantity) : '',
+            packageUnit: i.packageUnit || '',
             rawText: i.rawString || ''
           }))
         )
@@ -89,7 +127,10 @@ function RecipeForm() {
   }
 
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: '', quantity: '', unit: '', rawText: '' }])
+    setIngredients([
+      ...ingredients,
+      { name: '', quantity: '', unit: '', packageQuantity: '', packageUnit: '', rawText: '' }
+    ])
   }
 
   const removeIngredient = (index) => {
@@ -167,7 +208,9 @@ function RecipeForm() {
           .map(i => ({
             name: i.name,
             quantity: parseFloat(i.quantity),
-            unit: i.unit
+            unit: i.unit,
+            packageQuantity: i.packageQuantity ? parseFloat(i.packageQuantity) : null,
+            packageUnit: i.packageUnit || null
           })),
         steps: steps
           .filter(s => s.instructionText)
@@ -350,15 +393,17 @@ function RecipeForm() {
                   required
                 />
 
-                <input
-                  type="text"
+                <select
                   value={ingredient.unit}
                   onChange={(e) =>
                     handleIngredientChange(index, 'unit', e.target.value)
                   }
-                  placeholder="Unit"
+                  aria-label="Unit"
                   required
-                />
+                >
+                  <option value="" disabled>Unit</option>
+                  <UnitOptions units={units} />
+                </select>
 
                 <button
                   type="button"
@@ -368,6 +413,36 @@ function RecipeForm() {
                 >
                   Remove
                 </button>
+              </div>
+
+              <div className="package-field">
+                <label htmlFor={`ingredient-package-qty-${index}`}>
+                  Package size
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  id={`ingredient-package-qty-${index}`}
+                  value={ingredient.packageQuantity}
+                  onChange={(e) =>
+                    handleIngredientChange(index, 'packageQuantity', e.target.value)
+                  }
+                  placeholder="e.g. 15"
+                  aria-label="Package quantity"
+                  required={ingredient.packageUnit !== ''}
+                />
+                <select
+                  value={ingredient.packageUnit}
+                  onChange={(e) =>
+                    handleIngredientChange(index, 'packageUnit', e.target.value)
+                  }
+                  aria-label="Package unit"
+                  required={ingredient.packageQuantity !== ''}
+                >
+                  <option value="">No package</option>
+                  <UnitOptions units={units} categories={PACKAGE_CATEGORIES} />
+                </select>
               </div>
             </div>
           ))}

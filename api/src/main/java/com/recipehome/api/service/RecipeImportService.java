@@ -39,6 +39,8 @@ public class RecipeImportService {
             ingredientDTO.setName(parsed.name());
             ingredientDTO.setQuantity(parsed.quantity());
             ingredientDTO.setUnit(parsed.unit());
+            ingredientDTO.setPackageQuantity(parsed.packageQuantity());
+            ingredientDTO.setPackageUnit(parsed.packageUnit());
             ingredientDTO.setRawString(raw);
             return ingredientDTO;
         }).toList();

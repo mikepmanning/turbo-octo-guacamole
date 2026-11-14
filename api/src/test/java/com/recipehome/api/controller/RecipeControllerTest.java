@@ -9,6 +9,7 @@ import com.recipehome.api.entity.Ingredient;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.entity.Step;
 import com.recipehome.api.mapper.RecipeMapper;
+import com.recipehome.api.service.RecipeImportService;
 import com.recipehome.api.service.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +46,9 @@ class RecipeControllerTest {
 
     @MockitoBean
     private RecipeMapper recipeMapper;
+
+    @MockitoBean
+    private RecipeImportService recipeImportService;
 
     private Recipe testRecipe;
     private RecipeDTO testRecipeDTO;
@@ -319,5 +324,67 @@ class RecipeControllerTest {
                 .andExpect(content().string("5"));
 
         verify(recipeService, times(1)).countActiveRecipes();
+    }
+
+    @Test
+    void importRecipe_ShouldReturnImportedRecipe() throws Exception {
+        // Given
+        String url = "https://example.com/burrito-bowls";
+
+        IngredientDTO corn = new IngredientDTO();
+        corn.setName("corn kernels (drained)");
+        corn.setQuantity(new BigDecimal("1"));
+        corn.setUnit(Unit.CAN);
+        corn.setPackageQuantity(new BigDecimal("15"));
+        corn.setPackageUnit(Unit.OUNCE);
+        corn.setRawString("1 (15-ounce) can corn kernels (drained)");
+
+        RecipeDTO imported = new RecipeDTO();
+        imported.setTitle("Burrito Bowls");
+        imported.setSourceUrl(url);
+        imported.getIngredients().add(corn);
+
+        when(recipeImportService.importFromURL(url)).thenReturn(imported);
+
+        // When & Then
+        mockMvc.perform(get("/api/recipes/import")
+                        .param("url", url))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Burrito Bowls"))
+                .andExpect(jsonPath("$.sourceUrl").value(url))
+                .andExpect(jsonPath("$.ingredients", hasSize(1)))
+                .andExpect(jsonPath("$.ingredients[0].unit").value("CAN"))
+                .andExpect(jsonPath("$.ingredients[0].packageQuantity").value(15))
+                .andExpect(jsonPath("$.ingredients[0].packageUnit").value("OUNCE"))
+                .andExpect(jsonPath("$.ingredients[0].rawString")
+                        .value("1 (15-ounce) can corn kernels (drained)"));
+
+        verify(recipeImportService, times(1)).importFromURL(url);
+    }
+
+    @Test
+    void importRecipe_ShouldReturnUnprocessable_WhenUrlIsBlank() throws Exception {
+        // When & Then
+        mockMvc.perform(get("/api/recipes/import")
+                        .param("url", " "))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.error").value("URL parameter is required"));
+
+        verify(recipeImportService, never()).importFromURL(any());
+    }
+
+    @Test
+    void importRecipe_ShouldReturnBadGateway_WhenSiteCannotBeReached() throws Exception {
+        // Given
+        String url = "https://unreachable.example.com/recipe";
+        when(recipeImportService.importFromURL(url))
+                .thenThrow(new IOException("Connection refused"));
+
+        // When & Then
+        mockMvc.perform(get("/api/recipes/import")
+                        .param("url", url))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.error")
+                        .value("Failed to reach target website: Connection refused"));
     }
 }

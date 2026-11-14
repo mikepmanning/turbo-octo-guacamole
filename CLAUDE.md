@@ -56,6 +56,7 @@ cd api
 All npm commands must be run from the `front-end/` directory:
 
 #### First-Time Setup
+Requires Node.js 22.13 or newer (`front-end/.nvmrc`; run `nvm use` if you use nvm).
 ```bash
 cd front-end
 npm install
@@ -83,6 +84,17 @@ cd front-end
 npm run preview
 ```
 
+#### Running Tests
+```bash
+cd front-end
+npm test                # run all tests once with coverage; fails if line coverage < 80%
+npm run test:watch      # re-run tests on file changes while developing (no coverage)
+```
+
+`npm test` writes an HTML report to `front-end/test_reports/index.html` (gitignored): a single self-contained file you can open directly in a browser, showing the test results with a Coverage tab. The coverage files it uses live in `test_reports/coverage/` (also viewable on their own via `coverage/index.html`, and `lcov.info` for tools).
+
+To run a single test file, use `npx vitest run src/services/api.test.js` (or `test:watch`). `npm test -- <file>` also works, but fails the 80% check because coverage is measured across the whole app.
+
 ### Running the Full Stack
 
 To run both backend and frontend together:
@@ -106,9 +118,10 @@ To run both backend and frontend together:
 ## Frontend Architecture (front-end/)
 
 ### Technology Stack
-- React 18
+- React 19
 - Vite (build tool and dev server)
 - JavaScript (ES6+)
+- Vitest + React Testing Library (unit tests, jsdom environment)
 
 ### Project Structure
 - `src/` - Source code
@@ -119,6 +132,16 @@ To run both backend and frontend together:
 
 ### API Integration
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
+
+### Testing
+- Vitest is configured in the `test` block of `vite.config.js`; coverage uses the V8 provider with an 80% line threshold (`src/main.jsx` is excluded).
+- Reporters: `default` (terminal) plus `html` from `@vitest/ui`, written as a single file to `test_reports/index.html`. Coverage is written to `test_reports/coverage/`, the folder the report's Coverage tab reads, so Vitest doesn't make a second copy.
+- Tests sit next to the code they cover: `RecipeForm.jsx` -> `RecipeForm.test.jsx`.
+- `src/test/setup.js` loads the jest-dom matchers and cleans up after each test.
+- `src/test/renderWithRouter.jsx` renders a page inside a `MemoryRouter` (with optional router state) and exposes the current path via `data-testid="location"`.
+- `src/test/fixtures/` holds sample API payloads (units, imported and saved recipes).
+- Component tests mock the API layer with `vi.mock('../services/api')`; `api.test.js` tests the API layer itself against a stubbed `fetch`.
+- The environment is jsdom rather than happy-dom: happy-dom wrongly rejects `<input type="number" step="0.01">` values, which breaks RecipeForm's form validation.
 
 ## Backend Architecture (api/)
 

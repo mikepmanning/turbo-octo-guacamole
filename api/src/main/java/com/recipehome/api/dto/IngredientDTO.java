@@ -18,7 +18,7 @@ public class IngredientDTO {
     @Positive(message = "Quantity must be positive")
     private BigDecimal quantity;
 
-    @NotBlank(message = "Unit is required")
+    @NotNull(message = "Unit is required")
     private Unit unit;
 
     //rawString for imported ingredients

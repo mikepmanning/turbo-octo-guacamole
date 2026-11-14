@@ -5,20 +5,24 @@ import com.recipehome.api.entity.Ingredient;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.entity.Step;
 import com.recipehome.api.enums.Unit;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import(JpaConfig.class)
+@ActiveProfiles("test")
 class RecipeRepositoryTest {
 
     @Autowired
@@ -247,6 +251,24 @@ class RecipeRepositoryTest {
         assertThat(saved.getIngredients()).hasSize(1);
         assertThat(saved.getSteps().get(0).getRecipe()).isEqualTo(saved);
         assertThat(saved.getIngredients().get(0).getRecipe()).isEqualTo(saved);
+    }
+
+    @Test
+    void save_ShouldRejectIngredientWithoutUnit() {
+        // Given
+        Recipe newRecipe = new Recipe();
+        newRecipe.setTitle("Missing Unit Recipe");
+
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName("Salt");
+        ingredient.setQuantity(new BigDecimal("1"));
+        // unit intentionally left null
+        newRecipe.addIngredient(ingredient);
+
+        // When / Then
+        assertThatThrownBy(() -> recipeRepository.saveAndFlush(newRecipe))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Unit is required");
     }
 
     @Test

@@ -21,7 +21,7 @@ public class Ingredient extends BaseEntity {
     @Column(nullable = false, precision = 10, scale = 3)
     private BigDecimal quantity;
 
-    @NotBlank(message = "Unit is required")
+    @NotNull(message = "Unit is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Unit unit;

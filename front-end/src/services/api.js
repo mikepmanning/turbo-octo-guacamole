@@ -63,15 +63,20 @@ export const recipeApi = {
     return response.json();
   },
 
+  // Get the valid ingredient units: [{ value, label, category }]
+  getUnits: async () => {
+    const response = await fetch(`${API_BASE_URL}/units`);
+    if (!response.ok) throw new Error('Failed to fetch units');
+    return response.json();
+  },
+
   importRecipeFromUrl: async (recipeUrl) => {
-    console.log("In import api");
     const response = await fetch(`${API_BASE_URL}/recipes/import?url=${encodeURIComponent(recipeUrl)}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
     });
-    console.log(response);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || 'Failed to import recipe');

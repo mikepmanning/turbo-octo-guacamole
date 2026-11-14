@@ -3,6 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { recipeApi } from '../services/api'
 import './RecipeDetail.css'
 
+// "15 OUNCE" for an ingredient bought in a package, e.g. "1 (15-ounce) can corn";
+// null when there is no package size.
+const formatPackage = ({ packageQuantity, packageUnit }) => {
+  if (packageQuantity === null || packageQuantity === undefined) return null
+  return packageUnit ? `${packageQuantity} ${packageUnit}` : `${packageQuantity}`
+}
+
 function RecipeDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -19,7 +26,6 @@ function RecipeDetail() {
       setLoading(true)
       setError(null)
       const data = await recipeApi.getRecipeById(id)
-      console.log(data)
       setRecipe(data)
     } catch (err) {
       setError(err.message)
@@ -98,12 +104,18 @@ function RecipeDetail() {
           <section className="ingredients-section">
             <h2>Ingredients</h2>
             <ul className="ingredients-list">
-              {recipe.ingredients.map((ingredient) => (
-                <li key={ingredient.id}>
-                  <span className="quantity">{ingredient.quantity} {ingredient.unit}</span>
-                  <span className="name">{ingredient.name}</span>
-                </li>
-              ))}
+              {recipe.ingredients.map((ingredient) => {
+                const packageSize = formatPackage(ingredient)
+                return (
+                  <li key={ingredient.id}>
+                    <span className="quantity">
+                      {ingredient.quantity} {ingredient.unit}
+                      {packageSize && <span className="package"> ({packageSize})</span>}
+                    </span>
+                    <span className="name">{ingredient.name}</span>
+                  </li>
+                )
+              })}
             </ul>
           </section>
         )}

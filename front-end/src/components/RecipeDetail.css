@@ -125,6 +125,11 @@
   min-width: 100px;
 }
 
+.ingredients-list .package {
+  color: #999;
+  font-weight: 400;
+}
+
 .ingredients-list .name {
   color: #ddd;
 }

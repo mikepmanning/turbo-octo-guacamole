@@ -36,7 +36,9 @@ public class Recipe extends BaseEntity {
     @OrderBy("stepOrder ASC")
     private List<Step> steps = new ArrayList<>();
 
+    // Without an ORDER BY, PostgreSQL may return an edited ingredient last.
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private List<Ingredient> ingredients = new ArrayList<>();
 
     @ElementCollection
@@ -167,5 +169,13 @@ public class Recipe extends BaseEntity {
 
     public void setCategories(Set<String> categories) {
         this.categories = categories;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
     }
 }

@@ -1,5 +1,6 @@
 package com.recipehome.api.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
@@ -25,7 +26,9 @@ public class RecipeDTO {
     private Integer cookTimeMinutes;
     private Integer totalTimeMinutes;
 
+    @Valid
     private List<StepDTO> steps = new ArrayList<>();
+    @Valid
     private List<IngredientDTO> ingredients = new ArrayList<>();
     private List<String> equipment = new ArrayList<>();
     private Set<String> categories = new HashSet<>();

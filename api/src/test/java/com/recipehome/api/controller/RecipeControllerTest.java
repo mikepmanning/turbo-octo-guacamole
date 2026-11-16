@@ -8,6 +8,7 @@ import com.recipehome.api.dto.StepDTO;
 import com.recipehome.api.entity.Ingredient;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.entity.Step;
+import com.recipehome.api.exception.RecipeNotFoundException;
 import com.recipehome.api.mapper.RecipeMapper;
 import com.recipehome.api.service.RecipeImportService;
 import com.recipehome.api.service.RecipeService;
@@ -271,8 +272,7 @@ class RecipeControllerTest {
         updatedRecipe.setTitle("Updated Recipe");
         updatedRecipe.setServings(6);
 
-        when(recipeMapper.toEntity(any(RecipeDTO.class))).thenReturn(testRecipe);
-        when(recipeService.updateRecipe(eq(1L), any(Recipe.class))).thenReturn(updatedRecipe);
+        when(recipeService.updateRecipe(eq(1L), any(RecipeDTO.class))).thenReturn(updatedRecipe);
         when(recipeMapper.toDTO(updatedRecipe)).thenReturn(updatedDTO);
 
         // When & Then
@@ -283,7 +283,47 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.title").value("Updated Recipe"))
                 .andExpect(jsonPath("$.servings").value(6));
 
-        verify(recipeService, times(1)).updateRecipe(eq(1L), any(Recipe.class));
+        verify(recipeService, times(1)).updateRecipe(eq(1L), any(RecipeDTO.class));
+        verify(recipeMapper, never()).toEntity(any(RecipeDTO.class));
+    }
+
+    @Test
+    void updateRecipe_ShouldReturn404_WhenRecipeNotFound() throws Exception {
+        when(recipeService.updateRecipe(eq(999L), any(RecipeDTO.class)))
+                .thenThrow(new RecipeNotFoundException(999L));
+
+        mockMvc.perform(put("/api/recipes/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testRecipeDTO)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Recipe not found with id: 999"));
+    }
+
+    @Test
+    void updateRecipe_ShouldReturn422_WhenAStepBelongsToAnotherRecipe() throws Exception {
+        when(recipeService.updateRecipe(eq(1L), any(RecipeDTO.class)))
+                .thenThrow(new IllegalArgumentException("Step 999 does not belong to recipe 1"));
+
+        mockMvc.perform(put("/api/recipes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testRecipeDTO)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.error").value("Step 999 does not belong to recipe 1"));
+    }
+
+    @Test
+    void updateRecipe_ShouldReturn400_WhenAnIngredientOrStepIsInvalid() throws Exception {
+        testRecipeDTO.getIngredients().get(0).setName("");
+        testRecipeDTO.getSteps().get(0).setInstructionText(" ");
+
+        mockMvc.perform(put("/api/recipes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testRecipeDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$['ingredients[0].name']").value("Ingredient name is required"))
+                .andExpect(jsonPath("$['steps[0].instructionText']").value("Instruction text is required"));
+
+        verify(recipeService, never()).updateRecipe(any(), any(RecipeDTO.class));
     }
 
     @Test
@@ -296,6 +336,60 @@ class RecipeControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(recipeService, times(1)).deleteRecipe(1L);
+    }
+
+    @Test
+    void deleteRecipes_ShouldReturnTheDeletedIds() throws Exception {
+        when(recipeService.deleteRecipes(List.of(1L, 2L, 3L))).thenReturn(List.of(1L, 3L));
+
+        mockMvc.perform(post("/api/recipes/bulk-delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[1,2,3]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deletedIds", contains(1, 3)));
+    }
+
+    @Test
+    void deleteRecipes_ShouldReturn400_ForAnEmptyOrMissingList() throws Exception {
+        for (String body : List.of("{\"ids\":[]}", "{}")) {
+            mockMvc.perform(post("/api/recipes/bulk-delete").contentType(MediaType.APPLICATION_JSON).content(body))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.ids").value("Select at least one recipe"));
+        }
+        verify(recipeService, never()).deleteRecipes(any());
+    }
+
+    @Test
+    void deleteRecipes_ShouldReturn400_ForANullId() throws Exception {
+        mockMvc.perform(post("/api/recipes/bulk-delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[7,null]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$['ids[1]']").value("Recipe id is required"));
+        verify(recipeService, never()).deleteRecipes(any());
+    }
+
+    @Test
+    void deleteRecipes_ShouldReturn400_ForMoreThan100Ids() throws Exception {
+        String ids = java.util.stream.LongStream.rangeClosed(1, 101)
+                .mapToObj(Long::toString).collect(java.util.stream.Collectors.joining(","));
+
+        mockMvc.perform(post("/api/recipes/bulk-delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[" + ids + "]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.ids").value("Delete at most 100 recipes at a time"));
+        verify(recipeService, never()).deleteRecipes(any());
+    }
+
+    @Test
+    void nonNumericId_ShouldReturn400NotA500() throws Exception {
+        mockMvc.perform(get("/api/recipes/abc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Invalid id: 'abc'"));
+        mockMvc.perform(delete("/api/recipes/bulk-delete"))
+                .andExpect(status().isBadRequest());
+        verify(recipeService, never()).deleteRecipe(any());
     }
 
     @Test

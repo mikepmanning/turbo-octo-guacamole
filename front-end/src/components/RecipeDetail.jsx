@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { recipeApi } from '../services/api'
+import RecipeEditor from './RecipeEditor'
+import ConfirmDialog from './ConfirmDialog'
 import './RecipeDetail.css'
 
 // "15 OUNCE" for an ingredient bought in a package, e.g. "1 (15-ounce) can corn";
@@ -16,10 +18,22 @@ function RecipeDetail() {
   const [recipe, setRecipe] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [editing, setEditing] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const savedNoticeRef = useRef(null)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
+  const deleteButtonRef = useRef(null)
 
   useEffect(() => {
     loadRecipe()
   }, [id])
+
+  // After saving from the bottom of the form, bring "Changes saved." into view.
+  useEffect(() => {
+    if (saved) savedNoticeRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+  }, [saved])
 
   const loadRecipe = async () => {
     try {
@@ -53,11 +67,90 @@ function RecipeDetail() {
     return <div className="recipe-detail"><p>Recipe not found</p></div>
   }
 
+  const startEditing = () => {
+    setSaved(false)
+    setEditing(true)
+  }
+
+  // Show what the server saved (new ids, renumbered steps) straight away, without
+  // reloading. If the save fails, RecipeEditor shows the error and keeps the edits.
+  const saveRecipe = async (payload) => {
+    const updated = await recipeApi.updateRecipe(id, payload)
+    setRecipe(updated)
+    setEditing(false)
+    setSaved(true)
+  }
+
+  // Soft delete (the server keeps the row). Replace this page in the history so Back
+  // doesn't return to a recipe that no longer loads; the list says what was deleted.
+  const deleteRecipe = async () => {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await recipeApi.deleteRecipe(id)
+      navigate('/', { replace: true, state: { deletedRecipeTitle: recipe.title } })
+    } catch (err) {
+      setDeleteError(err.message)
+      setDeleting(false)
+    }
+  }
+
+  const cancelDelete = () => {
+    setConfirmingDelete(false)
+    setDeleteError(null)
+    deleteButtonRef.current?.focus()
+  }
+
+  if (editing) {
+    return (
+      <div className="recipe-detail">
+        <h1 className="edit-heading">Edit Recipe</h1>
+        <RecipeEditor
+          initialRecipe={recipe}
+          onSubmit={saveRecipe}
+          onCancel={() => setEditing(false)}
+          submitLabel="Save Changes"
+          submittingLabel="Saving..."
+          confirmDiscard
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="recipe-detail">
-      <button className="back-button" onClick={() => navigate('/')}>
-        ← Back to Recipes
-      </button>
+      <div className="detail-actions">
+        <button className="back-button" onClick={() => navigate('/')}>
+          ← Back to Recipes
+        </button>
+        <div className="detail-actions-end">
+          <button className="edit-button" onClick={startEditing}>
+            Edit Recipe
+          </button>
+          <button
+            className="delete-button"
+            ref={deleteButtonRef}
+            onClick={() => setConfirmingDelete(true)}
+          >
+            Delete Recipe
+          </button>
+        </div>
+      </div>
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          title="Delete this recipe?"
+          message={`“${recipe.title}” will be removed from your recipes.`}
+          confirmLabel="Delete"
+          busyLabel="Deleting..."
+          busy={deleting}
+          error={deleteError}
+          onConfirm={deleteRecipe}
+          onCancel={cancelDelete}
+        />
+      )}
+
+      {saved && <p className="save-notice" role="status" ref={savedNoticeRef}>Changes saved.</p>}
 
       <header className="recipe-header">
         <h1>{recipe.title}</h1>
@@ -135,7 +228,7 @@ function RecipeDetail() {
           <section className="steps-section">
             <h2>Instructions</h2>
             <ol className="steps-list">
-              {recipe.steps
+              {[...recipe.steps]
                 .sort((a, b) => a.stepOrder - b.stepOrder)
                 .map((step) => (
                   <li key={step.id}>

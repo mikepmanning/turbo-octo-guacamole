@@ -133,6 +133,9 @@ To run both backend and frontend together:
 ### API Integration
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
 
+### Recipe Search
+Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeSearch.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only.
+
 ### Testing
 - Vitest is configured in the `test` block of `vite.config.js`; coverage uses the V8 provider with an 80% line threshold (`src/main.jsx` is excluded).
 - Reporters: `default` (terminal) plus `html` from `@vitest/ui`, written as a single file to `test_reports/index.html`. Coverage is written to `test_reports/coverage/`, the folder the report's Coverage tab reads, so Vitest doesn't make a second copy.
@@ -141,6 +144,7 @@ The frontend communicates with the Spring Boot backend via the API service layer
 - `src/test/renderWithRouter.jsx` renders a page inside a `MemoryRouter` (with optional router state) and exposes the current path via `data-testid="location"`.
 - `src/test/fixtures/` holds sample API payloads (units, imported and saved recipes).
 - Component tests mock the API layer with `vi.mock('../services/api')`; `api.test.js` tests the API layer itself against a stubbed `fetch`.
+- `testTimeout` is 15s (Vitest's default is 5s): form tests that type through user-event take 3-5s under `npm test`.
 - The environment is jsdom rather than happy-dom: happy-dom wrongly rejects `<input type="number" step="0.01">` values, which breaks RecipeForm's form validation.
 
 ## Backend Architecture (api/)
@@ -220,5 +224,6 @@ Environment variables:
 - `DB_HOST`, `DB_PORT`, `DB_NAME` - Connection details
 - `DB_USERNAME`, `DB_PASSWORD` - Credentials
 - `HIBERNATE_DDL_AUTO` - Schema management (update/validate/etc.)
+- `SEED_DATA` - Load the 20 sample recipes into an empty database at startup (default: true)
 
 See `api/CLAUDE.md` for detailed setup instructions.

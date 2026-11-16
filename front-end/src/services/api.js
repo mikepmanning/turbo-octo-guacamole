@@ -1,5 +1,18 @@
 const API_BASE_URL = '/api';
 
+// Error message for a failed response, using the server's explanation when it sent one:
+// { "error": "..." } or a validation map like { "ingredients[0].name": "Ingredient name is required" }.
+const errorMessage = async (response, fallback) => {
+  const body = await response.json().catch(() => null);
+  if (body && typeof body === 'object') {
+    const details = typeof body.error === 'string'
+      ? [body.error]
+      : Object.values(body).filter(value => typeof value === 'string');
+    if (details.length > 0) return `${fallback}: ${details.join('; ')}`;
+  }
+  return fallback;
+};
+
 export const recipeApi = {
   // Get all recipes
   getAllRecipes: async () => {
@@ -37,7 +50,7 @@ export const recipeApi = {
       },
       body: JSON.stringify(recipe),
     });
-    if (!response.ok) throw new Error('Failed to update recipe');
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to update recipe'));
     return response.json();
   },
 
@@ -46,7 +59,21 @@ export const recipeApi = {
     const response = await fetch(`${API_BASE_URL}/recipes/${id}`, {
       method: 'DELETE',
     });
-    if (!response.ok) throw new Error('Failed to delete recipe');
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to delete recipe'));
+  },
+
+  // Soft delete several recipes in one request (all or nothing). Resolves to
+  // { deletedIds }: the ones deleted now, leaving out any that were already deleted.
+  deleteRecipes: async (ids) => {
+    const response = await fetch(`${API_BASE_URL}/recipes/bulk-delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ids }),
+    });
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to delete recipes'));
+    return response.json();
   },
 
   // Search recipes by title

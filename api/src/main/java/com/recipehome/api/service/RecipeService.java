@@ -1,7 +1,9 @@
 package com.recipehome.api.service;
 
+import com.recipehome.api.dto.RecipeDTO;
 import com.recipehome.api.entity.Recipe;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +15,16 @@ public interface RecipeService {
     Recipe createRecipe(Recipe recipe);
 
     /**
-     * Update an existing recipe
+     * Replace an active recipe's contents with {@code recipeDTO}.
+     * <p>
+     * Steps and ingredients are matched by id: ones with a matching id are updated in place,
+     * ones without an id are added, and existing ones missing from the DTO are deleted.
+     * Steps are renumbered 1..N in {@code stepOrder} order. {@code sourceUrl} is not changed.
+     *
+     * @throws com.recipehome.api.exception.RecipeNotFoundException if there is no active recipe with this id
+     * @throws IllegalArgumentException if a step or ingredient id does not belong to this recipe or is repeated
      */
-    Recipe updateRecipe(Long id, Recipe recipe);
+    Recipe updateRecipe(Long id, RecipeDTO recipeDTO);
 
     /**
      * Get a recipe by ID (only if active)
@@ -51,6 +60,14 @@ public interface RecipeService {
      * Soft delete a recipe
      */
     void deleteRecipe(Long id);
+
+    /**
+     * Soft delete several recipes in one transaction: all of them are deleted, or none are.
+     * Unknown, already-deleted, and repeated ids are skipped, like {@link #deleteRecipe(Long)}.
+     *
+     * @return the ids deleted by this call, in the order given
+     */
+    List<Long> deleteRecipes(Collection<Long> ids);
 
     /**
      * Restore a soft-deleted recipe

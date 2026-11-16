@@ -22,6 +22,10 @@ export default defineConfig({
     include: ['src/**/*.test.{js,jsx}'],
     css: false,
     restoreMocks: true,
+    // Form tests type through user-event, re-rendering and re-validating the form on every
+    // keystroke; under `npm test` (coverage, files in parallel) the longest take 3-5s, right
+    // at Vitest's 5s default. 15s still catches a test that hangs.
+    testTimeout: 15000,
     // Terminal output as usual, plus an HTML test report on every run.
     // singleFile: one self-contained index.html that opens straight from disk.
     reporters: [

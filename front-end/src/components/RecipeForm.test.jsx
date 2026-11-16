@@ -142,6 +142,15 @@ describe('RecipeForm', () => {
       ])
     })
 
+    it('sends the source URL along with the recipe', async () => {
+      const user = await renderForm(importedBurritoBowls)
+
+      await user.click(screen.getByRole('button', { name: 'Add Recipe' }))
+
+      expect(recipeApi.createRecipe.mock.calls[0][0].sourceUrl)
+        .toBe('https://damndelicious.net/burrito-bowls/')
+    })
+
     it('falls back to empty fields when the import is missing values', async () => {
       await renderForm({
         title: 'Sparse',

@@ -1,5 +1,7 @@
 package com.recipehome.api.controller;
 
+import com.recipehome.api.dto.BulkDeleteRequest;
+import com.recipehome.api.dto.BulkDeleteResponse;
 import com.recipehome.api.dto.RecipeDTO;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.mapper.RecipeMapper;
@@ -97,8 +99,7 @@ public class RecipeController {
             @PathVariable Long id,
             @Valid @RequestBody RecipeDTO recipeDTO) {
         logger.info("Updating recipe with id: {}", id);
-        Recipe recipe = recipeMapper.toEntity(recipeDTO);
-        Recipe updatedRecipe = recipeService.updateRecipe(id, recipe);
+        Recipe updatedRecipe = recipeService.updateRecipe(id, recipeDTO);
         logger.info("Updated recipe: {}", updatedRecipe.getTitle());
         return ResponseEntity.ok(recipeMapper.toDTO(updatedRecipe));
     }
@@ -108,6 +109,13 @@ public class RecipeController {
         logger.info("Soft deleting recipe with id: {}", id);
         recipeService.deleteRecipe(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<BulkDeleteResponse> deleteRecipes(@Valid @RequestBody BulkDeleteRequest request) {
+        logger.info("Soft deleting {} recipe(s): {}", request.ids().size(), request.ids());
+        List<Long> deletedIds = recipeService.deleteRecipes(request.ids());
+        return ResponseEntity.ok(new BulkDeleteResponse(deletedIds));
     }
 
     @PostMapping("/{id}/restore")

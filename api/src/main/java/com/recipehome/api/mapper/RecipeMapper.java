@@ -35,6 +35,7 @@ public class RecipeMapper {
         dto.setCategories(recipe.getCategories());
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
+        dto.setSourceUrl(recipe.getSourceUrl());
 
         // Map steps and ingredients
         dto.setSteps(recipe.getSteps().stream()
@@ -54,6 +55,7 @@ public class RecipeMapper {
 
         Recipe recipe = new Recipe();
         RecipeServiceImpl.populateRecipe(recipe, dto.getTitle(), dto.getDescription(), dto.getServings(), dto.getPrepTimeMinutes(), dto.getCookTimeMinutes(), dto.getTotalTimeMinutes(), dto.getEquipment(), dto.getCategories(), recipe);
+        recipe.setSourceUrl(dto.getSourceUrl());
 
         // Map steps and ingredients
         if (dto.getSteps() != null) {

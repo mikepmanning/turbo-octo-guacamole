@@ -77,6 +77,19 @@ describe('recipeApi', () => {
 
       await expect(recipeApi.updateRecipe(3, {})).rejects.toThrow('Failed to update recipe')
     })
+
+    it.each([
+      { desc: 'an error', body: { error: 'Recipe not found with id: 3' },
+        message: 'Failed to update recipe: Recipe not found with id: 3' },
+      { desc: 'field errors', body: { 'ingredients[0].name': 'Ingredient name is required', title: 'Recipe title is required' },
+        message: 'Failed to update recipe: Ingredient name is required; Recipe title is required' },
+      { desc: 'a body that is not JSON', body: new Error('not JSON'), message: 'Failed to update recipe' },
+      { desc: 'an empty body', body: null, message: 'Failed to update recipe' },
+    ])('uses the server\'s explanation when it sends $desc', async ({ body, message }) => {
+      fetch.mockResolvedValue(response(body, { ok: false }))
+
+      await expect(recipeApi.updateRecipe(3, {})).rejects.toThrow(new Error(message))
+    })
   })
 
   describe('deleteRecipe', () => {
@@ -93,6 +106,33 @@ describe('recipeApi', () => {
       fetch.mockResolvedValue(response(null, { ok: false }))
 
       await expect(recipeApi.deleteRecipe(9)).rejects.toThrow('Failed to delete recipe')
+    })
+
+    it('includes the server\'s explanation when it sends one', async () => {
+      fetch.mockResolvedValue(response({ error: 'An unexpected error occurred: connection refused' }, { ok: false }))
+
+      await expect(recipeApi.deleteRecipe(9)).rejects
+        .toThrow(new Error('Failed to delete recipe: An unexpected error occurred: connection refused'))
+    })
+  })
+
+  describe('deleteRecipes', () => {
+    it('POSTs the ids to /api/recipes/bulk-delete and returns what was deleted', async () => {
+      fetch.mockResolvedValue(response({ deletedIds: [1, 3] }))
+
+      await expect(recipeApi.deleteRecipes([1, 2, 3])).resolves.toEqual({ deletedIds: [1, 3] })
+      expect(fetch).toHaveBeenCalledWith('/api/recipes/bulk-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [1, 2, 3] }),
+      })
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ ids: 'Delete at most 100 recipes at a time' }, { ok: false }))
+
+      await expect(recipeApi.deleteRecipes([])).rejects
+        .toThrow(new Error('Failed to delete recipes: Delete at most 100 recipes at a time'))
     })
   })
 

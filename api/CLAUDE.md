@@ -102,6 +102,19 @@ Base package: `com.recipehome.api`
   - `DB_USERNAME` - Database username (default: postgres)
   - `DB_PASSWORD` - Database password (required, no default)
   - `HIBERNATE_DDL_AUTO` - Schema generation strategy (default: update)
+  - `SEED_DATA` - Load sample recipes at startup (default: true; see Sample Data below)
+
+### Sample Data
+- `src/main/resources/seed/recipes.json` holds 20 sample recipes in the `POST /api/recipes` body shape
+  (varied categories, times from 5 to 1005 min, every unit, package sizes, one deliberately sparse recipe)
+- `RecipeSeeder` loads them at startup when `recipehome.seed.enabled=${SEED_DATA:true}`, but only if
+  the database has no recipes (including soft-deleted ones), so it never duplicates or changes data.
+  Each recipe is validated like an API request before any is saved; a bad file stops startup with
+  the recipe title and field
+- To re-seed, empty the database, e.g. `TRUNCATE recipes, steps, ingredients, recipe_equipment,
+  recipe_categories RESTART IDENTITY;`, then restart. Set `SEED_DATA=false` before production
+- Tests: the test profile turns seeding off. Use `SeedRecipes.load()` for the data as `RecipeDTO`s,
+  or opt a Spring test in with `recipehome.seed.enabled=true` (see `RecipeSeederTest`)
 
 ### Layered Architecture
 
@@ -153,8 +166,10 @@ All endpoints are prefixed with `/api`
 - `POST /api/recipes` - Create a new recipe (with steps and ingredients)
 - `GET /api/recipes` - Get all active recipes
 - `GET /api/recipes/{id}` - Get recipe by ID
-- `PUT /api/recipes/{id}` - Update a recipe
+- `PUT /api/recipes/{id}` - Update a recipe (full replacement; see below)
 - `DELETE /api/recipes/{id}` - Soft delete a recipe
+- `POST /api/recipes/bulk-delete` - Soft delete several recipes: body `{"ids": [1, 2]}` (1-100 ids), returns
+  `{"deletedIds": [...]}`. All or nothing; unknown, already-deleted and repeated ids are skipped
 - `POST /api/recipes/{id}/restore` - Restore a soft-deleted recipe
 - `GET /api/recipes/search?title={title}` - Search recipes by title
 - `GET /api/recipes/category/{category}` - Get recipes by category
@@ -166,6 +181,15 @@ All endpoints are prefixed with `/api`
 - Steps and ingredients are embedded within Recipe payloads (no separate endpoints)
 - All create/update operations on steps and ingredients happen through the Recipe endpoint
 - This simplified design reflects that steps and ingredients don't exist independently of recipes
+
+**Updating a recipe (`PUT /api/recipes/{id}`)** - `RecipeService.updateRecipe(Long, RecipeDTO)`
+- The body replaces the recipe's contents; send the whole recipe (last save wins, no version check)
+- Steps and ingredients are matched by `id`: with a matching id -> updated in place; no id -> added;
+  existing ones missing from the body -> deleted (orphanRemoval, not soft delete)
+- Steps are renumbered 1..N in `stepOrder` order (Alexa looks steps up by number)
+- `sourceUrl` is set on create and never changed by an update
+- Errors: 404 unknown/inactive recipe (`RecipeNotFoundException`); 400 invalid fields, including
+  nested ones such as `ingredients[0].name`; 422 a step/ingredient id that isn't this recipe's or is repeated
 
 ### Technology Stack
 The project is set up with these Spring Boot starters:

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 RecipeHome is a Spring Boot 4.0.0 application designed to help users easily store and manage their recipes. The long-term vision includes integration with voice assistants (Alexa and Google Home) to provide hands-free, step-by-step cooking guidance while users are actively cooking.
 
 The project uses:
-- Java 25
+- Java 21
 - Maven for build management
 - PostgreSQL as the database
 - Spring Data JPA for data persistence

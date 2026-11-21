@@ -36,6 +36,7 @@ public class RecipeMapper {
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
         dto.setSourceUrl(recipe.getSourceUrl());
+        dto.setExcludedFromMealPlans(recipe.getExcludedFromMealPlans());
 
         // Map steps and ingredients
         dto.setSteps(recipe.getSteps().stream()

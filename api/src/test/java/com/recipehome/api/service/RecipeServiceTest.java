@@ -503,6 +503,57 @@ class RecipeServiceTest {
         }
     }
 
+    @Nested
+    class SetExcludedFromMealPlans {
+
+        private Recipe recipe(long id, boolean active, boolean excluded) {
+            Recipe recipe = new Recipe("Recipe " + id);
+            recipe.setId(id);
+            recipe.setIsActive(active);
+            recipe.setExcludedFromMealPlans(excluded);
+            return recipe;
+        }
+
+        @Test
+        void newRecipesAreIncluded() {
+            assertThat(new Recipe("Toast").getExcludedFromMealPlans()).isFalse();
+        }
+
+        @Test
+        void excludesEachActiveRecipe_andReturnsTheirIdsInRequestOrder() {
+            Recipe one = recipe(1L, true, false), two = recipe(2L, true, true);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(one, two));
+
+            List<Long> updated = recipeService.setExcludedFromMealPlans(List.of(2L, 1L), true);
+
+            assertThat(updated).containsExactly(2L, 1L);   // 2 was already excluded: still "set as asked"
+            assertThat(List.of(one, two)).allSatisfy(r -> assertThat(r.getExcludedFromMealPlans()).isTrue());
+            verify(recipeRepository).saveAll(List.of(two, one));
+        }
+
+        @Test
+        void includesThemAgain() {
+            Recipe one = recipe(1L, true, true);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(one));
+
+            assertThat(recipeService.setExcludedFromMealPlans(List.of(1L), false)).containsExactly(1L);
+            assertThat(one.getExcludedFromMealPlans()).isFalse();
+        }
+
+        @Test
+        void skipsUnknownDeletedAndRepeatedIds() {
+            Recipe active = recipe(1L, true, false), deleted = recipe(2L, false, false);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(active, deleted));
+
+            List<Long> updated = recipeService.setExcludedFromMealPlans(List.of(1L, 2L, 1L, 999L), true);
+
+            assertThat(updated).containsExactly(1L);
+            assertThat(deleted.getExcludedFromMealPlans()).isFalse();
+            verify(recipeRepository).findAllById(Set.of(1L, 2L, 999L));
+            verify(recipeRepository).saveAll(List.of(active));
+        }
+    }
+
     @Test
     void restoreRecipe_ShouldRestoreRecipe_WhenExists() {
         // Given

@@ -76,6 +76,20 @@ export const recipeApi = {
     return response.json();
   },
 
+  // Exclude recipes from meal plans (excluded = true) or include them again. Resolves to
+  // { updatedIds }: the recipes now set that way, leaving out any that were deleted.
+  setExcludedFromMealPlans: async (ids, excluded) => {
+    const response = await fetch(`${API_BASE_URL}/recipes/meal-plan-exclusion`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ids, excluded }),
+    });
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to update meal plan settings'));
+    return response.json();
+  },
+
   // Search recipes by title
   searchRecipes: async (title) => {
     const response = await fetch(`${API_BASE_URL}/recipes/search?title=${encodeURIComponent(title)}`);
@@ -110,4 +124,64 @@ export const recipeApi = {
     }
     return response.json();
   }
+};
+
+export const mealPlanApi = {
+  // Save a new meal plan: { name, startDate, days, mealTypes, entries: [{ date, mealType, recipeId }] }.
+  // Resolves to the saved plan, with a recipe summary in each entry.
+  createMealPlan: async (plan) => {
+    const response = await fetch(`${API_BASE_URL}/meal-plans`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(plan),
+    });
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to save meal plan'));
+    return response.json();
+  },
+
+  // Get every saved meal plan, latest start date first: summaries with mealCount instead of entries
+  getMealPlans: async () => {
+    const response = await fetch(`${API_BASE_URL}/meal-plans`);
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to load meal plans'));
+    return response.json();
+  },
+
+  // Meals already planned from `from` to `to` ('YYYY-MM-DD', inclusive) in any saved plan:
+  // [{ date, mealType, recipeId, recipeTitle, mealPlanId, mealPlanName, mealPlanStartDate, mealPlanDays }]
+  getPlannedMeals: async (from, to) => {
+    const params = new URLSearchParams({ from, to });
+    const response = await fetch(`${API_BASE_URL}/meal-plans/meals?${params}`);
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to load planned meals'));
+    return response.json();
+  },
+
+  // Get a saved meal plan by ID
+  getMealPlan: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/meal-plans/${id}`);
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to load meal plan'));
+    return response.json();
+  },
+
+  // Replace a saved meal plan's name and meals (same body as createMealPlan); resolves to the updated plan
+  updateMealPlan: async (id, plan) => {
+    const response = await fetch(`${API_BASE_URL}/meal-plans/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(plan),
+    });
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to save meal plan'));
+    return response.json();
+  },
+
+  // Delete a meal plan (soft delete on the server)
+  deleteMealPlan: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/meal-plans/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error(await errorMessage(response, 'Failed to delete meal plan'));
+  },
 };

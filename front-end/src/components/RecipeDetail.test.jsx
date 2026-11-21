@@ -9,7 +9,10 @@ import { savedBurritoBowls } from '../test/fixtures/recipes'
 import { UNITS } from '../test/fixtures/units'
 
 vi.mock('../services/api', () => ({
-  recipeApi: { getRecipeById: vi.fn(), updateRecipe: vi.fn(), getUnits: vi.fn(), deleteRecipe: vi.fn() },
+  recipeApi: {
+    getRecipeById: vi.fn(), updateRecipe: vi.fn(), getUnits: vi.fn(), deleteRecipe: vi.fn(),
+    setExcludedFromMealPlans: vi.fn(),
+  },
 }))
 
 const renderDetail = (id = '1') =>
@@ -345,6 +348,74 @@ describe('RecipeDetail', () => {
 
       await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument())
       expect(screen.getByRole('heading', { name: 'Chicken Burrito Bowls' })).toBeInTheDocument()
+    })
+  })
+
+  describe('meal plans', () => {
+    const loaded = async (recipe = savedBurritoBowls) => {
+      const user = userEvent.setup()
+      recipeApi.getRecipeById.mockResolvedValue(recipe)
+      renderDetail()
+      await screen.findByRole('heading', { name: recipe.title })
+      return user
+    }
+
+    it('a recipe starts in meal plans, with a button to exclude it', async () => {
+      await loaded()
+
+      expect(screen.getByRole('button', { name: 'Exclude from meal plans' })).toBeEnabled()
+      expect(screen.queryByText('Excluded from meal plans')).not.toBeInTheDocument()
+    })
+
+    it('excludes the recipe straight away, and says so', async () => {
+      let finish
+      recipeApi.setExcludedFromMealPlans.mockReturnValue(new Promise(resolve => { finish = resolve }))
+      const user = await loaded()
+
+      await user.click(screen.getByRole('button', { name: 'Exclude from meal plans' }))
+
+      expect(recipeApi.setExcludedFromMealPlans).toHaveBeenCalledWith([1], true)
+      expect(screen.getByRole('button', { name: 'Exclude from meal plans' })).toBeDisabled()
+      finish({ updatedIds: [1] })
+      expect(await screen.findByRole('status')).toHaveTextContent('Excluded from meal plans.')
+      expect(screen.getByText('Excluded from meal plans', { selector: '.excluded-tag' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Include in meal plans' })).toBeEnabled()
+    })
+
+    it('includes an excluded recipe again', async () => {
+      recipeApi.setExcludedFromMealPlans.mockResolvedValue({ updatedIds: [1] })
+      const user = await loaded({ ...savedBurritoBowls, excludedFromMealPlans: true })
+      expect(screen.getByText('Excluded from meal plans', { selector: '.excluded-tag' })).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Include in meal plans' }))
+
+      expect(recipeApi.setExcludedFromMealPlans).toHaveBeenCalledWith([1], false)
+      expect(await screen.findByRole('status')).toHaveTextContent('Included in meal plans again.')
+      expect(screen.queryByText('Excluded from meal plans', { selector: '.excluded-tag' })).not.toBeInTheDocument()
+    })
+
+    it('says why when it could not change the setting, and leaves it as it was', async () => {
+      recipeApi.setExcludedFromMealPlans.mockRejectedValue(new Error('Failed to update meal plan settings'))
+      const user = await loaded()
+
+      await user.click(screen.getByRole('button', { name: 'Exclude from meal plans' }))
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('Failed to update meal plan settings')
+      expect(screen.getByRole('button', { name: 'Exclude from meal plans' })).toBeEnabled()
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    })
+
+    it('the notice goes when editing starts', async () => {
+      recipeApi.setExcludedFromMealPlans.mockResolvedValue({ updatedIds: [1] })
+      recipeApi.getUnits.mockResolvedValue(UNITS)
+      const user = await loaded()
+      await user.click(screen.getByRole('button', { name: 'Exclude from meal plans' }))
+      await screen.findByRole('status')
+
+      await user.click(screen.getByRole('button', { name: 'Edit Recipe' }))
+      await user.click(await screen.findByRole('button', { name: 'Cancel' }))
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
     })
   })
 

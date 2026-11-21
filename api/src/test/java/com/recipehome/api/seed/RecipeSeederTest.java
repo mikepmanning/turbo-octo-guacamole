@@ -26,11 +26,11 @@ class RecipeSeederTest {
 
     @Test
     void loadsAllSampleRecipesAtStartup_andNotAgain() throws Exception {
-        assertThat(recipeRepository.count()).isEqualTo(20);
+        assertThat(recipeRepository.count()).isEqualTo(86);
 
         seeder.run(null);
 
-        assertThat(recipeRepository.count()).isEqualTo(20);
+        assertThat(recipeRepository.count()).isEqualTo(86);
     }
 
     @Test

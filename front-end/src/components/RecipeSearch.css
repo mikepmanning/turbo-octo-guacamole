@@ -75,6 +75,24 @@
   width: 100%;
 }
 
+/* "Only recipes excluded from meal plans": a checkbox across the whole panel */
+.filter-field.filter-checkbox {
+  grid-column: 1 / -1;
+}
+
+.filter-field.filter-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.filter-field.filter-checkbox input {
+  width: auto;
+  padding: 0;
+  accent-color: #646cff;
+}
+
 .active-filters {
   display: flex;
   flex-wrap: wrap;

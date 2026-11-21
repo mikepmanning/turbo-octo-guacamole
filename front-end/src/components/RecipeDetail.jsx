@@ -4,6 +4,7 @@ import { recipeApi } from '../services/api'
 import RecipeEditor from './RecipeEditor'
 import ConfirmDialog from './ConfirmDialog'
 import './RecipeDetail.css'
+import './MealPlan.css'
 
 // "15 OUNCE" for an ingredient bought in a package, e.g. "1 (15-ounce) can corn";
 // null when there is no package size.
@@ -25,6 +26,10 @@ function RecipeDetail() {
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
   const deleteButtonRef = useRef(null)
+  // "Exclude from meal plans": saved straight away; the notice says what changed.
+  const [exclusionBusy, setExclusionBusy] = useState(false)
+  const [exclusionError, setExclusionError] = useState(null)
+  const [exclusionNotice, setExclusionNotice] = useState(null)
 
   useEffect(() => {
     loadRecipe()
@@ -69,7 +74,25 @@ function RecipeDetail() {
 
   const startEditing = () => {
     setSaved(false)
+    setExclusionNotice(null)
     setEditing(true)
+  }
+
+  const toggleMealPlanExclusion = async () => {
+    const excluded = !recipe.excludedFromMealPlans
+    setExclusionBusy(true)
+    setExclusionError(null)
+    setExclusionNotice(null)
+    setSaved(false)
+    try {
+      await recipeApi.setExcludedFromMealPlans([recipe.id], excluded)
+      setRecipe({ ...recipe, excludedFromMealPlans: excluded })
+      setExclusionNotice(excluded ? 'Excluded from meal plans.' : 'Included in meal plans again.')
+    } catch (err) {
+      setExclusionError(err.message)
+    } finally {
+      setExclusionBusy(false)
+    }
   }
 
   // Show what the server saved (new ids, renumbered steps) straight away, without
@@ -127,6 +150,9 @@ function RecipeDetail() {
           <button className="edit-button" onClick={startEditing}>
             Edit Recipe
           </button>
+          <button className="edit-button" onClick={toggleMealPlanExclusion} disabled={exclusionBusy}>
+            {recipe.excludedFromMealPlans ? 'Include in meal plans' : 'Exclude from meal plans'}
+          </button>
           <button
             className="delete-button"
             ref={deleteButtonRef}
@@ -151,9 +177,12 @@ function RecipeDetail() {
       )}
 
       {saved && <p className="save-notice" role="status" ref={savedNoticeRef}>Changes saved.</p>}
+      {exclusionNotice && <p className="save-notice" role="status">{exclusionNotice}</p>}
+      {exclusionError && <p className="error-message" role="alert">{exclusionError}</p>}
 
       <header className="recipe-header">
         <h1>{recipe.title}</h1>
+        {recipe.excludedFromMealPlans && <p className="excluded-tag">Excluded from meal plans</p>}
         {recipe.description && <p className="description">{recipe.description}</p>}
 
         <div className="recipe-info">

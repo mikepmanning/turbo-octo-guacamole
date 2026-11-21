@@ -2,6 +2,8 @@ package com.recipehome.api.controller;
 
 import com.recipehome.api.dto.BulkDeleteRequest;
 import com.recipehome.api.dto.BulkDeleteResponse;
+import com.recipehome.api.dto.MealPlanExclusionRequest;
+import com.recipehome.api.dto.MealPlanExclusionResponse;
 import com.recipehome.api.dto.RecipeDTO;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.mapper.RecipeMapper;
@@ -116,6 +118,15 @@ public class RecipeController {
         logger.info("Soft deleting {} recipe(s): {}", request.ids().size(), request.ids());
         List<Long> deletedIds = recipeService.deleteRecipes(request.ids());
         return ResponseEntity.ok(new BulkDeleteResponse(deletedIds));
+    }
+
+    // Exclude recipes from meal plans, or include them again: {"ids": [1, 2], "excluded": true}
+    @PutMapping("/meal-plan-exclusion")
+    public ResponseEntity<MealPlanExclusionResponse> setExcludedFromMealPlans(@Valid @RequestBody MealPlanExclusionRequest request) {
+        logger.info("{} {} recipe(s) {} meal plans: {}", request.excluded() ? "Excluding" : "Including",
+                request.ids().size(), request.excluded() ? "from" : "in", request.ids());
+        List<Long> updatedIds = recipeService.setExcludedFromMealPlans(request.ids(), request.excluded());
+        return ResponseEntity.ok(new MealPlanExclusionResponse(updatedIds));
     }
 
     @PostMapping("/{id}/restore")

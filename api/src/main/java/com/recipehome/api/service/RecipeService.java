@@ -70,6 +70,14 @@ public interface RecipeService {
     List<Long> deleteRecipes(Collection<Long> ids);
 
     /**
+     * Exclude active recipes from meal plans, or include them again. Unknown, deleted, and repeated
+     * ids are skipped.
+     *
+     * @return the ids of the recipes now set as asked (including any that already were), in the order given
+     */
+    List<Long> setExcludedFromMealPlans(Collection<Long> ids, boolean excluded);
+
+    /**
      * Restore a soft-deleted recipe
      */
     Recipe restoreRecipe(Long id);

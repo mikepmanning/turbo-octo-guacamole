@@ -7,6 +7,7 @@ import SelectionBar from './SelectionBar'
 import RecipeSearch from './RecipeSearch'
 import { emptyFilters, filterRecipes, hasActiveFilters, knownCategories, matchNotes } from './recipeSearch'
 import './RecipeList.css'
+import './MealPlan.css'
 
 // How many titles the delete confirmation lists before "…and N more".
 const TITLES_SHOWN = 5
@@ -35,6 +36,7 @@ function RecipeCardContent({ recipe, titleId, notes = [] }) {
       <div className="recipe-meta">
         <span>⏱️ {recipe.totalTimeMinutes} min</span>
         <span>🍽️ {recipe.servings} servings</span>
+        {recipe.excludedFromMealPlans && <span className="excluded-tag">Not in meal plans</span>}
       </div>
       {recipe.categories && recipe.categories.length > 0 && (
         <div className="categories">
@@ -68,6 +70,8 @@ function RecipeList() {
   const [deleteError, setDeleteError] = useState(null)
   const deleteButtonRef = useRef(null)
   const noticeRef = useRef(null)
+  const [updatingMealPlans, setUpdatingMealPlans] = useState(false)
+  const [selectionError, setSelectionError] = useState(null)
 
   const navigate = useNavigate();
   const location = useLocation()
@@ -142,6 +146,7 @@ function RecipeList() {
   const stopSelecting = () => {
     setSelecting(false)
     setSelectedIds(new Set())
+    setSelectionError(null)
   }
 
   const toggleSelected = (id) => {
@@ -173,6 +178,25 @@ function RecipeList() {
     }
   }
 
+  // Exclude the selection from meal plans, or include it again; then show the refreshed list.
+  const setMealPlanExclusion = async (excluded) => {
+    setUpdatingMealPlans(true)
+    setSelectionError(null)
+    try {
+      const { updatedIds } = await recipeApi.setExcludedFromMealPlans(selectedRecipes.map(recipe => recipe.id), excluded)
+      setNotice(updatedIds.length === 0
+        ? 'Those recipes had already been deleted.'
+        : `${recipeCount(updatedIds.length)} ${excluded ? 'excluded from' : 'included in'} meal plans.`)
+      stopSelecting()
+      await loadRecipes({ quiet: true })
+    } catch (err) {
+      // Keep the selection to try again.
+      setSelectionError(err.message)
+    } finally {
+      setUpdatingMealPlans(false)
+    }
+  }
+
   const cancelDelete = () => {
     setConfirmingDelete(false)
     setDeleteError(null)
@@ -193,11 +217,16 @@ function RecipeList() {
           <button type="button" onClick={()=> setIsImportModalOpen(true)} className="create-recipe-btn secondary-btn">
             + Import Recipe
           </button>
-          {showingRecipes && !selecting && visibleRecipes.length > 0 && (
+          <Link to="/meal-plans" className="create-recipe-btn secondary-btn">
+            Meal Plans
+          </Link>
+          {/* Always there (so the header doesn't jump), but only usable when there are cards to select */}
+          {!selecting && (
             <button
               type="button"
               onClick={() => { setSelecting(true); setNotice(null) }}
               className="create-recipe-btn secondary-btn"
+              disabled={!showingRecipes || visibleRecipes.length === 0}
             >
               Select
             </button>
@@ -210,6 +239,14 @@ function RecipeList() {
           <p className="list-notice" role="status" ref={noticeRef}>{notice}</p>
         )}
 
+        {/* Always there, even while loading: filters apply to the recipes once they arrive. */}
+        <RecipeSearch
+          filters={filters}
+          onChange={changeFilters}
+          categories={categories}
+          searchInputRef={searchInputRef}
+        />
+
         {loading && <p>Loading recipes...</p>}
 
         {error && (
@@ -221,15 +258,6 @@ function RecipeList() {
 
         {!loading && !error && recipes.length === 0 && (
           <p>No recipes found. Create your first recipe!</p>
-        )}
-
-        {showingRecipes && (
-          <RecipeSearch
-            filters={filters}
-            onChange={changeFilters}
-            categories={categories}
-            searchInputRef={searchInputRef}
-          />
         )}
 
         {/* Announced as the filters change */}
@@ -258,8 +286,13 @@ function RecipeList() {
             onCancel={stopSelecting}
             onDelete={() => setConfirmingDelete(true)}
             deleteButtonRef={deleteButtonRef}
+            onExclude={() => setMealPlanExclusion(true)}
+            onInclude={() => setMealPlanExclusion(false)}
+            busy={updatingMealPlans}
           />
         )}
+
+        {selecting && selectionError && <p className="error-message" role="alert">{selectionError}</p>}
 
         {showingRecipes && visibleRecipes.length > 0 && (
           <div className="recipe-grid">

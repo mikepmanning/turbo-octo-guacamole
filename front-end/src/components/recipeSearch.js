@@ -6,6 +6,7 @@
 //   description, categories, ingredient names, or equipment - not necessarily together
 // - category, ingredient: one of the recipe's categories / ingredient names contains the text
 // - max times: the recipe's time is known and at most that many minutes
+// - excludedOnly (a checkbox, so true/false): only recipes excluded from meal plans
 // All text matching ignores case and accents.
 
 export const emptyFilters = () => ({
@@ -15,6 +16,7 @@ export const emptyFilters = () => ({
   maxPrepTimeMinutes: '',
   maxCookTimeMinutes: '',
   maxTotalTimeMinutes: '',
+  excludedOnly: false,
 })
 
 const TIME_FILTERS = [
@@ -58,6 +60,8 @@ export function matchesFilters(recipe, filters) {
     const minutes = recipe[field]
     if (minutes === null || minutes === undefined || minutes > max) return false
   }
+
+  if (filters.excludedOnly && !recipe.excludedFromMealPlans) return false
   return true
 }
 
@@ -106,6 +110,7 @@ export function activeFilters(filters) {
     const max = maxMinutes(filters[key])
     if (max !== null) chips.push({ key, label, text: `${max} min` })
   }
+  if (filters.excludedOnly) chips.push({ key: 'excludedOnly', label: 'Meal plans', text: 'excluded only' })
   return chips
 }
 

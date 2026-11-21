@@ -7,10 +7,17 @@ import { renderWithRouter } from '../test/renderWithRouter'
 import { importedBurritoBowls, savedBurritoBowls } from '../test/fixtures/recipes'
 
 vi.mock('../services/api', () => ({
-  recipeApi: { getAllRecipes: vi.fn(), importRecipeFromUrl: vi.fn(), deleteRecipes: vi.fn() },
+  recipeApi: { getAllRecipes: vi.fn(), importRecipeFromUrl: vi.fn(), deleteRecipes: vi.fn(), setExcludedFromMealPlans: vi.fn() },
 }))
 
 const renderList = () => renderWithRouter(<RecipeList />, { path: '/', route: '/' })
+
+// Select is there from the start, but disabled until there are recipes to select.
+const selectButtonWhenReady = async () => {
+  const button = screen.getByRole('button', { name: 'Select' })
+  await waitFor(() => expect(button).toBeEnabled())
+  return button
+}
 
 describe('RecipeList', () => {
   it('shows a loading message until recipes arrive', async () => {
@@ -134,6 +141,121 @@ describe('RecipeList', () => {
     })
   })
 
+  it('always links to the saved meal plans', async () => {
+    recipeApi.getAllRecipes.mockResolvedValue([])
+    renderList()
+
+    expect(screen.getByRole('link', { name: 'Meal Plans' })).toHaveAttribute('href', '/meal-plans')
+    await screen.findByText(/No recipes found/)
+    expect(screen.getByRole('link', { name: 'Meal Plans' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Plan Meals' })).not.toBeInTheDocument()   // on the Meal Plans page
+  })
+
+  describe('excluding recipes from meal plans', () => {
+    const RECIPES = [
+      { id: 1, title: 'Pancakes', description: '', totalTimeMinutes: 10, servings: 2, categories: [], excludedFromMealPlans: true },
+      { id: 2, title: 'Waffles', description: '', totalTimeMinutes: 10, servings: 2, categories: [] },
+      { id: 3, title: 'Crepes', description: '', totalTimeMinutes: 10, servings: 2, categories: [] },
+    ]
+    const card = (title) => screen.getByRole('checkbox', { name: title }).closest('.recipe-card')
+    const bar = (name) => screen.getByRole('button', { name })
+
+    beforeEach(() => {
+      recipeApi.getAllRecipes.mockResolvedValue(RECIPES)
+    })
+
+    async function selectRecipes(titles) {
+      const user = userEvent.setup()
+      renderList()
+      await user.click(await selectButtonWhenReady())
+      for (const title of titles) await user.click(card(title))
+      return user
+    }
+
+    it('tags the cards of excluded recipes', async () => {
+      renderList()
+
+      const pancakes = await screen.findByRole('link', { name: /Pancakes/ })
+      expect(within(pancakes).getByText('Not in meal plans')).toBeInTheDocument()
+      expect(within(screen.getByRole('link', { name: /Waffles/ })).queryByText('Not in meal plans')).not.toBeInTheDocument()
+    })
+
+    it('offers Exclude and Include in Select mode, once something is selected', async () => {
+      const user = await selectRecipes([])
+
+      expect(bar('Exclude from meal plans')).toBeDisabled()
+      expect(bar('Include in meal plans')).toBeDisabled()
+      await user.click(card('Waffles'))
+      expect(bar('Exclude from meal plans')).toBeEnabled()
+      expect(bar('Include in meal plans')).toBeEnabled()
+    })
+
+    it('excludes the selection, then shows the refreshed list and what happened', async () => {
+      let finish
+      recipeApi.setExcludedFromMealPlans.mockReturnValue(new Promise(resolve => { finish = resolve }))
+      const user = await selectRecipes(['Crepes', 'Waffles'])
+
+      await user.click(bar('Exclude from meal plans'))
+
+      expect(recipeApi.setExcludedFromMealPlans).toHaveBeenCalledWith([2, 3], true)   // list order
+      expect(bar('Exclude from meal plans')).toBeDisabled()
+      expect(bar('Include in meal plans')).toBeDisabled()
+      recipeApi.getAllRecipes.mockResolvedValue(RECIPES.map(r => ({ ...r, excludedFromMealPlans: true })))
+      finish({ updatedIds: [2, 3] })
+
+      expect(await screen.findByRole('status')).toHaveTextContent('2 recipes excluded from meal plans.')
+      expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()   // Select mode has ended
+      await waitFor(() => expect(screen.getAllByText('Not in meal plans')).toHaveLength(3))
+      expect(recipeApi.getAllRecipes).toHaveBeenCalledTimes(2)
+    })
+
+    it('includes the selection again', async () => {
+      recipeApi.setExcludedFromMealPlans.mockResolvedValue({ updatedIds: [1] })
+      const user = await selectRecipes(['Pancakes'])
+
+      await user.click(bar('Include in meal plans'))
+
+      expect(recipeApi.setExcludedFromMealPlans).toHaveBeenCalledWith([1], false)
+      expect(await screen.findByRole('status')).toHaveTextContent('1 recipe included in meal plans.')
+    })
+
+    it('says so when the selected recipes had been deleted meanwhile', async () => {
+      recipeApi.setExcludedFromMealPlans.mockResolvedValue({ updatedIds: [] })
+      const user = await selectRecipes(['Waffles'])
+
+      await user.click(bar('Exclude from meal plans'))
+
+      expect(await screen.findByRole('status')).toHaveTextContent('Those recipes had already been deleted.')
+    })
+
+    it('when it fails, says why and keeps the selection to try again', async () => {
+      recipeApi.setExcludedFromMealPlans.mockRejectedValue(new Error('Failed to update meal plan settings'))
+      const user = await selectRecipes(['Waffles'])
+
+      await user.click(bar('Exclude from meal plans'))
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('Failed to update meal plan settings')
+      expect(screen.getByRole('checkbox', { name: 'Waffles' })).toBeChecked()
+      expect(bar('Exclude from meal plans')).toBeEnabled()
+
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('the Filters panel can show only the excluded recipes', async () => {
+      const user = userEvent.setup()
+      renderList()
+      await screen.findByRole('link', { name: /Pancakes/ })
+
+      await user.click(screen.getByRole('button', { name: /Filters/ }))
+      await user.click(screen.getByRole('checkbox', { name: 'Only recipes excluded from meal plans' }))
+
+      expect(screen.getByRole('link', { name: /Pancakes/ })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /Waffles/ })).not.toBeInTheDocument()
+      expect(screen.getByText('Showing 1 of 3 recipes')).toBeInTheDocument()
+    })
+  })
+
   describe('selecting recipes to delete', () => {
     const TITLES = ['Pancakes', 'Waffles', 'Crepes', 'Omelette', 'Porridge', 'Granola', 'Toast']
     const RECIPES = TITLES.map((title, i) => ({
@@ -149,7 +271,7 @@ describe('RecipeList', () => {
     async function startSelecting() {
       const user = userEvent.setup()
       renderList()
-      await user.click(await screen.findByRole('button', { name: 'Select' }))
+      await user.click(await selectButtonWhenReady())
       return user
     }
 
@@ -159,13 +281,25 @@ describe('RecipeList', () => {
       return within(screen.getByRole('alertdialog'))
     }
 
-    it('offers Select only when there are recipes', async () => {
-      recipeApi.getAllRecipes.mockResolvedValue([])
+    it('shows Select from the start, usable once there are recipes', async () => {
       renderList()
 
-      expect(screen.queryByRole('button', { name: 'Select' })).not.toBeInTheDocument()   // while loading
+      expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled()   // while loading
+      await screen.findByRole('link', { name: /Pancakes/ })
+      expect(screen.getByRole('button', { name: 'Select' })).toBeEnabled()
+    })
+
+    it('keeps Select disabled when there are no recipes, or they did not load', async () => {
+      recipeApi.getAllRecipes.mockResolvedValueOnce([])
+      const { unmount } = renderList()
       await screen.findByText(/No recipes found/)
-      expect(screen.queryByRole('button', { name: 'Select' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled()
+      unmount()
+
+      recipeApi.getAllRecipes.mockRejectedValueOnce(new Error('Failed to fetch recipes'))
+      renderList()
+      await screen.findByText('Error: Failed to fetch recipes')
+      expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled()
     })
 
     it('turns cards into checkboxes, with nothing selected yet', async () => {
@@ -297,7 +431,7 @@ describe('RecipeList', () => {
       expect(await screen.findByRole('status')).toHaveTextContent('Deleted 2 recipes.')
       await waitFor(() => expect(screen.queryByRole('link', { name: /Pancakes/ })).not.toBeInTheDocument())
       expect(screen.getAllByRole('link', { name: /./ }).map(a => a.getAttribute('href')))
-        .toEqual(['/recipe/new', '/recipe/2', '/recipe/4', '/recipe/5', '/recipe/6', '/recipe/7'])
+        .toEqual(['/recipe/new', '/meal-plans', '/recipe/2', '/recipe/4', '/recipe/5', '/recipe/6', '/recipe/7'])
       expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
       expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
       expect(screen.queryByText('Loading recipes...')).not.toBeInTheDocument()
@@ -371,7 +505,7 @@ describe('RecipeList', () => {
       renderWithRouter(<RecipeList />, { path: '/', route: '/', state: { deletedRecipeTitle: 'Weeknight Chili' } })
       expect(screen.getByRole('status')).toBeInTheDocument()
 
-      await user.click(await screen.findByRole('button', { name: 'Select' }))
+      await user.click(await selectButtonWhenReady())
 
       expect(screen.queryByRole('status')).not.toBeInTheDocument()
     })
@@ -417,12 +551,27 @@ describe('RecipeList', () => {
       await user.click(screen.getByRole('button', { name: /^Filters/ }))
     }
 
-    it('is offered only when there are recipes to search', async () => {
+    it('is there from the start, even with no recipes', async () => {
       recipeApi.getAllRecipes.mockResolvedValue([])
       renderList()
 
+      expect(screen.getByRole('searchbox', { name: 'Search recipes' })).toBeInTheDocument()   // while loading
       await screen.findByText('No recipes found. Create your first recipe!')
-      expect(screen.queryByRole('search')).not.toBeInTheDocument()
+      expect(screen.getByRole('searchbox', { name: 'Search recipes' })).toBeInTheDocument()
+    })
+
+    it('can be typed in while the recipes load, and applies once they arrive', async () => {
+      const user = userEvent.setup()
+      let finishLoading
+      recipeApi.getAllRecipes.mockReturnValue(new Promise(resolve => { finishLoading = resolve }))
+      renderList()
+
+      await user.type(screen.getByRole('searchbox', { name: 'Search recipes' }), 'soup')
+      expect(screen.getByText('Loading recipes...')).toBeInTheDocument()
+      finishLoading(RECIPES)
+
+      await screen.findByText('Showing 2 of 6 recipes')
+      expect(shownTitles()).toEqual(['Chicken Noodle Soup', 'Miso Soup'])
     })
 
     it('shows every recipe, with no summary, until something is searched', async () => {
@@ -565,7 +714,7 @@ describe('RecipeList', () => {
       expect(shownTitles()).toEqual([])
       expect(screen.queryByText(/No recipes found/)).not.toBeInTheDocument()
       expect(screen.queryByText(/^Showing/)).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'Select' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled()
       expect(chips()).toEqual(['Search: pizza✕'])
 
       await user.click(screen.getByRole('button', { name: 'Clear search' }))

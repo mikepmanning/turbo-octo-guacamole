@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react'
 import { activeFilters, emptyFilters } from './recipeSearch'
 import './RecipeSearch.css'
 
-const PANEL_FIELDS = ['category', 'ingredient', 'maxPrepTimeMinutes', 'maxCookTimeMinutes', 'maxTotalTimeMinutes']
+const PANEL_FIELDS = ['category', 'ingredient', 'maxPrepTimeMinutes', 'maxCookTimeMinutes', 'maxTotalTimeMinutes', 'excludedOnly']
 
 const TIME_FIELDS = [
   { key: 'maxPrepTimeMinutes', label: 'Max prep (min)' },
@@ -98,6 +98,16 @@ function RecipeSearch({ filters, onChange, categories = [], searchInputRef: give
             />
           </div>
         ))}
+        <div className="filter-field filter-checkbox">
+          <label>
+            <input
+              type="checkbox"
+              checked={Boolean(filters.excludedOnly)}
+              onChange={(e) => set('excludedOnly', e.target.checked)}
+            />
+            Only recipes excluded from meal plans
+          </label>
+        </div>
       </div>
 
       {chips.length > 0 && (

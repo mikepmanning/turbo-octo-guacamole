@@ -34,6 +34,10 @@ public class RecipeDTO {
     private Set<String> categories = new HashSet<>();
     private String sourceUrl;
 
+    // Read-only here: set with PUT /api/recipes/meal-plan-exclusion. Creating or updating a
+    // recipe ignores it, so an edit can't clear it by leaving it out.
+    private Boolean excludedFromMealPlans;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -157,5 +161,13 @@ public class RecipeDTO {
 
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
+    }
+
+    public Boolean getExcludedFromMealPlans() {
+        return excludedFromMealPlans;
+    }
+
+    public void setExcludedFromMealPlans(Boolean excludedFromMealPlans) {
+        this.excludedFromMealPlans = excludedFromMealPlans;
     }
 }

@@ -58,10 +58,11 @@ describe('RecipeSearch', () => {
     await user.type(screen.getByLabelText('Max prep (min)'), '15')
     await user.type(screen.getByLabelText('Max cook (min)'), '20')
     await user.type(screen.getByLabelText('Max total (min)'), '30')
+    await user.click(screen.getByRole('checkbox', { name: 'Only recipes excluded from meal plans' }))
 
     expect(onChange).toHaveBeenLastCalledWith({
       query: '', category: 'Din', ingredient: 'egg',
-      maxPrepTimeMinutes: '15', maxCookTimeMinutes: '20', maxTotalTimeMinutes: '30',
+      maxPrepTimeMinutes: '15', maxCookTimeMinutes: '20', maxTotalTimeMinutes: '30', excludedOnly: true,
     })
   })
 
@@ -82,6 +83,20 @@ describe('RecipeSearch', () => {
     expect(screen.getByLabelText('Ingredient')).toHaveValue('')
     expect(chipTexts()).toEqual(['Search: soup✕'])
     expect(screen.getByRole('searchbox')).toHaveFocus()
+  })
+
+  it('"Only recipes excluded from meal plans" shows a chip whose ✕ unticks it', async () => {
+    const { user, onChange } = renderSearch({ excludedOnly: true })
+    await user.click(screen.getByRole('button', { name: 'Filters (1) ▾' }))
+    const checkbox = screen.getByRole('checkbox', { name: 'Only recipes excluded from meal plans' })
+    expect(checkbox).toBeChecked()
+    expect(chipTexts()).toEqual(['Meal plans: excluded only✕'])
+
+    await user.click(screen.getByRole('button', { name: 'Remove Meal plans filter' }))
+
+    expect(checkbox).not.toBeChecked()
+    expect(onChange.mock.calls.at(-1)[0].excludedOnly).toBeFalsy()
+    expect(screen.queryByRole('list', { name: 'Active filters' })).not.toBeInTheDocument()
   })
 
   it('Clear all clears every filter and hides the chips', async () => {

@@ -162,3 +162,23 @@ describe('knownCategories', () => {
       .toEqual(['Dessert', 'Dinner', 'French', 'Mexican', 'Quick'])
   })
 })
+
+describe('excluded from meal plans', () => {
+  const recipes = [
+    { id: 1, title: 'Toast', excludedFromMealPlans: true },
+    { id: 2, title: 'Tea', excludedFromMealPlans: false },
+    { id: 3, title: 'Tart' },
+  ]
+
+  it('"excludedOnly" keeps only the recipes excluded from meal plans', () => {
+    expect(filterRecipes(recipes, filters({ excludedOnly: true })).map(r => r.id)).toEqual([1])
+    expect(filterRecipes(recipes, filters({ excludedOnly: false })).map(r => r.id)).toEqual([1, 2, 3])
+  })
+
+  it('shows as a chip, and counts as a filter', () => {
+    expect(activeFilters(filters({ excludedOnly: true })))
+      .toEqual([{ key: 'excludedOnly', label: 'Meal plans', text: 'excluded only' }])
+    expect(hasActiveFilters(filters({ excludedOnly: true }))).toBe(true)
+    expect(hasActiveFilters(filters({ excludedOnly: '' }))).toBe(false)   // a chip's ✕ sets ''
+  })
+})

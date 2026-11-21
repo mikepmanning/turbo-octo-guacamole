@@ -70,7 +70,9 @@ mvnw.cmd spring-boot:run
 
 The application follows standard Spring Boot Maven project layout:
 - `src/main/java/com/recipehome/api/` - Main application code
-  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, BaseEntity)
+  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, MealPlan, MealPlanEntry, BaseEntity)
+  - `enums/` - `Unit` (ingredient units) and `MealType` (Breakfast, Lunch, Snack, Dinner)
+  - `exception/` - `GlobalExceptionHandler` and the not-found exceptions it maps to 404
   - `repository/` - Spring Data JPA repositories
   - `service/` - Service interfaces
   - `service/impl/` - Service implementations
@@ -105,14 +107,16 @@ Base package: `com.recipehome.api`
   - `SEED_DATA` - Load sample recipes at startup (default: true; see Sample Data below)
 
 ### Sample Data
-- `src/main/resources/seed/recipes.json` holds 20 sample recipes in the `POST /api/recipes` body shape
-  (varied categories, times from 5 to 1005 min, every unit, package sizes, one deliberately sparse recipe)
+- `src/main/resources/seed/recipes.json` holds 86 sample recipes in the `POST /api/recipes` body shape
+  (varied categories, times from 5 to 1005 min, every unit, package sizes, one deliberately sparse recipe,
+  20 Breakfast, 25 Lunch, 25 Dinner and 25 Snack recipes for meal-planning testing)
 - `RecipeSeeder` loads them at startup when `recipehome.seed.enabled=${SEED_DATA:true}`, but only if
   the database has no recipes (including soft-deleted ones), so it never duplicates or changes data.
   Each recipe is validated like an API request before any is saved; a bad file stops startup with
   the recipe title and field
-- To re-seed, empty the database, e.g. `TRUNCATE recipes, steps, ingredients, recipe_equipment,
-  recipe_categories RESTART IDENTITY;`, then restart. Set `SEED_DATA=false` before production
+- To re-seed, empty the database, e.g. `TRUNCATE meal_plan_entries, meal_plan_meal_types, meal_plans,
+  recipes, steps, ingredients, recipe_equipment, recipe_categories RESTART IDENTITY;` (meal plans
+  reference recipes, so they must go too), then restart. Set `SEED_DATA=false` before production
 - Tests: the test profile turns seeding off. Use `SeedRecipes.load()` for the data as `RecipeDTO`s,
   or opt a Spring test in with `recipehome.seed.enabled=true` (see `RecipeSeederTest`)
 
@@ -128,6 +132,8 @@ The application follows a standard three-tier architecture:
   - `RecipeRepository`: Search by title, category, prep time, total time
   - `StepRepository`: Find steps by recipe ID (ordered by stepOrder)
   - `IngredientRepository`: Find ingredients by recipe ID, search by name
+  - `MealPlanRepository`: Find an active meal plan by ID; list active plans (latest start date first, entries fetched with them)
+  - `MealPlanEntryRepository`: Meals planned in a date range in active plans, with their recipe and plan
 
 **Service Layer** (`com.recipehome.api.service`)
 - Contains business logic and transaction management
@@ -148,6 +154,7 @@ The application follows a standard three-tier architecture:
 **Controller Layer** (`com.recipehome.api.controller`)
 - REST API endpoints using Spring Web MVC
 - `RecipeController` handles all recipe operations including embedded steps and ingredients
+- `MealPlanController` lists, creates, returns, updates and deletes meal plans
 - Uses DTOs for request/response payloads
 - Mappers convert between entities and DTOs
 - Validation handled via `@Valid` annotation on DTOs
@@ -171,6 +178,10 @@ All endpoints are prefixed with `/api`
 - `POST /api/recipes/bulk-delete` - Soft delete several recipes: body `{"ids": [1, 2]}` (1-100 ids), returns
   `{"deletedIds": [...]}`. All or nothing; unknown, already-deleted and repeated ids are skipped
 - `POST /api/recipes/{id}/restore` - Restore a soft-deleted recipe
+- `PUT /api/recipes/meal-plan-exclusion` - Exclude recipes from meal plans or include them again: body
+  `{"ids": [1, 2], "excluded": true}` (1-100 ids), returns `{"updatedIds": [...]}` (the recipes now set that way, in
+  request order; unknown, deleted and repeated ids are skipped). Recipes return the setting as `excludedFromMealPlans`;
+  `POST`/`PUT /api/recipes` ignore it, so editing a recipe never changes it
 - `GET /api/recipes/search?title={title}` - Search recipes by title
 - `GET /api/recipes/category/{category}` - Get recipes by category
 - `GET /api/recipes/filter/prep-time?maxMinutes={minutes}` - Filter by max prep time
@@ -190,6 +201,47 @@ All endpoints are prefixed with `/api`
 - `sourceUrl` is set on create and never changed by an update
 - Errors: 404 unknown/inactive recipe (`RecipeNotFoundException`); 400 invalid fields, including
   nested ones such as `ingredients[0].name`; 422 a step/ingredient id that isn't this recipe's or is repeated
+
+**Meal Plan Endpoints** (`/api/meal-plans`) - `MealPlanService`
+- `POST /api/meal-plans` - Save a meal plan; returns 201 with the saved plan. Body:
+  `{"name": "Week of Jun 1", "startDate": "2026-06-01", "days": 7, "mealTypes": ["BREAKFAST", "DINNER"],
+  "entries": [{"date": "2026-06-01", "mealType": "BREAKFAST", "recipeId": 12}]}`. `name` is optional;
+  meals the user left empty are simply not in `entries`
+- `GET /api/meal-plans` - List active meal plans, latest start date first, as summaries without recipes:
+  `{id, name, startDate, endDate, days, mealTypes, mealCount, createdAt, updatedAt}`
+- `GET /api/meal-plans/{id}` - Get a meal plan
+- `PUT /api/meal-plans/{id}` - Update a meal plan (full replacement, same body as POST; see below)
+- `DELETE /api/meal-plans/{id}` - Soft delete a meal plan; 204, also for unknown or already deleted ids
+- `GET /api/meal-plans/meals?from=2026-11-16&to=2026-11-29` - The meals planned in that date range (inclusive)
+  in active plans, by date then meal: `[{date, mealType, recipeId, recipeTitle, mealPlanId, mealPlanName,
+  mealPlanStartDate, mealPlanDays}]`. Compares meals by date, so a plan only partly in the range adds just the
+  meals inside it. Used by the planner's "Avoid recent recipes". 400 if `from`/`to` is missing or not a date,
+  `from` is after `to`, or the range is over 366 days (`InvalidDateRangeException`)
+- Response: the plan with a calculated `endDate`, `mealTypes` in display order (Breakfast, Lunch, Snack,
+  Dinner), and `entries` by date then meal, each with a recipe summary
+  `{id, title, totalTimeMinutes, servings, deleted}`. `deleted` is true for a recipe soft-deleted after
+  the plan was saved: the plan keeps it
+- Rules (422, `IllegalArgumentException`): each entry's date is within the plan's days, its meal type is
+  one of `mealTypes`, at most one entry per date and meal, and every recipe exists and isn't deleted.
+  A recipe doesn't have to be in the meal's category (users can choose any recipe). Past start dates
+  and overlapping plans are allowed
+- Errors: 400 invalid fields (`days` not 1-7, no `startDate`, no `mealTypes` or `entries`, name over 100
+  characters, `entries[0].recipeId` missing); 404 unknown/inactive plan (`MealPlanNotFoundException`)
+- Updating (`MealPlanService.updateMealPlan`): the body replaces the plan's name, dates, meal types and
+  entries. Entries are matched by date and meal type: same recipe -> left alone; different recipe ->
+  updated in place; not in the body -> deleted (orphanRemoval); new -> added. Updating in place matters:
+  Hibernate inserts before it deletes, so delete-then-insert for the same meal would hit the unique
+  constraint. The dates may change too (moving the plan, e.g. a week later): overlapping dates are updated in
+  place the same way. Recipes already in the plan may stay, in any meal, even if deleted since (so older plans
+  stay editable and movable); recipes new to the plan must be active
+- The plan is generated in the browser (front-end `mealPlan.js`); the server only validates and stores it
+
+**Missing query parameters** - a required parameter that isn't there (e.g. `?title=` on search, `?from=` on
+planned meals) is a 400 `{"error": "Missing parameter: from"}`
+
+**Request bodies** - a body that isn't JSON, or a value of the wrong type (an unknown enum like a unit or
+meal type, a date not in `YYYY-MM-DD`), is a 400 `{"error": "Invalid value for entries[0].date"}`
+(`GlobalExceptionHandler`), or "Request body is missing or is not valid JSON" when no field is known
 
 ### Technology Stack
 The project is set up with these Spring Boot starters:

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { recipeApi } from './api'
+import { recipeApi, mealPlanApi } from './api'
 
 // Minimal stand-in for a fetch Response.
 const response = (body, { ok = true } = {}) => ({
@@ -136,6 +136,26 @@ describe('recipeApi', () => {
     })
   })
 
+  describe('setExcludedFromMealPlans', () => {
+    it('PUTs the ids and the choice to /api/recipes/meal-plan-exclusion', async () => {
+      fetch.mockResolvedValue(response({ updatedIds: [1] }))
+
+      await expect(recipeApi.setExcludedFromMealPlans([1, 2], true)).resolves.toEqual({ updatedIds: [1] })
+      expect(fetch).toHaveBeenCalledWith('/api/recipes/meal-plan-exclusion', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [1, 2], excluded: true }),
+      })
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ ids: 'Select at least one recipe' }, { ok: false }))
+
+      await expect(recipeApi.setExcludedFromMealPlans([], false)).rejects
+        .toThrow(new Error('Failed to update meal plan settings: Select at least one recipe'))
+    })
+  })
+
   describe('importRecipeFromUrl', () => {
     it('URL-encodes the recipe link and returns the imported recipe', async () => {
       fetch.mockResolvedValue(response({ title: 'Burrito Bowls' }))
@@ -160,6 +180,121 @@ describe('recipeApi', () => {
 
       await expect(recipeApi.importRecipeFromUrl('https://x.com'))
         .rejects.toThrow('Failed to import recipe')
+    })
+  })
+})
+
+describe('mealPlanApi', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  describe('createMealPlan', () => {
+    const plan = { startDate: '2026-06-01', days: 1, mealTypes: ['LUNCH'], entries: [] }
+
+    it('POSTs the plan as JSON to /api/meal-plans and returns the saved plan', async () => {
+      fetch.mockResolvedValue(response({ id: 4 }))
+
+      await expect(mealPlanApi.createMealPlan(plan)).resolves.toEqual({ id: 4 })
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(plan),
+      })
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ error: 'Recipe 9 does not exist or has been deleted' }, { ok: false }))
+
+      await expect(mealPlanApi.createMealPlan(plan)).rejects
+        .toThrow(new Error('Failed to save meal plan: Recipe 9 does not exist or has been deleted'))
+    })
+  })
+
+  describe('getMealPlans', () => {
+    it('GETs /api/meal-plans and returns the list', async () => {
+      fetch.mockResolvedValue(response([{ id: 4 }]))
+
+      await expect(mealPlanApi.getMealPlans()).resolves.toEqual([{ id: 4 }])
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans')
+    })
+
+    it('throws when the response is not ok', async () => {
+      fetch.mockResolvedValue(response(new SyntaxError('Unexpected token <'), { ok: false }))
+
+      await expect(mealPlanApi.getMealPlans()).rejects.toThrow(new Error('Failed to load meal plans'))
+    })
+  })
+
+  describe('getPlannedMeals', () => {
+    it('GETs /api/meal-plans/meals for the date range and returns the meals', async () => {
+      fetch.mockResolvedValue(response([{ recipeId: 4 }]))
+
+      await expect(mealPlanApi.getPlannedMeals('2026-11-16', '2026-11-29')).resolves.toEqual([{ recipeId: 4 }])
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans/meals?from=2026-11-16&to=2026-11-29')
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ error: 'The date range can be at most 366 days' }, { ok: false }))
+
+      await expect(mealPlanApi.getPlannedMeals('2020-01-01', '2026-11-29')).rejects
+        .toThrow(new Error('Failed to load planned meals: The date range can be at most 366 days'))
+    })
+  })
+
+  describe('updateMealPlan', () => {
+    const plan = { startDate: '2026-06-01', days: 1, mealTypes: ['LUNCH'], entries: [] }
+
+    it('PUTs the plan as JSON to /api/meal-plans/:id and returns the updated plan', async () => {
+      fetch.mockResolvedValue(response({ id: 4, name: 'Renamed' }))
+
+      await expect(mealPlanApi.updateMealPlan(4, plan)).resolves.toEqual({ id: 4, name: 'Renamed' })
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans/4', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(plan),
+      })
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ error: 'Meal plan not found with id: 4' }, { ok: false }))
+
+      await expect(mealPlanApi.updateMealPlan(4, plan)).rejects
+        .toThrow(new Error('Failed to save meal plan: Meal plan not found with id: 4'))
+    })
+  })
+
+  describe('deleteMealPlan', () => {
+    it('sends DELETE and does not read a response body', async () => {
+      const ok = response(null)
+      fetch.mockResolvedValue(ok)
+
+      await expect(mealPlanApi.deleteMealPlan(4)).resolves.toBeUndefined()
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans/4', { method: 'DELETE' })
+      expect(ok.json).not.toHaveBeenCalled()
+    })
+
+    it('throws when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ error: 'Database unavailable' }, { ok: false }))
+
+      await expect(mealPlanApi.deleteMealPlan(4)).rejects
+        .toThrow(new Error('Failed to delete meal plan: Database unavailable'))
+    })
+  })
+
+  describe('getMealPlan', () => {
+    it('GETs /api/meal-plans/:id and returns the plan', async () => {
+      fetch.mockResolvedValue(response({ id: 4 }))
+
+      await expect(mealPlanApi.getMealPlan(4)).resolves.toEqual({ id: 4 })
+      expect(fetch).toHaveBeenCalledWith('/api/meal-plans/4')
+    })
+
+    it('throws with the server\'s explanation when the response is not ok', async () => {
+      fetch.mockResolvedValue(response({ error: 'Meal plan not found with id: 4' }, { ok: false }))
+
+      await expect(mealPlanApi.getMealPlan(4)).rejects
+        .toThrow(new Error('Failed to load meal plan: Meal plan not found with id: 4'))
     })
   })
 })

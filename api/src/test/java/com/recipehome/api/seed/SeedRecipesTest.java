@@ -17,9 +17,32 @@ class SeedRecipesTest {
     private final List<RecipeDTO> recipes = SeedRecipes.load();
 
     @Test
-    void hasTwentyRecipesWithUniqueTitles() {
-        assertThat(recipes).hasSize(20);
+    void hasEightySixRecipesWithUniqueTitles() {
+        assertThat(recipes).hasSize(86);
         assertThat(recipes).extracting(RecipeDTO::getTitle).doesNotHaveDuplicates();
+    }
+
+    @Test
+    void hasTwentyBreakfastRecipesForMealPlanning() {
+        assertThat(recipes).filteredOn(r -> r.getCategories().contains("Breakfast")).hasSize(20);
+    }
+
+    @Test
+    void hasTwentyFiveLunchRecipesForMealPlanning() {
+        // 20 dedicated lunch recipes, plus 5 soups, salads and tacos that are also Dinner or Appetizer
+        assertThat(recipes).filteredOn(r -> r.getCategories().contains("Lunch")).hasSize(25);
+    }
+
+    @Test
+    void hasTwentyFiveDinnerRecipesForMealPlanning() {
+        // 20 dedicated dinner recipes, plus 5 that are also Breakfast or Lunch
+        assertThat(recipes).filteredOn(r -> r.getCategories().contains("Dinner")).hasSize(25);
+    }
+
+    @Test
+    void hasTwentyFiveSnackRecipesForMealPlanning() {
+        // 20 dedicated snack recipes, plus 5 that are also Breakfast, Lunch, Dessert or Drinks
+        assertThat(recipes).filteredOn(r -> r.getCategories().contains("Snack")).hasSize(25);
     }
 
     @Test

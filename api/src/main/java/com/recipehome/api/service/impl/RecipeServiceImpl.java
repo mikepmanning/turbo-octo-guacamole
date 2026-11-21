@@ -231,6 +231,19 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public List<Long> setExcludedFromMealPlans(Collection<Long> ids, boolean excluded) {
+        Set<Long> uniqueIds = new LinkedHashSet<>(ids);
+        Map<Long, Recipe> found = byId(recipeRepository.findAllById(uniqueIds));
+        List<Recipe> recipes = uniqueIds.stream()
+                .map(found::get)
+                .filter(recipe -> recipe != null && recipe.getIsActive())
+                .toList();
+        recipes.forEach(recipe -> recipe.setExcludedFromMealPlans(excluded));
+        recipeRepository.saveAll(recipes);
+        return recipes.stream().map(Recipe::getId).toList();
+    }
+
+    @Override
     public Recipe restoreRecipe(Long id) {
         return recipeRepository.findById(id)
                 .map(recipe -> {

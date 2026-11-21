@@ -392,6 +392,7 @@
     "totalTimeMinutes": 20,
     "categories": [
       "Dinner",
+      "Lunch",
       "Mexican",
       "Vegan",
       "Quick"
@@ -660,6 +661,8 @@
     "categories": [
       "Appetizer",
       "Salad",
+      "Lunch",
+      "Snack",
       "Italian",
       "Vegetarian",
       "Gluten-Free",
@@ -799,6 +802,7 @@
     "totalTimeMinutes": 15,
     "categories": [
       "Soup",
+      "Lunch",
       "Japanese",
       "Vegan",
       "Quick"
@@ -870,6 +874,7 @@
     "totalTimeMinutes": 95,
     "categories": [
       "Soup",
+      "Lunch",
       "French",
       "Dinner"
     ],
@@ -1047,6 +1052,7 @@
     "totalTimeMinutes": 87,
     "categories": [
       "Dessert",
+      "Snack",
       "American",
       "Baking",
       "Vegetarian"
@@ -1189,6 +1195,7 @@
     "categories": [
       "Soup",
       "Dinner",
+      "Lunch",
       "American",
       "Instant Pot"
     ],
@@ -1590,6 +1597,7 @@
     "totalTimeMinutes": 5,
     "categories": [
       "Drinks",
+      "Snack",
       "Indian",
       "Vegetarian",
       "Gluten-Free",
@@ -1737,6 +1745,6382 @@
       {
         "stepOrder": 5,
         "instructionText": "Fold in the macaroni and serve right away."
+      }
+    ]
+  },
+  {
+    "title": "Classic French Toast",
+    "description": "Thick brioche soaked in cinnamon custard and griddled until golden.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Breakfast",
+      "American",
+      "Vegetarian",
+      "Quick",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Shallow dish",
+      "Whisk",
+      "Griddle"
+    ],
+    "ingredients": [
+      {
+        "name": "large eggs",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "brioche, thick-sliced",
+        "quantity": 8,
+        "unit": "SLICE"
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "maple syrup",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Whisk the eggs, milk, vanilla, cinnamon, and salt in a shallow dish."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Soak each brioche slice for about 20 seconds per side."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Melt a little butter on a griddle over medium heat and cook the slices until golden, 2 to 3 minutes per side.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Serve hot with maple syrup."
+      }
+    ]
+  },
+  {
+    "title": "Huevos Rancheros",
+    "description": "Fried eggs on crisp corn tortillas with black beans and a quick ranchero sauce.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Breakfast",
+      "Dinner",
+      "Mexican",
+      "Vegetarian",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Large skillet",
+      "Small saucepan",
+      "Blender"
+    ],
+    "ingredients": [
+      {
+        "name": "vegetable oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "white onion, chopped",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "jalapeño, seeded and chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fire-roasted diced tomatoes",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 14.5,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "black beans, drained and rinsed",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "corn tortillas",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "queso fresco, crumbled",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "avocado, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the onion and jalapeño in 1 tablespoon of oil until soft, then add the garlic and cumin.",
+        "estimatedTimeMinutes": 6
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the tomatoes, simmer until slightly thickened, then blend until mostly smooth.",
+        "estimatedTimeMinutes": 7
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, warm the black beans in a small saucepan."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Fry the tortillas in the remaining oil until crisp at the edges.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Fry the eggs sunny-side up in the same pan.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Top two tortillas per plate with beans, two eggs, sauce, queso fresco, avocado, and cilantro."
+      }
+    ]
+  },
+  {
+    "title": "Avocado Toast with Poached Egg",
+    "description": "Smashed avocado on toasted sourdough topped with a soft poached egg.",
+    "servings": 2,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 5,
+    "totalTimeMinutes": 10,
+    "categories": [
+      "Breakfast",
+      "Vegetarian",
+      "Quick"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Slotted spoon",
+      "Toaster"
+    ],
+    "ingredients": [
+      {
+        "name": "sourdough bread",
+        "quantity": 2,
+        "unit": "SLICE"
+      },
+      {
+        "name": "ripe avocado",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "white vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "red pepper flakes",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "flaky sea salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Bring a saucepan of water and the vinegar to a gentle simmer."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Crack in the eggs and poach until the whites are set but the yolks are runny.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, toast the bread and mash the avocado with the lemon juice and a little salt."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread the avocado on the toast, top each with an egg, and finish with pepper flakes and flaky salt."
+      }
+    ]
+  },
+  {
+    "title": "Blueberry Muffins",
+    "description": "Bakery-style muffins with crackly sugar tops that freeze well for busy mornings.",
+    "servings": 12,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 22,
+    "totalTimeMinutes": 52,
+    "categories": [
+      "Breakfast",
+      "Snack",
+      "American",
+      "Baking",
+      "Vegetarian",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "12-cup muffin tin",
+      "Paper liners",
+      "Mixing bowls"
+    ],
+    "ingredients": [
+      {
+        "name": "all-purpose flour",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "sugar",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "baking powder",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "blueberries",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "turbinado sugar",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 400°F and line the muffin tin."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Whisk the flour, sugar, baking powder, and salt in a large bowl."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the eggs, milk, oil, and vanilla, stir into the dry ingredients until just combined, then fold in the blueberries."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Divide the batter among the cups and sprinkle with turbinado sugar."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake until a toothpick comes out clean.",
+        "estimatedTimeMinutes": 22
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cool in the tin before serving, or cool completely and freeze.",
+        "estimatedTimeMinutes": 15
+      }
+    ]
+  },
+  {
+    "title": "Spinach & Feta Frittata",
+    "description": "A one-pan egg bake that is just as good cold the next day.",
+    "servings": 6,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Breakfast",
+      "Dinner",
+      "Italian",
+      "Vegetarian",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Oven-safe skillet",
+      "Whisk"
+    ],
+    "ingredients": [
+      {
+        "name": "large eggs",
+        "quantity": 10,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "shallot, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "baby spinach",
+        "quantity": 5,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "cherry tomatoes, halved",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "feta, crumbled",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 375°F and whisk the eggs, milk, salt, and pepper."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Cook the shallot in the oil until soft.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the spinach and stir until wilted.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Pour in the eggs, scatter over the tomatoes and feta, and cook on the stove until the edges set.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake until the center is just set.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Rest, then cut into wedges.",
+        "estimatedTimeMinutes": 5
+      }
+    ]
+  },
+  {
+    "title": "Freezer Breakfast Burritos",
+    "description": "Sausage, egg, and potato burritos to roll in a batch and reheat all week.",
+    "servings": 8,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 45,
+    "categories": [
+      "Breakfast",
+      "Mexican",
+      "Make-Ahead",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Large skillet",
+      "Aluminum foil"
+    ],
+    "ingredients": [
+      {
+        "name": "breakfast sausage",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "frozen diced hash browns",
+        "quantity": 1,
+        "unit": "BAG",
+        "packageQuantity": 16,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 12,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "shredded cheddar",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "large flour tortillas",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "salsa",
+        "quantity": 1,
+        "unit": "JAR",
+        "packageQuantity": 16,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Brown the sausage in a large skillet, breaking it up as it cooks.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the hash browns and cook until crisp.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the eggs, milk, salt, and pepper, add to the pan, and scramble until just set.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Warm the tortillas so they fold without cracking.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Fill each tortilla with the egg mixture, cheese, and a spoonful of salsa, then roll tightly."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Serve now, or wrap each burrito in foil and freeze for up to 3 months; reheat from frozen at 350°F for about 30 minutes."
+      }
+    ]
+  },
+  {
+    "title": "Greek Yogurt Parfait",
+    "description": "Layers of yogurt, granola, berries, and honey in five minutes.",
+    "servings": 1,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 5,
+    "categories": [
+      "Breakfast",
+      "Snack",
+      "Vegetarian",
+      "No-Cook",
+      "Quick"
+    ],
+    "equipment": [
+      "Glass or jar"
+    ],
+    "ingredients": [
+      {
+        "name": "Greek yogurt",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "granola",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "strawberries, sliced",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "raspberries",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "honey",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sliced almonds",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Spoon half the yogurt into a glass and top with half the granola and berries."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Repeat the layers."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Drizzle with honey, sprinkle with almonds, and eat right away so the granola stays crunchy."
+      }
+    ]
+  },
+  {
+    "title": "Tofu Scramble",
+    "description": "A turmeric-golden vegan scramble with peppers and spinach.",
+    "servings": 2,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 15,
+    "categories": [
+      "Breakfast",
+      "Vegan",
+      "Gluten-Free",
+      "Quick"
+    ],
+    "equipment": [
+      "Nonstick skillet"
+    ],
+    "ingredients": [
+      {
+        "name": "extra-firm tofu, drained",
+        "quantity": 1,
+        "unit": "PACKAGE",
+        "packageQuantity": 14,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "red onion, diced",
+        "quantity": 0.25,
+        "unit": "EACH"
+      },
+      {
+        "name": "red bell pepper, diced",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "nutritional yeast",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic powder",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "baby spinach",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "black salt (kala namak)",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the onion and pepper in the oil until soft.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Crumble the tofu into the pan and stir in the turmeric, nutritional yeast, and garlic powder.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Fold in the spinach until wilted.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Season with black salt and pepper and serve."
+      }
+    ]
+  },
+  {
+    "title": "Belgian Waffles",
+    "description": "Crisp outside and airy inside, thanks to whipped egg whites.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Breakfast",
+      "Belgian",
+      "Vegetarian",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Belgian waffle iron",
+      "Hand mixer",
+      "Mixing bowls"
+    ],
+    "ingredients": [
+      {
+        "name": "all-purpose flour",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "sugar",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "baking powder",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "large eggs, separated",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 1.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "unsalted butter, melted",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "powdered sugar",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Preheat the waffle iron."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Whisk the flour, sugar, baking powder, and salt in a large bowl."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the egg yolks, milk, melted butter, and vanilla, then stir into the dry ingredients."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Beat the egg whites to stiff peaks and gently fold them into the batter.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Cook the batter in the waffle iron until deep golden and crisp.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Dust with powdered sugar and serve with fruit."
+      }
+    ]
+  },
+  {
+    "title": "Eggs Benedict",
+    "description": "Poached eggs and Canadian bacon on English muffins under a blender hollandaise.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Breakfast",
+      "American"
+    ],
+    "equipment": [
+      "Blender",
+      "Saucepan",
+      "Skillet",
+      "Slotted spoon"
+    ],
+    "ingredients": [
+      {
+        "name": "English muffins, split",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "Canadian bacon",
+        "quantity": 8,
+        "unit": "SLICE"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "large egg yolks",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "cayenne pepper",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "white vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "fresh chives",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Blend the yolks, lemon juice, and cayenne, then stream in hot melted butter with the blender running until thick. Keep warm.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Brown the Canadian bacon in a skillet.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Toast the English muffin halves."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Poach the eggs in barely simmering water with the vinegar, in batches.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Top each muffin half with bacon, an egg, hollandaise, and snipped chives."
+      }
+    ]
+  },
+  {
+    "title": "Chicken Congee",
+    "description": "Silky Chinese rice porridge with ginger and shredded chicken for a slow weekend morning.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 90,
+    "totalTimeMinutes": 100,
+    "categories": [
+      "Breakfast",
+      "Chinese",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Dutch oven"
+    ],
+    "ingredients": [
+      {
+        "name": "jasmine rice",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "chicken stock",
+        "quantity": 1,
+        "unit": "QUART"
+      },
+      {
+        "name": "water",
+        "quantity": 1,
+        "unit": "QUART"
+      },
+      {
+        "name": "fresh ginger, julienned",
+        "quantity": 1,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "boneless chicken thighs",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "white pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "scallions, sliced",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "toasted sesame oil",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fried shallots",
+        "quantity": 0.25,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Rinse the rice until the water runs mostly clear."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Bring the rice, stock, water, and ginger to a boil in a Dutch oven.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the chicken, lower to a gentle simmer, and cook partly covered until the chicken is cooked through.",
+        "estimatedTimeMinutes": 25
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Remove and shred the chicken; keep simmering the rice, stirring often, until broken down and creamy.",
+        "estimatedTimeMinutes": 55
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Stir the chicken back in and season with salt and white pepper."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Serve topped with scallions, a drizzle of sesame oil, and fried shallots."
+      }
+    ]
+  },
+  {
+    "title": "Baked Apple Cinnamon Oatmeal",
+    "description": "A sliceable oat bake that reheats well all week.",
+    "servings": 6,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 50,
+    "categories": [
+      "Breakfast",
+      "American",
+      "Vegetarian",
+      "Make-Ahead",
+      "Baking"
+    ],
+    "equipment": [
+      "8x8-inch baking dish",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "old-fashioned rolled oats",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "baking powder",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "maple syrup",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "unsalted butter, melted",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "apples, diced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "chopped walnuts",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 375°F and butter the baking dish."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Mix the oats, baking powder, cinnamon, and salt."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the milk, eggs, maple syrup, and melted butter, pour over the oats, and fold in the apples and half the walnuts."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread in the dish, top with the remaining walnuts, and bake until set and golden.",
+        "estimatedTimeMinutes": 40
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Serve warm, or refrigerate for up to 5 days and reheat by the slice."
+      }
+    ]
+  },
+  {
+    "title": "Full English Breakfast",
+    "description": "Sausages, bacon, eggs, beans, mushrooms, and tomatoes: the classic weekend fry-up.",
+    "servings": 2,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 40,
+    "categories": [
+      "Breakfast",
+      "British"
+    ],
+    "equipment": [
+      "Large frying pan",
+      "Small saucepan",
+      "Baking sheet"
+    ],
+    "ingredients": [
+      {
+        "name": "pork sausages",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "back bacon",
+        "quantity": 4,
+        "unit": "SLICE"
+      },
+      {
+        "name": "black pudding",
+        "quantity": 2,
+        "unit": "SLICE"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "baked beans",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "cremini mushrooms, halved",
+        "quantity": 150,
+        "unit": "GRAM"
+      },
+      {
+        "name": "tomatoes, halved",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "white bread",
+        "quantity": 2,
+        "unit": "SLICE"
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 200°F to keep everything warm as it finishes."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Fry the sausages in the oil over medium heat, turning often.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the bacon and black pudding to the pan and cook until crisp, then move everything to the oven.",
+        "estimatedTimeMinutes": 6
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Fry the mushrooms in the butter, with the tomatoes cut-side down alongside.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Meanwhile, warm the beans in a small saucepan."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Fry the eggs and toast the bread.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Plate everything together and serve at once."
+      }
+    ]
+  },
+  {
+    "title": "Kanda Poha",
+    "description": "Mumbai-style flattened rice with onion, mustard seeds, turmeric, and peanuts.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 20,
+    "categories": [
+      "Breakfast",
+      "Indian",
+      "Vegan",
+      "Gluten-Free",
+      "Quick"
+    ],
+    "equipment": [
+      "Large skillet",
+      "Colander"
+    ],
+    "ingredients": [
+      {
+        "name": "thick poha (flattened rice)",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "raw peanuts",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "black mustard seeds",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "curry leaves",
+        "quantity": 10,
+        "unit": "EACH"
+      },
+      {
+        "name": "green chilies, chopped",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "yellow onion, finely chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "sugar",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Rinse the poha briefly in a colander, drain well, and toss with the sugar and salt."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Fry the peanuts in the oil until golden, then lift them out.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the mustard seeds; when they pop, add the curry leaves and chilies.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Add the onion and turmeric and cook until soft.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Add the poha and peanuts and toss over low heat until hot.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Finish with lemon juice and cilantro."
+      }
+    ]
+  },
+  {
+    "title": "Berry Smoothie Bowl",
+    "description": "A thick frozen berry and banana bowl you eat with a spoon.",
+    "servings": 1,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 5,
+    "categories": [
+      "Breakfast",
+      "Vegan",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick"
+    ],
+    "equipment": [
+      "High-speed blender"
+    ],
+    "ingredients": [
+      {
+        "name": "frozen mixed berries",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "frozen banana",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "unsweetened almond milk",
+        "quantity": 80,
+        "unit": "MILLILITER"
+      },
+      {
+        "name": "kiwi, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "unsweetened coconut flakes",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "chia seeds",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "hemp hearts",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Blend the berries, banana, and almond milk until thick and smooth, scraping down the sides; add a splash more milk only if needed."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Spoon into a bowl and top with kiwi, coconut, chia seeds, and hemp hearts. Eat immediately."
+      }
+    ]
+  },
+  {
+    "title": "Tamagoyaki",
+    "description": "Sweet-savory Japanese rolled omelet, great for breakfast or a bento.",
+    "servings": 2,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 20,
+    "categories": [
+      "Breakfast",
+      "Japanese",
+      "Quick"
+    ],
+    "equipment": [
+      "Tamagoyaki pan",
+      "Chopsticks",
+      "Bamboo sushi mat"
+    ],
+    "ingredients": [
+      {
+        "name": "large eggs",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "dashi",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sugar",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "soy sauce",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "mirin",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Beat the eggs with the dashi, sugar, soy sauce, mirin, and salt without making them foamy."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Oil the pan over medium-low heat, pour in a thin layer, and roll it toward you when nearly set.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Push the roll to the far side, oil the pan, and add another thin layer, lifting the roll so egg flows underneath; roll back. Repeat until the egg is used up.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Shape the omelet in a bamboo mat, then slice into six pieces.",
+        "estimatedTimeMinutes": 5
+      }
+    ]
+  },
+  {
+    "title": "Overnight Sausage & Egg Breakfast Casserole",
+    "description": "Assemble it the night before and bake in the morning; made for holiday brunch.",
+    "servings": 8,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 570,
+    "categories": [
+      "Breakfast",
+      "American",
+      "Make-Ahead",
+      "Holiday"
+    ],
+    "equipment": [
+      "9x13-inch baking dish",
+      "Large skillet",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "breakfast sausage",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "day-old French bread, cubed",
+        "quantity": 8,
+        "unit": "CUP"
+      },
+      {
+        "name": "shredded sharp cheddar",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "green onions, sliced",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 10,
+        "unit": "EACH"
+      },
+      {
+        "name": "whole milk",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Brown the sausage in a skillet, breaking it up, then drain.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Grease the baking dish and layer in the bread, sausage, cheese, and green onions."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the eggs, milk, mustard, salt, and pepper, pour over the bread, and press down so it soaks."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Cover and refrigerate overnight.",
+        "estimatedTimeMinutes": 480
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake uncovered at 350°F until puffed and set in the center.",
+        "estimatedTimeMinutes": 50
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Rest before cutting.",
+        "estimatedTimeMinutes": 10
+      }
+    ]
+  },
+  {
+    "title": "Classic Club Sandwich",
+    "description": "Triple-decker toast with roast turkey, crisp bacon, lettuce, and tomato.",
+    "servings": 2,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Lunch",
+      "American"
+    ],
+    "equipment": [
+      "Skillet",
+      "Toaster",
+      "Toothpicks"
+    ],
+    "ingredients": [
+      {
+        "name": "bacon",
+        "quantity": 6,
+        "unit": "SLICE"
+      },
+      {
+        "name": "white sandwich bread",
+        "quantity": 6,
+        "unit": "SLICE"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sliced roast turkey",
+        "quantity": 6,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "romaine lettuce leaves",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "tomato, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the bacon until crisp, then drain on paper towels.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toast the bread.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Spread mayonnaise on one side of each slice of toast."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Layer toast, turkey, lettuce, toast, bacon, tomato, and a final slice of toast; season with pepper."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Secure each sandwich with four toothpicks and cut into quarters on the diagonal."
+      }
+    ]
+  },
+  {
+    "title": "Chicken Caesar Salad",
+    "description": "Crisp romaine, seared chicken, garlicky croutons, and a punchy homemade dressing.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Lunch",
+      "Salad",
+      "American"
+    ],
+    "equipment": [
+      "Skillet",
+      "Baking sheet",
+      "Whisk",
+      "Large salad bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless skinless chicken breasts",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "day-old ciabatta, cubed",
+        "quantity": 3,
+        "unit": "CUP"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "anchovy fillets, minced",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Worcestershire sauce",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "Parmesan, grated",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "romaine hearts",
+        "quantity": 3,
+        "unit": "HEAD"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 375°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toss the bread cubes with 2 tablespoons of the oil and bake until golden and crisp.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, season the chicken and sear it in 1 tablespoon of oil until cooked through, 5 to 6 minutes per side; rest, then slice."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Whisk the garlic, anchovies, mayonnaise, mustard, lemon juice, and Worcestershire, then whisk in the remaining oil and half the Parmesan."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Toss the chopped romaine with the dressing, then top with the chicken, croutons, and remaining Parmesan.",
+        "estimatedTimeMinutes": 3
+      }
+    ]
+  },
+  {
+    "title": "Greek Salad",
+    "description": "Chunky tomatoes, cucumber, olives, and a slab of feta, with no lettuce in sight.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "categories": [
+      "Lunch",
+      "Salad",
+      "Greek",
+      "Vegetarian",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick"
+    ],
+    "equipment": [
+      "Large salad bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "ripe tomatoes, cut into wedges",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "English cucumber, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "green bell pepper, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red onion, thinly sliced",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "Kalamata olives",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "feta, in one block",
+        "quantity": 7,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "red wine vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "flaky sea salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Combine the tomatoes, cucumber, pepper, onion, and olives in a bowl and season with salt."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Lay the block of feta on top."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Drizzle with the oil and vinegar, sprinkle with oregano, and serve with crusty bread."
+      }
+    ]
+  },
+  {
+    "title": "Tomato Soup & Grilled Cheese",
+    "description": "Creamy tomato-basil soup with crisp, melty grilled cheese for dunking.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "categories": [
+      "Lunch",
+      "Soup",
+      "American",
+      "Vegetarian",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Dutch oven",
+      "Immersion blender",
+      "Griddle"
+    ],
+    "ingredients": [
+      {
+        "name": "unsalted butter",
+        "quantity": 4,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "yellow onion, chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 3,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "whole peeled tomatoes",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 28,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "vegetable broth",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "sugar",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fresh basil",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "heavy cream",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "sandwich bread",
+        "quantity": 8,
+        "unit": "SLICE"
+      },
+      {
+        "name": "sharp cheddar, sliced",
+        "quantity": 8,
+        "unit": "OUNCE"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Melt 2 tablespoons of the butter in a Dutch oven and cook the onion until soft.",
+        "estimatedTimeMinutes": 6
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the garlic and cook until fragrant.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the tomatoes, broth, sugar, and salt and simmer.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Add the basil leaves, blend until smooth, and stir in the cream."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Butter the outsides of the bread, fill with cheddar, and griddle over medium heat until golden and melted.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cut the sandwiches in half and serve with the soup."
+      }
+    ]
+  },
+  {
+    "title": "Chicken Quesadillas",
+    "description": "Crisp tortillas stuffed with chicken, peppers, and plenty of melted cheese.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Lunch",
+      "Mexican",
+      "Quick",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Large skillet",
+      "Box grater"
+    ],
+    "ingredients": [
+      {
+        "name": "cooked chicken, shredded",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "large flour tortillas",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "Monterey Jack, shredded",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "red bell pepper, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "green onions, sliced",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "chili powder",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sour cream",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "salsa",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the pepper in a little oil until just soft.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toss the chicken with the chili powder and cooked pepper."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Cover half of each tortilla with cheese, chicken, and green onions, then fold over."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Cook the quesadillas in a lightly oiled skillet until golden and melted, 2 to 3 minutes per side, in batches.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Cut into wedges and serve with sour cream and salsa."
+      }
+    ]
+  },
+  {
+    "title": "Lemongrass Chicken Banh Mi",
+    "description": "Vietnamese baguette sandwiches with caramelized lemongrass chicken, quick pickles, and herbs.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 60,
+    "categories": [
+      "Lunch",
+      "Vietnamese"
+    ],
+    "equipment": [
+      "Grill pan",
+      "Mixing bowls"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless chicken thighs",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "lemongrass stalks, minced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "fish sauce",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "brown sugar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 3,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "carrot, julienned",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "daikon radish, julienned",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "rice vinegar",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "sugar",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "short soft baguettes",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "sriracha",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "cucumber, thinly sliced",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "jalapeño, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Toss the chicken with the lemongrass, fish sauce, brown sugar, and garlic and marinate.",
+        "estimatedTimeMinutes": 30
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Meanwhile, stir the carrot and daikon with the vinegar, sugar, and salt and leave to pickle."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Grill the chicken over medium-high heat until charred and cooked through, then slice.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir the mayonnaise and sriracha together."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Split the baguettes, spread with sriracha mayo, and fill with chicken, drained pickles, cucumber, jalapeño, and cilantro."
+      }
+    ]
+  },
+  {
+    "title": "Falafel Pitas with Tahini Sauce",
+    "description": "Crisp, herby falafel made from soaked dried chickpeas, tucked into warm pitas.",
+    "servings": 6,
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 760,
+    "categories": [
+      "Lunch",
+      "Middle Eastern",
+      "Vegan",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Food processor",
+      "Heavy pot",
+      "Deep-fry thermometer",
+      "Slotted spoon"
+    ],
+    "ingredients": [
+      {
+        "name": "dried chickpeas",
+        "quantity": 0.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "yellow onion, quartered",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "fresh parsley",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground coriander",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "baking soda",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "vegetable oil, for frying",
+        "quantity": 1,
+        "unit": "LITER"
+      },
+      {
+        "name": "tahini",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "pita breads",
+        "quantity": 6,
+        "unit": "EACH"
+      },
+      {
+        "name": "tomatoes, diced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "cucumber, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cover the chickpeas with cold water by 2 inches and soak.",
+        "estimatedTimeMinutes": 720
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Drain well, then pulse with the onion, garlic, herbs, spices, and salt until finely chopped but not a paste. Stir in the baking soda."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Shape into about 24 small patties."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Heat the oil to 350°F and fry the falafel in batches until deep brown.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Whisk the tahini, lemon juice, ⅓ cup water, and a pinch of salt into a pourable sauce."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Fill the warm pitas with falafel, tomato, cucumber, and tahini sauce."
+      }
+    ]
+  },
+  {
+    "title": "Mediterranean Quinoa Meal-Prep Bowls",
+    "description": "Four grab-and-go lunches of quinoa, roasted chickpeas, vegetables, and lemon dressing.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 45,
+    "categories": [
+      "Lunch",
+      "Mediterranean",
+      "Vegetarian",
+      "Gluten-Free",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Baking sheet",
+      "Meal-prep containers"
+    ],
+    "ingredients": [
+      {
+        "name": "quinoa, rinsed",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "water",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "chickpeas, drained and rinsed",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "cherry tomatoes, halved",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "English cucumber, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red onion, finely diced",
+        "quantity": 0.25,
+        "unit": "EACH"
+      },
+      {
+        "name": "Kalamata olives",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "feta, crumbled",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 425°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toss the chickpeas with 1 tablespoon of oil, the paprika, and a pinch of salt and roast until crisp.",
+        "estimatedTimeMinutes": 25
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, simmer the quinoa in the water, covered, for 15 minutes, then fluff and cool."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Whisk the remaining oil with the lemon juice, oregano, and salt."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Divide the quinoa, chickpeas, vegetables, olives, and feta among four containers, with the dressing on the side. Refrigerate for up to 4 days."
+      }
+    ]
+  },
+  {
+    "title": "Cobb Salad",
+    "description": "Rows of chicken, bacon, egg, avocado, tomato, and blue cheese over crisp greens.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 12,
+    "totalTimeMinutes": 37,
+    "categories": [
+      "Lunch",
+      "Salad",
+      "American",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Skillet",
+      "Large platter"
+    ],
+    "ingredients": [
+      {
+        "name": "romaine",
+        "quantity": 2,
+        "unit": "HEAD"
+      },
+      {
+        "name": "cooked chicken breast, diced",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "bacon",
+        "quantity": 6,
+        "unit": "SLICE"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "avocados, diced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "cherry tomatoes, halved",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "blue cheese, crumbled",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "red wine vinegar",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cover the eggs with water, bring to a boil, and simmer until hard-cooked.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Meanwhile, cook the bacon until crisp and crumble it."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Cool the eggs in ice water, then peel and chop.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Whisk the vinegar, mustard, oil, salt, and pepper."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Arrange the chopped romaine on a platter and lay the chicken, bacon, egg, avocado, tomatoes, and blue cheese over it in rows. Drizzle with dressing."
+      }
+    ]
+  },
+  {
+    "title": "Tuna Melt",
+    "description": "Open-faced tuna salad on rye, broiled under sharp cheddar.",
+    "servings": 2,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 5,
+    "totalTimeMinutes": 15,
+    "categories": [
+      "Lunch",
+      "American",
+      "Quick"
+    ],
+    "equipment": [
+      "Baking sheet",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "solid white tuna, drained",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 5,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "celery stalk, finely diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red onion, minced",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "rye bread",
+        "quantity": 2,
+        "unit": "SLICE"
+      },
+      {
+        "name": "sharp cheddar",
+        "quantity": 2,
+        "unit": "SLICE"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the broiler."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Mix the tuna, mayonnaise, celery, onion, lemon juice, and pepper."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Toast the bread under the broiler, about a minute per side.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread with the tuna, top with cheddar, and broil until bubbling.",
+        "estimatedTimeMinutes": 3
+      }
+    ]
+  },
+  {
+    "title": "Cold Sesame Noodles",
+    "description": "Chewy noodles in a creamy sesame-peanut sauce; even better after a night in the fridge.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 20,
+    "categories": [
+      "Lunch",
+      "Chinese",
+      "Vegan",
+      "Make-Ahead",
+      "Quick"
+    ],
+    "equipment": [
+      "Large pot",
+      "Colander",
+      "Whisk"
+    ],
+    "ingredients": [
+      {
+        "name": "dried wheat noodles",
+        "quantity": 12,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "tahini",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "creamy peanut butter",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "soy sauce",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "rice vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "toasted sesame oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "maple syrup",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "chili crisp",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fresh ginger, grated",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic, grated",
+        "quantity": 1,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "English cucumber, julienned",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "scallions, sliced",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "toasted sesame seeds",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Boil the noodles according to the package directions.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Rinse under cold water, drain well, and toss with a little of the sesame oil.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Whisk the tahini, peanut butter, soy sauce, vinegar, remaining sesame oil, maple syrup, chili crisp, ginger, and garlic with 2 to 3 tablespoons of hot water."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Toss the noodles with the sauce and top with cucumber, scallions, and sesame seeds. Eat now or refrigerate for up to 3 days."
+      }
+    ]
+  },
+  {
+    "title": "Turkish Red Lentil Soup",
+    "description": "Silky red lentil soup (mercimek çorbası) with a sizzling Aleppo pepper oil.",
+    "servings": 6,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 40,
+    "categories": [
+      "Lunch",
+      "Dinner",
+      "Soup",
+      "Turkish",
+      "Vegan",
+      "Gluten-Free",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Dutch oven",
+      "Immersion blender"
+    ],
+    "ingredients": [
+      {
+        "name": "olive oil",
+        "quantity": 4,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "yellow onion, chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "carrot, chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "tomato paste",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "red lentils, rinsed",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vegetable broth",
+        "quantity": 1.5,
+        "unit": "LITER"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "Aleppo pepper",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "lemon, cut into wedges",
+        "quantity": 1,
+        "unit": "EACH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the onion and carrot in 2 tablespoons of the oil until soft.",
+        "estimatedTimeMinutes": 6
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Stir in the garlic, tomato paste, and cumin.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the lentils and broth and simmer until the lentils fall apart.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Blend until smooth and season with salt.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Warm the remaining oil with the Aleppo pepper, drizzle over each bowl, and serve with lemon wedges. Freezes well."
+      }
+    ]
+  },
+  {
+    "title": "Chicken Shawarma Wraps",
+    "description": "Spiced, charred chicken wrapped in flatbread with garlic yogurt sauce and pickles.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 90,
+    "categories": [
+      "Lunch",
+      "Dinner",
+      "Middle Eastern"
+    ],
+    "equipment": [
+      "Cast-iron skillet",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless chicken thighs",
+        "quantity": 2,
+        "unit": "POUND"
+      },
+      {
+        "name": "plain yogurt",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Greek yogurt",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "flatbreads",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "romaine, shredded",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "tomatoes, sliced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "dill pickles, sliced",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Toss the chicken with the plain yogurt, 2 tablespoons of the lemon juice, 3 cloves of garlic, the spices, salt, and 1 tablespoon of oil, then marinate in the fridge.",
+        "estimatedTimeMinutes": 60
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Sear the chicken in the remaining oil over medium-high heat, in batches, until charred and cooked through.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Rest the chicken, then slice thinly.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir the Greek yogurt with the remaining garlic and lemon juice."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Fill the flatbreads with romaine, tomato, pickles, chicken, and garlic sauce, then roll up tightly."
+      }
+    ]
+  },
+  {
+    "title": "Muffuletta",
+    "description": "New Orleans pressed sandwich of Italian meats, provolone, and olive salad, made to feed a crowd.",
+    "servings": 8,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 80,
+    "categories": [
+      "Lunch",
+      "American",
+      "Make-Ahead",
+      "No-Cook"
+    ],
+    "equipment": [
+      "Bread knife",
+      "Plastic wrap",
+      "Heavy skillet"
+    ],
+    "ingredients": [
+      {
+        "name": "round Italian loaf",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "giardiniera, drained and chopped",
+        "quantity": 1,
+        "unit": "JAR",
+        "packageQuantity": 16,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "green olives, chopped",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "Kalamata olives, chopped",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "capers",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "red wine vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "Genoa salami",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "mortadella",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "capicola",
+        "quantity": 4,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "provolone",
+        "quantity": 6,
+        "unit": "SLICE"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Mix the giardiniera, olives, capers, oil, vinegar, and oregano to make the olive salad."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Split the loaf horizontally and pull out a little of the soft crumb."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Spread half the olive salad on the bottom, layer on the meats and provolone, then the rest of the olive salad, and replace the top."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Wrap tightly in plastic and press under a heavy skillet in the fridge.",
+        "estimatedTimeMinutes": 60
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Cut into 8 wedges. It can be made up to a day ahead."
+      }
+    ]
+  },
+  {
+    "title": "Ahi Poke Bowls",
+    "description": "Sushi-grade tuna in a soy-sesame marinade over seasoned rice.",
+    "servings": 2,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 50,
+    "categories": [
+      "Lunch",
+      "Hawaiian"
+    ],
+    "equipment": [
+      "Rice cooker",
+      "Sharp knife"
+    ],
+    "ingredients": [
+      {
+        "name": "sushi rice, rinsed",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "rice vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sushi-grade ahi tuna, cubed",
+        "quantity": 12,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "soy sauce",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "toasted sesame oil",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "green onions, sliced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh ginger, grated",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "avocado, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "English cucumber, diced",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "shelled edamame, thawed",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "toasted sesame seeds",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the rice.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Let the rice rest, then fold in the vinegar.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, toss the tuna with the soy sauce, sesame oil, green onions, and ginger and chill."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Divide the rice between bowls and top with the tuna, avocado, cucumber, edamame, and sesame seeds."
+      }
+    ]
+  },
+  {
+    "title": "Black Bean Burrito Bowls",
+    "description": "Cilantro-lime rice, spiced black beans, charred corn, and avocado; packs up for the week.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "categories": [
+      "Lunch",
+      "Mexican",
+      "Vegan",
+      "Gluten-Free",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Skillet",
+      "Mixing bowls"
+    ],
+    "ingredients": [
+      {
+        "name": "long-grain white rice",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "water",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "limes",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "black beans, drained and rinsed",
+        "quantity": 2,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "chili powder",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "frozen corn",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "red onion, diced",
+        "quantity": 0.5,
+        "unit": "EACH"
+      },
+      {
+        "name": "cherry tomatoes, quartered",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "avocados",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Simmer the rice in the salted water, covered, until tender.",
+        "estimatedTimeMinutes": 18
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Char the corn in 1 tablespoon of oil in a hot skillet.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, warm the beans with the cumin, chili powder, remaining oil, and a splash of water."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Fluff the rice with the juice of one lime and chopped cilantro.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Toss the corn with the onion, tomatoes, and remaining lime juice."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Divide the rice, beans, and corn salsa among bowls and top with avocado just before eating. Keeps for 4 days without the avocado."
+      }
+    ]
+  },
+  {
+    "title": "Slow Cooker White Chicken Chili",
+    "description": "Creamy white bean and green chile chili that simmers all morning.",
+    "servings": 8,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 375,
+    "totalTimeMinutes": 390,
+    "categories": [
+      "Lunch",
+      "Dinner",
+      "American",
+      "Slow Cooker",
+      "Gluten-Free",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Slow cooker",
+      "Two forks"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless skinless chicken breasts",
+        "quantity": 2,
+        "unit": "POUND"
+      },
+      {
+        "name": "cannellini beans, drained",
+        "quantity": 3,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "diced green chiles",
+        "quantity": 2,
+        "unit": "CAN",
+        "packageQuantity": 4,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "yellow onion, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "chicken broth",
+        "quantity": 1,
+        "unit": "BOX",
+        "packageQuantity": 32,
+        "packageUnit": "FLUID_OUNCE"
+      },
+      {
+        "name": "cream cheese, cubed",
+        "quantity": 1,
+        "unit": "PACKAGE",
+        "packageQuantity": 8,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "frozen corn",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Put the chicken, beans, chiles, onion, garlic, spices, salt, and broth in the slow cooker."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Cover and cook on low.",
+        "estimatedTimeMinutes": 360
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Shred the chicken with two forks and return it to the pot."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir in the cream cheese and corn and cook until melted and creamy.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Finish with lime juice and cilantro. Freezes well in lunch-size portions."
+      }
+    ]
+  },
+  {
+    "title": "Egg Salad Sandwiches",
+    "description": "Creamy, chive-flecked egg salad on soft bread; the filling keeps for three days.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 12,
+    "totalTimeMinutes": 42,
+    "categories": [
+      "Lunch",
+      "American",
+      "Vegetarian",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "large eggs",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "celery stalk, finely diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh chives, snipped",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "soft sandwich bread",
+        "quantity": 8,
+        "unit": "SLICE"
+      },
+      {
+        "name": "butter lettuce",
+        "quantity": 1,
+        "unit": "HEAD"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cover the eggs with cold water, bring to a boil, then cover, take off the heat, and let stand.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Chill the eggs in ice water.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Peel and chop the eggs, then mix with the mayonnaise, mustard, lemon juice, celery, chives, salt, and paprika."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread onto four slices of bread, add lettuce, and top with the remaining bread."
+      }
+    ]
+  },
+  {
+    "title": "Instant Pot Butternut Squash Soup",
+    "description": "Velvety squash soup with apple and warm spices, ready in under an hour.",
+    "servings": 6,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 55,
+    "categories": [
+      "Lunch",
+      "Soup",
+      "Vegan",
+      "Gluten-Free",
+      "Instant Pot"
+    ],
+    "equipment": [
+      "Instant Pot",
+      "Immersion blender"
+    ],
+    "ingredients": [
+      {
+        "name": "butternut squash, peeled and cubed",
+        "quantity": 1.5,
+        "unit": "KILOGRAM"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "yellow onion, chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "apple, cored and chopped",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground nutmeg",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "vegetable broth",
+        "quantity": 1,
+        "unit": "LITER"
+      },
+      {
+        "name": "coconut milk",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 13.5,
+        "packageUnit": "FLUID_OUNCE"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "toasted pumpkin seeds",
+        "quantity": 0.25,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Use the sauté setting to cook the onion in the oil until soft.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the garlic, cinnamon, and nutmeg and stir for a minute.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the squash, apple, and broth, lock the lid, and pressure cook on high. It takes about 10 minutes to come up to pressure.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Let the pressure release naturally.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Blend until smooth, stir in the coconut milk and salt, and top with pumpkin seeds."
+      }
+    ]
+  },
+  {
+    "title": "Thai Chicken Larb Lettuce Wraps",
+    "description": "Zesty minced chicken with lime, fish sauce, fresh herbs, and toasted rice in lettuce cups.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Lunch",
+      "Thai",
+      "Gluten-Free",
+      "Quick"
+    ],
+    "equipment": [
+      "Large skillet",
+      "Spice grinder"
+    ],
+    "ingredients": [
+      {
+        "name": "uncooked jasmine rice",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "ground chicken",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "shallots, thinly sliced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "fish sauce",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "lime juice",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "sugar",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "red pepper flakes",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fresh mint",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "green onions, sliced",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "butter lettuce",
+        "quantity": 1,
+        "unit": "HEAD"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Toast the rice in a dry skillet until golden, then grind to a coarse powder.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Cook the chicken with a splash of water, breaking it up, until no longer pink.",
+        "estimatedTimeMinutes": 6
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Off the heat, stir in the fish sauce, lime juice, sugar, pepper flakes, and shallots."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Fold in the mint, cilantro, green onions, and toasted rice powder."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Spoon into lettuce cups to serve."
+      }
+    ]
+  },
+  {
+    "title": "Classic Hummus with Veggie Sticks",
+    "description": "Ultra-smooth hummus with carrot, cucumber, and pepper sticks for dipping.",
+    "servings": 6,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "categories": [
+      "Snack",
+      "Middle Eastern",
+      "Vegan",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick"
+    ],
+    "equipment": [
+      "Food processor"
+    ],
+    "ingredients": [
+      {
+        "name": "chickpeas, drained",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "tahini",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ice water",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "carrots",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "English cucumber",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red bell pepper",
+        "quantity": 1,
+        "unit": "EACH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Blend the tahini and lemon juice for a minute until whipped and pale."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the garlic, cumin, salt, and chickpeas and blend, scraping down the sides and streaming in the ice water, until very smooth."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Spread in a shallow bowl and finish with the olive oil and paprika."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Cut the vegetables into sticks and serve alongside. The hummus keeps for 5 days in the fridge."
+      }
+    ]
+  },
+  {
+    "title": "Fresh Guacamole with Tortilla Chips",
+    "description": "Chunky, lime-bright guacamole made right before serving.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "categories": [
+      "Snack",
+      "Mexican",
+      "Vegan",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick"
+    ],
+    "equipment": [
+      "Molcajete or mixing bowl",
+      "Fork"
+    ],
+    "ingredients": [
+      {
+        "name": "ripe avocados",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "lime juice",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "white onion, finely chopped",
+        "quantity": 0.25,
+        "unit": "EACH"
+      },
+      {
+        "name": "jalapeño, minced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "Roma tomato, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh cilantro, chopped",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.75,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "tortilla chips",
+        "quantity": 1,
+        "unit": "BAG",
+        "packageQuantity": 11,
+        "packageUnit": "OUNCE"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Mash the onion and jalapeño with a pinch of the salt into a rough paste."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the avocados and mash, leaving plenty of chunks."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Fold in the tomato, cilantro, lime juice, and the rest of the salt to taste."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Serve right away with the chips."
+      }
+    ]
+  },
+  {
+    "title": "Parmesan Herb Popcorn",
+    "description": "Stovetop popcorn tossed with butter, Parmesan, and dried herbs.",
+    "servings": 4,
+    "prepTimeMinutes": 2,
+    "cookTimeMinutes": 8,
+    "totalTimeMinutes": 10,
+    "categories": [
+      "Snack",
+      "American",
+      "Vegetarian",
+      "Gluten-Free",
+      "Quick",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Large heavy pot with lid",
+      "Large bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "popcorn kernels",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Parmesan, finely grated",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "dried Italian seasoning",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic powder",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oil with 3 kernels in a covered pot over medium-high heat until they pop.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the remaining kernels, cover, and shake the pot often until the popping slows to 2 or 3 seconds apart.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Tip the popcorn into a large bowl and melt the butter in the warm pot.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Toss the popcorn with the butter, Parmesan, Italian seasoning, garlic powder, and salt."
+      }
+    ]
+  },
+  {
+    "title": "Peanut Butter Energy Bites",
+    "description": "No-bake oat bites with peanut butter, honey, flax, and mini chocolate chips.",
+    "servings": 20,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 45,
+    "categories": [
+      "Snack",
+      "Vegetarian",
+      "Make-Ahead",
+      "No-Cook",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Mixing bowl",
+      "Cookie scoop",
+      "Airtight container"
+    ],
+    "ingredients": [
+      {
+        "name": "old-fashioned rolled oats",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "creamy peanut butter",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "honey",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "ground flaxseed",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "mini chocolate chips",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Stir all the ingredients together until evenly combined."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Chill the mixture so it is easier to roll.",
+        "estimatedTimeMinutes": 30
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Roll into 20 balls."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Store in an airtight container in the fridge for up to a week."
+      }
+    ]
+  },
+  {
+    "title": "Crispy Roasted Chickpeas",
+    "description": "Crunchy, smoky chickpeas to eat by the handful.",
+    "servings": 4,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "categories": [
+      "Snack",
+      "Vegan",
+      "Gluten-Free",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Baking sheet",
+      "Clean kitchen towel"
+    ],
+    "ingredients": [
+      {
+        "name": "chickpeas, drained and rinsed",
+        "quantity": 2,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic powder",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.75,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 400°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Dry the chickpeas thoroughly in a towel, discarding any loose skins."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Roast the chickpeas plain on a baking sheet.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Toss with the oil, spices, and salt and roast until deep golden and crunchy.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Cool on the sheet so they crisp further.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Store uncovered at room temperature for up to 2 days."
+      }
+    ]
+  },
+  {
+    "title": "Classic Deviled Eggs",
+    "description": "Creamy, tangy yolk filling piped into egg whites and dusted with smoked paprika.",
+    "servings": 12,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 12,
+    "totalTimeMinutes": 52,
+    "categories": [
+      "Snack",
+      "Appetizer",
+      "American",
+      "Vegetarian",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Piping bag"
+    ],
+    "ingredients": [
+      {
+        "name": "large eggs",
+        "quantity": 12,
+        "unit": "EACH"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "white vinegar",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "fresh chives",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cover the eggs with cold water, bring to a boil, then cover, take off the heat, and let stand.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Chill the eggs in ice water.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Peel and halve the eggs lengthwise, and pop the yolks into a bowl."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Mash the yolks with the mayonnaise, mustard, vinegar, and salt until smooth."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Pipe the filling into the whites, then dust with paprika and snipped chives."
+      }
+    ]
+  },
+  {
+    "title": "Chewy Granola Bars",
+    "description": "Honey-sweetened oat bars with almonds and dried cranberries, far better than store-bought.",
+    "servings": 12,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 160,
+    "categories": [
+      "Snack",
+      "American",
+      "Baking",
+      "Vegetarian",
+      "Make-Ahead",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "8x8-inch baking pan",
+      "Parchment paper",
+      "Saucepan"
+    ],
+    "ingredients": [
+      {
+        "name": "old-fashioned rolled oats",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "sliced almonds",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "dried cranberries",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 4,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "honey",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "brown sugar",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 350°F and line the pan with parchment."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toast the oats and almonds on a baking sheet until lightly golden.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Melt the butter, honey, and brown sugar together and simmer for 1 minute."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir in the vanilla, cinnamon, and salt, then the oats, almonds, and cranberries."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Press the mixture very firmly into the pan and bake until the edges are golden.",
+        "estimatedTimeMinutes": 17
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cool completely in the pan before cutting into 12 bars.",
+        "estimatedTimeMinutes": 120
+      }
+    ]
+  },
+  {
+    "title": "Ants on a Log",
+    "description": "Celery, peanut butter, and raisins: the after-school classic.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "categories": [
+      "Snack",
+      "American",
+      "Vegan",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Butter knife"
+    ],
+    "ingredients": [
+      {
+        "name": "celery stalks",
+        "quantity": 6,
+        "unit": "EACH"
+      },
+      {
+        "name": "creamy peanut butter",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "raisins",
+        "quantity": 0.25,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Trim the celery and cut it into 3-inch pieces."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Fill each groove with peanut butter."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Press a line of raisins along the top."
+      }
+    ]
+  },
+  {
+    "title": "Spicy Garlic Edamame",
+    "description": "Blistered edamame pods tossed in garlic, chili crisp, and soy.",
+    "servings": 4,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 8,
+    "totalTimeMinutes": 13,
+    "categories": [
+      "Snack",
+      "Japanese",
+      "Vegan",
+      "Quick"
+    ],
+    "equipment": [
+      "Pot",
+      "Large skillet"
+    ],
+    "ingredients": [
+      {
+        "name": "frozen edamame in pods",
+        "quantity": 1,
+        "unit": "BAG",
+        "packageQuantity": 16,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "toasted sesame oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 3,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "soy sauce",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "chili crisp",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "flaky sea salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Boil the edamame until bright green and hot, then drain well.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Heat the sesame oil in a skillet and blister the pods over high heat.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the garlic and stir until fragrant.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Off the heat, toss with the soy sauce, chili crisp, and flaky salt. Serve with a bowl for the empty pods."
+      }
+    ]
+  },
+  {
+    "title": "Hot Spinach Artichoke Dip",
+    "description": "A bubbling, cheesy dip for chips, crackers, or bread.",
+    "servings": 8,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "categories": [
+      "Snack",
+      "Appetizer",
+      "American",
+      "Vegetarian"
+    ],
+    "equipment": [
+      "1-quart baking dish",
+      "Mixing bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "frozen chopped spinach, thawed and squeezed dry",
+        "quantity": 1,
+        "unit": "PACKAGE",
+        "packageQuantity": 10,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "marinated artichoke hearts, drained and chopped",
+        "quantity": 1,
+        "unit": "JAR",
+        "packageQuantity": 12,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "cream cheese, softened",
+        "quantity": 1,
+        "unit": "PACKAGE",
+        "packageQuantity": 8,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "sour cream",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "Parmesan, grated",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "mozzarella, shredded",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "red pepper flakes",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "pita chips",
+        "quantity": 1,
+        "unit": "BAG",
+        "packageQuantity": 8,
+        "packageUnit": "OUNCE"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 375°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Beat the cream cheese, sour cream, mayonnaise, and garlic until smooth."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Fold in the spinach, artichokes, Parmesan, half the mozzarella, and the pepper flakes."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread in the baking dish and top with the remaining mozzarella."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake until bubbling and browned on top.",
+        "estimatedTimeMinutes": 25
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Serve hot with pita chips."
+      }
+    ]
+  },
+  {
+    "title": "Apple Slices with Peanut Butter Yogurt Dip",
+    "description": "A protein-packed dip that turns an apple into a proper snack.",
+    "servings": 2,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 5,
+    "categories": [
+      "Snack",
+      "Vegetarian",
+      "Gluten-Free",
+      "No-Cook",
+      "Quick",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Small bowl",
+      "Apple corer"
+    ],
+    "ingredients": [
+      {
+        "name": "crisp apples",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "Greek yogurt",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "creamy peanut butter",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "honey",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Whisk the yogurt, peanut butter, honey, and cinnamon until smooth."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Core and slice the apples and toss with the lemon juice to stop them browning."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Serve the apple slices with the dip."
+      }
+    ]
+  },
+  {
+    "title": "Sweet & Salty Trail Mix",
+    "description": "A make-ahead mix of roasted nuts, seeds, dried fruit, and chocolate.",
+    "servings": 8,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 5,
+    "categories": [
+      "Snack",
+      "Vegetarian",
+      "Gluten-Free",
+      "No-Cook",
+      "Make-Ahead",
+      "Quick"
+    ],
+    "equipment": [
+      "Large jar"
+    ],
+    "ingredients": [
+      {
+        "name": "roasted salted almonds",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "cashews",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "pepitas",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "dried cherries",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "dark chocolate chips",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "banana chips",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "unsweetened coconut flakes",
+        "quantity": 0.25,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Toss everything together in a large bowl."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Store in an airtight jar for up to a month and portion into ½-cup servings."
+      }
+    ]
+  },
+  {
+    "title": "Baked Kale Chips",
+    "description": "Crisp, salty kale leaves that disappear as fast as potato chips.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Snack",
+      "Vegan",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Baking sheets",
+      "Salad spinner"
+    ],
+    "ingredients": [
+      {
+        "name": "curly kale",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "nutritional yeast",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic powder",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 300°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Strip the leaves from the stems, tear into chip-size pieces, then wash and dry completely."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Massage the kale with the oil, nutritional yeast, salt, and garlic powder."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spread in a single layer over two baking sheets."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake until crisp, rotating the sheets halfway through.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cool on the sheets before serving.",
+        "estimatedTimeMinutes": 5
+      }
+    ]
+  },
+  {
+    "title": "Classic Banana Bread",
+    "description": "A moist, deeply banana-y loaf that uses up overripe fruit.",
+    "servings": 10,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 135,
+    "categories": [
+      "Snack",
+      "American",
+      "Baking",
+      "Vegetarian",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "9x5-inch loaf pan",
+      "Mixing bowls"
+    ],
+    "ingredients": [
+      {
+        "name": "very ripe bananas",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "unsalted butter, melted",
+        "quantity": 0.333,
+        "unit": "CUP"
+      },
+      {
+        "name": "brown sugar",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "large egg",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "vanilla extract",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "baking soda",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "all-purpose flour",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "chopped walnuts",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 350°F and grease the loaf pan."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Mash the bananas and stir in the melted butter."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Mix in the brown sugar, egg, and vanilla, then the baking soda and salt."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Fold in the flour until no streaks remain, then the walnuts."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Bake until a skewer comes out clean.",
+        "estimatedTimeMinutes": 60
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cool in the pan for 10 minutes, then on a rack before slicing.",
+        "estimatedTimeMinutes": 60
+      }
+    ]
+  },
+  {
+    "title": "Soft Pretzel Bites",
+    "description": "Chewy, golden pretzel nuggets with coarse salt and honey mustard for dipping.",
+    "servings": 8,
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 105,
+    "categories": [
+      "Snack",
+      "German",
+      "Baking",
+      "Vegetarian",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Stand mixer with dough hook",
+      "Large pot",
+      "Slotted spoon",
+      "Baking sheets"
+    ],
+    "ingredients": [
+      {
+        "name": "warm water",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "active dry yeast",
+        "quantity": 1,
+        "unit": "PACKAGE",
+        "packageQuantity": 0.25,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "sugar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "all-purpose flour",
+        "quantity": 4,
+        "unit": "CUP"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "unsalted butter, melted",
+        "quantity": 4,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "water, for boiling",
+        "quantity": 2,
+        "unit": "QUART"
+      },
+      {
+        "name": "baking soda",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "large egg, beaten",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "coarse pretzel salt",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Dijon mustard",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "honey",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Stir the warm water, yeast, and sugar together and let stand until foamy."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the flour, salt, and butter and knead with the dough hook until smooth and elastic."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Cover and let rise until doubled.",
+        "estimatedTimeMinutes": 60
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Heat the oven to 425°F and bring the boiling water and baking soda to a boil in a large pot."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Divide the dough into 8 pieces, roll each into a rope, and cut into 1-inch bites."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Boil the bites in batches for 30 seconds, lift onto baking sheets, brush with egg, and sprinkle with pretzel salt.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Bake until deep golden brown.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 8,
+        "instructionText": "Stir the mustard and honey together for dipping."
+      }
+    ]
+  },
+  {
+    "title": "Strawberry Yogurt Popsicles",
+    "description": "Creamy swirled freezer pops that are perfect for hot afternoons.",
+    "servings": 8,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 370,
+    "categories": [
+      "Snack",
+      "Vegetarian",
+      "Gluten-Free",
+      "Make-Ahead",
+      "No-Cook",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Blender",
+      "Popsicle molds",
+      "Popsicle sticks"
+    ],
+    "ingredients": [
+      {
+        "name": "fresh strawberries, hulled",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "whole-milk Greek yogurt",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "honey",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Blend half the strawberries with the honey and lemon juice until smooth."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Finely chop the remaining strawberries."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Layer the yogurt, purée, and chopped berries into the molds and swirl gently with a skewer."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Insert the sticks and freeze until solid.",
+        "estimatedTimeMinutes": 360
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Run the molds under warm water for 10 seconds to release."
+      }
+    ]
+  },
+  {
+    "title": "Pan con Tomate",
+    "description": "Charred bread rubbed with garlic and grated fresh tomato, finished with olive oil.",
+    "servings": 4,
+    "prepTimeMinutes": 5,
+    "cookTimeMinutes": 5,
+    "totalTimeMinutes": 10,
+    "categories": [
+      "Snack",
+      "Spanish",
+      "Vegan",
+      "Quick"
+    ],
+    "equipment": [
+      "Box grater",
+      "Grill pan"
+    ],
+    "ingredients": [
+      {
+        "name": "rustic bread, thickly sliced",
+        "quantity": 4,
+        "unit": "SLICE"
+      },
+      {
+        "name": "ripe tomatoes",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "flaky sea salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Halve the tomatoes, grate the cut sides on a box grater, discard the skins, and season the pulp with salt."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Grill or toast the bread until crisp and lightly charred.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Rub the hot toast with the cut garlic clove."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Spoon over the tomato, drizzle with olive oil, and finish with flaky salt."
+      }
+    ]
+  },
+  {
+    "title": "Fresh Spring Rolls with Peanut Sauce",
+    "description": "Rice paper rolls packed with crisp vegetables, herbs, and tofu.",
+    "servings": 4,
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 5,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Snack",
+      "Vietnamese",
+      "Vegan"
+    ],
+    "equipment": [
+      "Saucepan",
+      "Shallow dish",
+      "Whisk"
+    ],
+    "ingredients": [
+      {
+        "name": "rice vermicelli",
+        "quantity": 2,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "rice paper wrappers",
+        "quantity": 12,
+        "unit": "EACH"
+      },
+      {
+        "name": "extra-firm tofu, cut into strips",
+        "quantity": 7,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "carrots, julienned",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "cucumber, julienned",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red leaf lettuce",
+        "quantity": 1,
+        "unit": "HEAD"
+      },
+      {
+        "name": "fresh mint",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "Thai basil",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "creamy peanut butter",
+        "quantity": 0.25,
+        "unit": "CUP"
+      },
+      {
+        "name": "hoisin sauce",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "lime juice",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sriracha",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "warm water",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the vermicelli according to the package, then rinse under cold water and drain.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Whisk the peanut butter, hoisin, lime juice, sriracha, and warm water into a smooth sauce."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Dip one rice paper wrapper in warm water for a few seconds until pliable and lay it flat."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Layer on lettuce, noodles, tofu, carrot, cucumber, and herbs, fold in the sides, and roll up tightly. Repeat."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Serve with the peanut sauce."
+      }
+    ]
+  },
+  {
+    "title": "Tzatziki with Baked Pita Chips",
+    "description": "Cool, garlicky cucumber yogurt dip with crisp homemade pita chips.",
+    "servings": 6,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 45,
+    "categories": [
+      "Snack",
+      "Greek",
+      "Vegetarian",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Box grater",
+      "Fine-mesh strainer",
+      "Baking sheet"
+    ],
+    "ingredients": [
+      {
+        "name": "English cucumber",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "whole-milk Greek yogurt",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "garlic, grated",
+        "quantity": 2,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "fresh dill, chopped",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "pita breads",
+        "quantity": 4,
+        "unit": "EACH"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Grate the cucumber, toss with half the salt, and squeeze out as much liquid as you can in a strainer."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Stir the cucumber into the yogurt with the garlic, dill, lemon juice, and 1 tablespoon of oil, then chill.",
+        "estimatedTimeMinutes": 30
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "While it chills, heat the oven to 400°F, cut each pita into 8 wedges, and toss with the remaining oil, oregano, and salt."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Bake the pita wedges until crisp and golden.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Serve the tzatziki with the chips. It keeps for 4 days in the fridge."
+      }
+    ]
+  },
+  {
+    "title": "Salmon Onigiri",
+    "description": "Japanese rice balls filled with flaked salted salmon and wrapped in crisp nori.",
+    "servings": 4,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 60,
+    "categories": [
+      "Snack",
+      "Japanese",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Rice cooker",
+      "Baking sheet"
+    ],
+    "ingredients": [
+      {
+        "name": "Japanese short-grain rice",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "water",
+        "quantity": 2.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "salmon fillet",
+        "quantity": 8,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "toasted sesame seeds",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "nori sheets, cut into strips",
+        "quantity": 4,
+        "unit": "EACH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Rinse the rice until the water runs clear, then cook it with the water.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Meanwhile, sprinkle the salmon with ½ teaspoon of salt, broil until just cooked, then flake it, discarding the skin, and mix with the sesame seeds."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Let the rice rest, then spread it out until cool enough to handle.",
+        "estimatedTimeMinutes": 20
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Wet your hands, rub them with a little salt, and shape ½ cup of rice around a spoonful of salmon into a triangle. Repeat to make 8."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Wrap each with a nori strip just before eating so it stays crisp."
+      }
+    ]
+  },
+  {
+    "title": "Sheet-Pan Lemon Herb Salmon with Asparagus",
+    "description": "Salmon and asparagus roasted together on one pan with lemon, garlic, and dill.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Dinner",
+      "American",
+      "Gluten-Free",
+      "Quick"
+    ],
+    "equipment": [
+      "Rimmed baking sheet",
+      "Parchment paper"
+    ],
+    "ingredients": [
+      {
+        "name": "skin-on salmon fillets",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "asparagus, trimmed",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 3,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh dill, chopped",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 425°F and line the baking sheet with parchment."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toss the asparagus with 1 tablespoon of the oil and a pinch of salt and roast.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Mix the remaining oil with the garlic, lemon zest, dill, salt, and pepper."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Nestle the salmon among the asparagus, brush with the herb mixture, and roast until the fish flakes easily.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Squeeze the lemon juice over everything and serve."
+      }
+    ]
+  },
+  {
+    "title": "Classic Beef Lasagna",
+    "description": "Layers of meaty tomato sauce, ricotta, and mozzarella; feeds a crowd and freezes well.",
+    "servings": 8,
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 75,
+    "totalTimeMinutes": 135,
+    "categories": [
+      "Dinner",
+      "Italian",
+      "Make-Ahead",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "9x13-inch baking dish",
+      "Large pot",
+      "Large skillet",
+      "Aluminum foil"
+    ],
+    "ingredients": [
+      {
+        "name": "lasagna noodles",
+        "quantity": 1,
+        "unit": "BOX",
+        "packageQuantity": 16,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "ground beef",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "Italian sausage, casings removed",
+        "quantity": 0.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "yellow onion, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "tomato paste",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "crushed tomatoes",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 28,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "dried basil",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ricotta",
+        "quantity": 1,
+        "unit": "CONTAINER",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "large egg",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "Parmesan, grated",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "fresh parsley, chopped",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "mozzarella, shredded",
+        "quantity": 1,
+        "unit": "POUND"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Boil the noodles until just short of al dente, then drain and lay flat on oiled foil.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Brown the beef, sausage, and onion in a large skillet, breaking up the meat.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Stir in the garlic and tomato paste, then the tomatoes, herbs, and salt, and simmer.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Mix the ricotta, egg, half the Parmesan, and the parsley. Heat the oven to 375°F."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Layer sauce, noodles, ricotta mixture, and mozzarella three times, finishing with sauce, mozzarella, and the remaining Parmesan. You can cover and refrigerate it at this point for up to a day."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Cover with foil and bake.",
+        "estimatedTimeMinutes": 25
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Uncover and bake until bubbling and browned.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 8,
+        "instructionText": "Rest before cutting so the layers hold.",
+        "estimatedTimeMinutes": 30
+      }
+    ]
+  },
+  {
+    "title": "Kung Pao Chicken",
+    "description": "Sichuan-style stir-fry of chicken, peanuts, and dried chilies in a glossy sweet-sour sauce.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 25,
+    "categories": [
+      "Dinner",
+      "Chinese",
+      "Quick"
+    ],
+    "equipment": [
+      "Wok",
+      "Small bowl"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless chicken thighs, cubed",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "soy sauce",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Shaoxing wine",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "cornstarch",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Chinkiang black vinegar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "sugar",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "water",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "dried red chilies",
+        "quantity": 10,
+        "unit": "EACH"
+      },
+      {
+        "name": "Sichuan peppercorns",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 3,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "fresh ginger, minced",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "scallions, cut into 1-inch pieces",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "roasted unsalted peanuts",
+        "quantity": 0.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Toss the chicken with 1 tablespoon of soy sauce, the wine, and 2 teaspoons of cornstarch."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Whisk the remaining soy sauce and cornstarch with the vinegar, sugar, and water."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Heat the oil in a wok and fry the chilies and peppercorns until fragrant, without letting them burn.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Add the chicken and stir-fry until cooked through.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Add the garlic, ginger, and scallion whites and stir-fry briefly.",
+        "estimatedTimeMinutes": 1
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Pour in the sauce and toss until glossy, then add the peanuts and scallion greens.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Serve with steamed rice."
+      }
+    ]
+  },
+  {
+    "title": "Chickpea & Spinach Coconut Curry",
+    "description": "A weeknight chana curry simmered in spiced tomato and coconut milk.",
+    "servings": 4,
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 35,
+    "categories": [
+      "Dinner",
+      "Indian",
+      "Vegan",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "Large deep skillet"
+    ],
+    "ingredients": [
+      {
+        "name": "coconut oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "yellow onion, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "fresh ginger, grated",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "garam masala",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "cayenne pepper",
+        "quantity": 0.25,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "diced tomatoes",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 14.5,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "coconut milk",
+        "quantity": 1,
+        "unit": "CAN",
+        "packageQuantity": 13.5,
+        "packageUnit": "FLUID_OUNCE"
+      },
+      {
+        "name": "chickpeas, drained and rinsed",
+        "quantity": 2,
+        "unit": "CAN",
+        "packageQuantity": 15,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "baby spinach",
+        "quantity": 5,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "lime juice",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Cook the onion in the coconut oil until soft and golden.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Add the garlic, ginger, and spices and stir until fragrant.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the tomatoes, coconut milk, chickpeas, and salt and simmer until thickened.",
+        "estimatedTimeMinutes": 13
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir in the spinach until wilted.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Finish with lime juice and serve with rice or naan."
+      }
+    ]
+  },
+  {
+    "title": "Sheet-Pan Chicken Fajitas",
+    "description": "Smoky chicken, peppers, and onions roasted on one pan and piled into warm tortillas.",
+    "servings": 4,
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "categories": [
+      "Dinner",
+      "Mexican",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Rimmed baking sheets",
+      "Aluminum foil"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless skinless chicken breasts, sliced",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "bell peppers, sliced",
+        "quantity": 3,
+        "unit": "EACH"
+      },
+      {
+        "name": "red onion, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "chili powder",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "garlic powder",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "flour tortillas",
+        "quantity": 8,
+        "unit": "EACH"
+      },
+      {
+        "name": "sour cream",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Heat the oven to 425°F."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Toss the chicken, peppers, and onion with the oil, spices, and salt and spread over two baking sheets."
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Roast, stirring halfway, until the chicken is cooked through and the vegetables are charred at the edges.",
+        "estimatedTimeMinutes": 22
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Wrap the tortillas in foil and warm them in the oven for the last few minutes.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Squeeze the lime over the pan and serve with the tortillas, sour cream, and cilantro."
+      }
+    ]
+  },
+  {
+    "title": "Shrimp & Chorizo Paella",
+    "description": "Saffron rice with shrimp, chorizo, and peas, cooked until it forms a crisp socarrat.",
+    "servings": 6,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 45,
+    "totalTimeMinutes": 75,
+    "categories": [
+      "Dinner",
+      "Spanish",
+      "Gluten-Free"
+    ],
+    "equipment": [
+      "14-inch paella pan",
+      "Kitchen towel"
+    ],
+    "ingredients": [
+      {
+        "name": "chicken stock",
+        "quantity": 1.5,
+        "unit": "LITER"
+      },
+      {
+        "name": "saffron threads",
+        "quantity": 1,
+        "unit": "PINCH"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 3,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "Spanish chorizo, sliced",
+        "quantity": 6,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "yellow onion, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "red bell pepper, diced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "crushed tomatoes",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "bomba rice",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "large shrimp, peeled and deveined",
+        "quantity": 1,
+        "unit": "POUND"
+      },
+      {
+        "name": "frozen peas",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "lemon, cut into wedges",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "fresh parsley",
+        "quantity": 1,
+        "unit": "BUNCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Warm the stock with the saffron."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Brown the chorizo in the oil, then lift it out.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Cook the onion and pepper in the same pan until soft.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Add the garlic, paprika, and tomatoes and cook until thick.",
+        "estimatedTimeMinutes": 4
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Stir in the rice, then add the stock, salt, and chorizo. Bring to a boil, then simmer without stirring.",
+        "estimatedTimeMinutes": 18
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Press the shrimp into the rice, scatter over the peas, and cook until the shrimp are pink and the liquid is absorbed.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Turn up the heat until the rice crackles, to form a crisp crust underneath.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 8,
+        "instructionText": "Cover with a towel and rest, then serve with lemon wedges and parsley.",
+        "estimatedTimeMinutes": 10
+      }
+    ]
+  },
+  {
+    "title": "Homemade Margherita Pizza",
+    "description": "Chewy homemade crust topped with crushed tomatoes, fresh mozzarella, and basil.",
+    "servings": 4,
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 12,
+    "totalTimeMinutes": 130,
+    "categories": [
+      "Dinner",
+      "Italian",
+      "Vegetarian",
+      "Baking",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Pizza stone",
+      "Pizza peel",
+      "Stand mixer"
+    ],
+    "ingredients": [
+      {
+        "name": "bread flour",
+        "quantity": 3,
+        "unit": "CUP"
+      },
+      {
+        "name": "instant yeast",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "warm water",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "cornmeal",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "crushed San Marzano tomatoes",
+        "quantity": 1,
+        "unit": "CUP"
+      },
+      {
+        "name": "fresh mozzarella, torn",
+        "quantity": 8,
+        "unit": "OUNCE"
+      },
+      {
+        "name": "fresh basil",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "flaky sea salt",
+        "quantity": 1,
+        "unit": "PINCH"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Mix the flour, yeast, salt, water, and 1 tablespoon of oil and knead until smooth."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Cover and let rise until doubled.",
+        "estimatedTimeMinutes": 90
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Meanwhile, put the pizza stone in the oven and heat to 500°F for at least 45 minutes."
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Divide the dough in two and stretch each half into a 12-inch round on a cornmeal-dusted peel."
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Spread with the tomatoes, season with salt, and scatter over the mozzarella."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Slide onto the stone and bake one pizza at a time until blistered.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Top with basil and a drizzle of the remaining oil."
+      }
+    ]
+  },
+  {
+    "title": "Chicken Katsu Curry",
+    "description": "Crispy panko chicken cutlets with a rich, mild Japanese curry sauce over rice.",
+    "servings": 4,
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 65,
+    "categories": [
+      "Dinner",
+      "Japanese",
+      "Kid-Friendly"
+    ],
+    "equipment": [
+      "Dutch oven",
+      "Large skillet",
+      "Rice cooker",
+      "Shallow dishes"
+    ],
+    "ingredients": [
+      {
+        "name": "Japanese short-grain rice",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "water (for the rice)",
+        "quantity": 2.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "vegetable oil",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "yellow onion, sliced",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "carrots, chopped",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "Yukon Gold potatoes, cubed",
+        "quantity": 0.75,
+        "unit": "POUND"
+      },
+      {
+        "name": "water (for the curry)",
+        "quantity": 3,
+        "unit": "CUP"
+      },
+      {
+        "name": "Japanese curry roux",
+        "quantity": 1,
+        "unit": "BOX",
+        "packageQuantity": 3.5,
+        "packageUnit": "OUNCE"
+      },
+      {
+        "name": "boneless skinless chicken breasts",
+        "quantity": 1.5,
+        "unit": "POUND"
+      },
+      {
+        "name": "salt",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "all-purpose flour",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "large eggs",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "panko breadcrumbs",
+        "quantity": 1.5,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Rinse the rice and start it cooking with its water."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Cook the onion in 1 tablespoon of the oil until soft.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Add the carrots, potatoes, and curry water and simmer until tender.",
+        "estimatedTimeMinutes": 15
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Stir in the curry roux until dissolved and simmer until thick.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Meanwhile, butterfly and pound the chicken to an even thickness, season with salt, and coat in flour, then beaten egg, then panko."
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Fry the cutlets in the remaining oil until golden and cooked through, about 3 minutes per side, in batches.",
+        "estimatedTimeMinutes": 12
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Rest the cutlets, then slice.",
+        "estimatedTimeMinutes": 3
+      },
+      {
+        "stepOrder": 8,
+        "instructionText": "Serve the sliced katsu over the rice with the curry sauce spooned alongside."
+      }
+    ]
+  },
+  {
+    "title": "Moroccan Chicken Tagine with Apricots",
+    "description": "Chicken thighs braised with warm spices, apricots, and olives, served over fluffy couscous.",
+    "servings": 6,
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 80,
+    "categories": [
+      "Dinner",
+      "Moroccan",
+      "Make-Ahead"
+    ],
+    "equipment": [
+      "Tagine or Dutch oven",
+      "Saucepan"
+    ],
+    "ingredients": [
+      {
+        "name": "bone-in chicken thighs",
+        "quantity": 3,
+        "unit": "POUND"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 2,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "yellow onions, sliced",
+        "quantity": 2,
+        "unit": "EACH"
+      },
+      {
+        "name": "garlic, minced",
+        "quantity": 4,
+        "unit": "CLOVE"
+      },
+      {
+        "name": "fresh ginger, grated",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "ground cumin",
+        "quantity": 2,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground coriander",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground cinnamon",
+        "quantity": 1,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "salt",
+        "quantity": 1.5,
+        "unit": "TEASPOON"
+      },
+      {
+        "name": "chicken broth",
+        "quantity": 2,
+        "unit": "CUP"
+      },
+      {
+        "name": "dried apricots",
+        "quantity": 0.75,
+        "unit": "CUP"
+      },
+      {
+        "name": "honey",
+        "quantity": 1,
+        "unit": "TABLESPOON"
+      },
+      {
+        "name": "green olives",
+        "quantity": 0.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "EACH"
+      },
+      {
+        "name": "couscous",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "boiling water",
+        "quantity": 1.5,
+        "unit": "CUP"
+      },
+      {
+        "name": "fresh cilantro",
+        "quantity": 1,
+        "unit": "BUNCH"
+      },
+      {
+        "name": "toasted sliced almonds",
+        "quantity": 0.25,
+        "unit": "CUP"
+      }
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "instructionText": "Season the chicken with half the spices and salt."
+      },
+      {
+        "stepOrder": 2,
+        "instructionText": "Brown the chicken skin-side down in the oil, in batches, then set aside.",
+        "estimatedTimeMinutes": 10
+      },
+      {
+        "stepOrder": 3,
+        "instructionText": "Cook the onions in the same pan until soft.",
+        "estimatedTimeMinutes": 8
+      },
+      {
+        "stepOrder": 4,
+        "instructionText": "Add the garlic, ginger, and remaining spices and stir until fragrant.",
+        "estimatedTimeMinutes": 2
+      },
+      {
+        "stepOrder": 5,
+        "instructionText": "Add the broth, apricots, and honey, return the chicken skin-side up, cover, and simmer gently.",
+        "estimatedTimeMinutes": 35
+      },
+      {
+        "stepOrder": 6,
+        "instructionText": "Add the olives and lemon juice and simmer uncovered until the sauce thickens.",
+        "estimatedTimeMinutes": 5
+      },
+      {
+        "stepOrder": 7,
+        "instructionText": "Meanwhile, pour the boiling water over the couscous with a pinch of salt, cover for 5 minutes, and fluff."
+      },
+      {
+        "stepOrder": 8,
+        "instructionText": "Serve the tagine over the couscous with cilantro and almonds. It tastes even better the next day."
       }
     ]
   }

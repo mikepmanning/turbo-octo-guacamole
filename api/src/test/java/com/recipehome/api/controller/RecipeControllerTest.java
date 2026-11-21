@@ -339,6 +339,30 @@ class RecipeControllerTest {
     }
 
     @Test
+    void setExcludedFromMealPlans_ShouldReturnTheUpdatedIds() throws Exception {
+        when(recipeService.setExcludedFromMealPlans(List.of(1L, 2L), true)).thenReturn(List.of(1L));
+
+        mockMvc.perform(put("/api/recipes/meal-plan-exclusion")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[1,2],\"excluded\":true}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.updatedIds", contains(1)));
+    }
+
+    @Test
+    void setExcludedFromMealPlans_ShouldReturn400_ForNoIdsOrNoChoice() throws Exception {
+        mockMvc.perform(put("/api/recipes/meal-plan-exclusion").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[],\"excluded\":true}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.ids").value("Select at least one recipe"));
+        mockMvc.perform(put("/api/recipes/meal-plan-exclusion").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[1]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.excluded").value("Say whether to exclude or include the recipes"));
+        verify(recipeService, never()).setExcludedFromMealPlans(any(), anyBoolean());
+    }
+
+    @Test
     void deleteRecipes_ShouldReturnTheDeletedIds() throws Exception {
         when(recipeService.deleteRecipes(List.of(1L, 2L, 3L))).thenReturn(List.of(1L, 3L));
 

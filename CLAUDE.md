@@ -134,7 +134,18 @@ To run both backend and frontend together:
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
 
 ### Recipe Search
-Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeSearch.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only.
+Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeSearch.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only. The search bar and the Select button are always shown, also while the recipes load (typed filters apply once they arrive); Select is disabled while there are no cards to select (loading, failed to load, no recipes, or no matches). The Filters panel also has "Only recipes excluded from meal plans" (`excludedOnly`, a boolean in the filters).
+
+### Meal Planning
+"Plan Meals" on the Meal Plans page (`/meal-plans`) opens `MealPlanSetupModal`: pick meals (Breakfast, Lunch, Snack, Dinner), 1-7 days and a start date. The page loads the recipes in the background when it opens; if the dialog is opened sooner it says "Loading recipes..." (with Retry if they fail) and shows the form once they arrive. Generate builds a draft in the browser from the recipes already loaded (`generatePlan` in `src/components/mealPlan.js`) and opens it at `/meal-plan/new` (`NewMealPlan`) in the router state; nothing is saved until "Save plan" (`POST /api/meal-plans`), which then shows the saved plan at `/meal-plans/:id` (`MealPlanView`).
+- Pages: `/meal-plans` (`MealPlanList`, linked as "Meal Plans" from the recipe list) has "Plan Meals" and lists the saved plans, latest start date first, marked Upcoming/Current/Past; `/meal-plans/:id` (`MealPlanView`) shows one, with "Edit Plan" (edits in place, like RecipeDetail; `PUT /api/meal-plans/:id`, then "Changes saved.") and "Delete Plan" (asks, soft deletes, then the list says "“…” was deleted.").
+- `MealPlanEditor` is the editing UI shared by the new and saved plan pages (like `RecipeEditor`): name, start date, grid, slot actions, Save/Cancel, and the discard dialog. Changing the start date moves the whole plan (`moveToStartDate`): each day's meals keep their day, and an automatic name ("Week of Nov 23") follows the new dates while a chosen name is kept. The date field keeps its text as the browser reports it while typing and the plan follows each complete date. A new plan always asks before discarding; an edit asks only if something changed. For a saved plan it gets the entries' recipe summaries (`knownRecipes`), so a recipe deleted since shows as "Old Tacos (no longer available)". `planFromSaved` turns a saved plan into a draft. Both pages draw the grid with `MealPlanGrid`.
+- A meal draws from recipes whose categories include its name (whole category, ignoring case and accents). Each meal's recipes are shuffled and dealt one per day, so a recipe doesn't repeat within a meal until all have been used, and dealing avoids the same recipe twice in a day. A meal with no recipes gets empty slots (and can't be ticked in the dialog).
+- In the editor each slot can be swapped for another random recipe (`pickRandomRecipe`), chosen with `RecipePickerDialog` (the meal's recipes, or any recipe with "Show all recipes"), or removed; empty slots can be filled again. On `/meal-plan/new` every edit is written back to the router state, so a refresh keeps the draft (editing a saved plan keeps changes in component state only). Cancel and "Back to Meal Plans" ask before discarding (then return to `/meal-plans`); the browser's Back button does not (`useBlocker` needs a data router, and the app uses `<BrowserRouter>`).
+- "Avoid recent recipes" in the dialog (Don't avoid / previous 1, 2 or 4 weeks; remembered in localStorage as `recipehome.mealPlan.avoidDays`) looks at the days just before the start date (`avoidWindow`, e.g. 2 weeks before Nov 30 = Nov 16 - Nov 29) and fetches the meals planned in that period from every saved plan (`GET /api/meal-plans/meals`). It's a preference across all meals, not a hard rule: each meal's deck deals recipes not planned in the period first, then the recent ones least recently planned first, so no slot is left empty. The dialog shows what will be avoided and warns per meal when some recipes will be reused (`shortfalls`); Generate waits for the check (with Retry if it fails). The draft keeps `avoid: { from, to, lastPlanned }`: the review page says "Avoiding recipes planned Nov 16 – Nov 29", marks reused recipes "Also planned Nov 16" (also in the picker), and Swap/Random prefer recipes not planned then. Editing a saved plan doesn't avoid (the setting isn't stored).
+- "Use up ingredients" in the dialog (up to 4 rows, e.g. chicken in 2 Dinner): a row matches recipes for that meal with an ingredient whose name contains the text (ignoring case and accents). The dialog lists the matching ingredient names with recipe counts so the user can untick ones they don't mean (e.g. "chicken stock"; stored as `excluded`), and says how many recipes qualify or warns when too few do. A row's meal is limited to the chosen meals and its count to the number of days. Generating places those meals first, on the earliest days, each a different recipe (not-recently-planned ones first; recent ones rather than none), then deals the rest as usual without repeating them. The review page shows a checklist ("Chicken: 2 of 2 dinners ✓", via `ingredientChecklist`) and "Uses chicken" badges (also in the picker), and Swap on such a slot keeps the ingredient when another recipe has it. Other meals of that type are still random, so they may happen to use the ingredient too. Saved plans don't store the requests.
+- Recipes can be excluded from meal plans (`excludedFromMealPlans` on each recipe from `GET /api/recipes`): "Exclude from meal plans" / "Include in meal plans" on the recipe page (saved straight away), or for a selection in Select mode on the recipe list (`PUT /api/recipes/meal-plan-exclusion`). Their cards are tagged "Not in meal plans". `recipesForMeal` leaves them out, so generating, Swap/Random, use-up ingredients and the dialog's counts never use them; the dialog notes how many are excluded. The picker hides them unless "Show all recipes" is ticked (then they're tagged and can still be chosen deliberately), and a saved plan that already has one keeps it, tagged "Excluded from meal plans" when editing.
+- The draft is plain data: `{ name, startDate, days, mealTypes, slots: { 'YYYY-MM-DD|LUNCH': recipeId | null }, avoid, useUp }`. Dates are `YYYY-MM-DD` strings in the local calendar; build them with `parseDate`/`toDateString`, never `new Date('YYYY-MM-DD')` (that is midnight UTC, the previous day in the Americas).
 
 ### Testing
 - Vitest is configured in the `test` block of `vite.config.js`; coverage uses the V8 provider with an 80% line threshold (`src/main.jsx` is excluded).
@@ -142,7 +153,7 @@ Search on the recipe list filters in the browser: `GET /api/recipes` already ret
 - Tests sit next to the code they cover: `RecipeForm.jsx` -> `RecipeForm.test.jsx`.
 - `src/test/setup.js` loads the jest-dom matchers and cleans up after each test.
 - `src/test/renderWithRouter.jsx` renders a page inside a `MemoryRouter` (with optional router state) and exposes the current path via `data-testid="location"`.
-- `src/test/fixtures/` holds sample API payloads (units, imported and saved recipes).
+- `src/test/fixtures/` holds sample API payloads (units, imported and saved recipes, meal-planning recipes, draft and saved meal plans).
 - Component tests mock the API layer with `vi.mock('../services/api')`; `api.test.js` tests the API layer itself against a stubbed `fetch`.
 - `testTimeout` is 15s (Vitest's default is 5s): form tests that type through user-event take 3-5s under `npm test`.
 - The environment is jsdom rather than happy-dom: happy-dom wrongly rejects `<input type="number" step="0.01">` values, which breaks RecipeForm's form validation.
@@ -173,16 +184,25 @@ The domain model uses a soft-delete pattern with audit timestamps:
 - `CascadeType.ALL` and `orphanRemoval = true` on Recipe side
 - Use helper methods on Recipe: `addStep()`, `removeStep()`, `addIngredient()`, `removeIngredient()` to maintain bidirectional consistency
 
+**Recipe.excludedFromMealPlans** - never chosen automatically for meal plans (column `excluded_from_meal_plans`,
+`DEFAULT false NOT NULL`, so `ddl-auto=update` can add it to a database that already has recipes). Set only through
+`PUT /api/recipes/meal-plan-exclusion`; creating or updating a recipe ignores it, so an edit can't clear it.
+
 **Recipe Collections**
 - `equipment` - List of strings stored in `recipe_equipment` table via `@ElementCollection`
 - `categories` - Set of strings stored in `recipe_categories` table via `@ElementCollection`
+
+**MealPlan** → **MealPlanEntry** (One-to-Many bidirectional) → **Recipe** (Many-to-One)
+- MealPlan has `name` (optional), `startDate`, `days` (1-7), and `mealTypes` (Set of the `MealType` enum: BREAKFAST, LUNCH, SNACK, DINNER, in `meal_plan_meal_types`)
+- Each MealPlanEntry puts one recipe in one day's meal; unique per plan, date and meal type. Days of a meal type can have no entry (the user removed it)
+- Use `MealPlan.addEntry()` / `removeEntry()`; entries point to Recipe, but Recipe has no link back
 
 ### Layered Architecture
 
 The application follows a three-tier architecture:
 
 **Repositories** (`api/src/main/java/com/recipehome/api/repository/`)
-- `RecipeRepository`, `StepRepository`, `IngredientRepository`
+- `RecipeRepository`, `StepRepository`, `IngredientRepository`, `MealPlanRepository`
 - Extend Spring Data JPA's `JpaRepository`
 - All queries filter by `isActive = true` to respect soft deletes
 - Provide domain-specific query methods (search by title, category, time, etc.)
@@ -196,6 +216,7 @@ The application follows a three-tier architecture:
 
 **REST API** (`api/src/main/java/com/recipehome/api/controller/`)
 - `RecipeController` exposes `/api/recipes` endpoints
+- `MealPlanController` exposes `/api/meal-plans` (list, create, get, update and delete meal plans)
 - Steps and ingredients are embedded in Recipe payloads (no separate endpoints)
 - All recipe operations handled through a single unified endpoint
 - See `api/CLAUDE.md` for complete API endpoint documentation
@@ -224,6 +245,6 @@ Environment variables:
 - `DB_HOST`, `DB_PORT`, `DB_NAME` - Connection details
 - `DB_USERNAME`, `DB_PASSWORD` - Credentials
 - `HIBERNATE_DDL_AUTO` - Schema management (update/validate/etc.)
-- `SEED_DATA` - Load the 20 sample recipes into an empty database at startup (default: true)
+- `SEED_DATA` - Load the 86 sample recipes into an empty database at startup (default: true)
 
 See `api/CLAUDE.md` for detailed setup instructions.

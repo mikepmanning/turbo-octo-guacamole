@@ -3,6 +3,7 @@ package com.recipehome.api.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +54,12 @@ public class Recipe extends BaseEntity {
 
     @Column(name = "source_url")
     private String sourceUrl;
+
+    // Never chosen automatically for meal plans. The database default lets ddl-auto=update add
+    // the column to a table that already has recipes.
+    @Column(name = "excluded_from_meal_plans", nullable = false)
+    @ColumnDefault("false")
+    private Boolean excludedFromMealPlans = false;
 
 
     // Constructors
@@ -177,5 +184,13 @@ public class Recipe extends BaseEntity {
 
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
+    }
+
+    public Boolean getExcludedFromMealPlans() {
+        return excludedFromMealPlans;
+    }
+
+    public void setExcludedFromMealPlans(Boolean excludedFromMealPlans) {
+        this.excludedFromMealPlans = excludedFromMealPlans;
     }
 }

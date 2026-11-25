@@ -70,7 +70,7 @@ mvnw.cmd spring-boot:run
 
 The application follows standard Spring Boot Maven project layout:
 - `src/main/java/com/recipehome/api/` - Main application code
-  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, MealPlan, MealPlanEntry, User, BaseEntity)
+  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, MealPlan, MealPlanEntry, User, Family, FamilyMember, BaseEntity)
   - `config/` - `JpaConfig` (auditing) and `SecurityConfig` (which endpoints need a login, BCrypt, JWT keys)
   - `security/` - `TokenService` (issues login tokens) and `JwtProperties` (`recipehome.jwt.*`)
   - `enums/` - `Unit` (ingredient units) and `MealType` (Breakfast, Lunch, Snack, Dinner)
@@ -202,6 +202,29 @@ All endpoints are prefixed with `/api`
 - There is no logout endpoint: the browser forgets the token. A token stays valid until it expires
 - Tests: `@WebMvcTest` classes use `@AutoConfigureMockMvc(addFilters = false)` (controller logic only);
   `@SpringBootTest` + MockMvc classes use `@WithMockUser`; `AuthIntegrationTest` covers the real login flow
+
+**Family Endpoints** (`/api/family`, always the logged-in user's family) - `FamilyService`, `FamilyController`
+- Model: `Family` (`families`: `name`, `inviteCode`, `inviteCodeCreatedAt`) has `FamilyMember`s (`family_members`:
+  user, `role` OWNER or MEMBER, joined = `createdAt`). `user_id` is unique, so a user is in at most one family.
+  Exactly one OWNER per family. Leaving or being removed deletes the membership row (not a soft delete), so the
+  user can create or join another family. Deleting a family soft-deletes it, clears its code and removes everyone
+- Invite codes: 8 characters from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` (no 0/O or 1/I), `SecureRandom`, unique
+  across all families. One code per family at a time; made when the family is created. Matched ignoring case,
+  spaces and dashes (the UI shows `ABCD-2345`)
+- `GET /api/family` - 200 the family, or 204 when the user isn't in one. Response `{id, name, myRole, inviteCode,
+  inviteCodeCreatedAt, createdAt, members: [{userId, firstName, lastName, email, role, joinedAt}]}`, members owner
+  first then by when they joined. `inviteCode`/`inviteCodeCreatedAt` are only sent to the owner
+- `POST /api/family` `{"name"}` - create (201); the user becomes the owner
+- `PUT /api/family` `{"name"}` - rename (owner). `DELETE /api/family` - delete (owner; 204)
+- `POST /api/family/invite-code` - new code, replacing the old one (owner). `DELETE /api/family/invite-code` -
+  revoke: no code works until the owner makes a new one (owner)
+- `POST /api/family/join` `{"code"}` - join as a member
+- `POST /api/family/leave` - 204. The owner can only leave as the last member (which deletes the family)
+- `DELETE /api/family/members/{userId}` - remove a member (owner; not yourself)
+- `POST /api/family/members/{userId}/make-owner` - hand over ownership; the caller becomes a member (owner)
+- Errors are `FamilyException` with `{"error"}`: 404 not in a family / invalid or revoked code / not a member,
+  409 already in a family, 403 owner only, 422 rule (owner leaving others behind, removing yourself)
+- Recipes and meal plans are not linked to families yet
 
 **Recipe Endpoints** (`/api/recipes`)
 - `POST /api/recipes` - Create a new recipe (with steps and ingredients)

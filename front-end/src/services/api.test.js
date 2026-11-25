@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
-  recipeApi, mealPlanApi, authApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
+  recipeApi, mealPlanApi, authApi, familyApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
 } from './api'
 
 // Minimal stand-in for a fetch Response.
@@ -487,5 +487,58 @@ describe('authApi account changes', () => {
     fetch.mockResolvedValue(response(new Error('not json'), { ok: false }))
 
     await expect(authApi.changePassword('a', 'b')).rejects.toThrow('Could not change your password')
+  })
+})
+
+describe('familyApi', () => {
+  const family = { id: 7, name: 'The Lovelaces' }
+  const json = { 'Content-Type': 'application/json', Authorization: 'Bearer tok' }
+  const auth = { Authorization: 'Bearer tok' }
+
+  beforeEach(() => {
+    saveSession({ token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { id: 1 } })
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it.each([
+    { call: () => familyApi.getMyFamily(), url: '/api/family', init: { method: 'GET', headers: auth } },
+    { call: () => familyApi.createFamily('The Lovelaces'), url: '/api/family',
+      init: { method: 'POST', headers: json, body: JSON.stringify({ name: 'The Lovelaces' }) } },
+    { call: () => familyApi.renameFamily('Team'), url: '/api/family',
+      init: { method: 'PUT', headers: json, body: JSON.stringify({ name: 'Team' }) } },
+    { call: () => familyApi.newInviteCode(), url: '/api/family/invite-code', init: { method: 'POST', headers: auth } },
+    { call: () => familyApi.revokeInviteCode(), url: '/api/family/invite-code', init: { method: 'DELETE', headers: auth } },
+    { call: () => familyApi.joinFamily('abcd-2345'), url: '/api/family/join',
+      init: { method: 'POST', headers: json, body: JSON.stringify({ code: 'abcd-2345' }) } },
+    { call: () => familyApi.removeMember(2), url: '/api/family/members/2', init: { method: 'DELETE', headers: auth } },
+    { call: () => familyApi.makeOwner(2), url: '/api/family/members/2/make-owner', init: { method: 'POST', headers: auth } },
+  ])('$url $init.method returns the family', async ({ call, url, init }) => {
+    fetch.mockResolvedValue({ ...response(family), status: 200 })
+
+    await expect(call()).resolves.toEqual(family)
+    expect(fetch).toHaveBeenCalledWith(url, init)
+  })
+
+  it.each([
+    { name: 'getMyFamily (not in a family)', call: () => familyApi.getMyFamily() },
+    { name: 'leaveFamily', call: () => familyApi.leaveFamily() },
+    { name: 'deleteFamily', call: () => familyApi.deleteFamily() },
+  ])('$name resolves to null on 204', async ({ call }) => {
+    fetch.mockResolvedValue({ ok: true, status: 204, json: vi.fn() })
+
+    await expect(call()).resolves.toBeNull()
+  })
+
+  it('rejects with the server\'s message', async () => {
+    fetch.mockResolvedValue({ ...response({ error: 'Only the family owner can do that' }, { ok: false }), status: 403 })
+
+    await expect(familyApi.revokeInviteCode()).rejects.toThrow('Only the family owner can do that')
+    expect(getSession()).not.toBeNull()
+  })
+
+  it('falls back to a general message', async () => {
+    fetch.mockResolvedValue(response(new Error('not json'), { ok: false }))
+
+    await expect(familyApi.joinFamily('X')).rejects.toThrow('Could not join the family')
   })
 })

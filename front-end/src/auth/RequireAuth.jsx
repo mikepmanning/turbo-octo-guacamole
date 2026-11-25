@@ -18,6 +18,7 @@ export default function RequireAuth() {
     <>
       <div className="account-bar">
         <span>Signed in as <strong>{user.firstName} {user.lastName}</strong></span>
+        <Link to="/family" className="account-bar-link">Family</Link>
         <Link to="/account" className="account-bar-link">My account</Link>
         <button type="button" className="account-bar-logout" onClick={logout}>Log out</button>
       </div>

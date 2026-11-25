@@ -10,6 +10,7 @@ import RequireAuth from './auth/RequireAuth'
 import LoginPage from './auth/LoginPage'
 import RegisterPage from './auth/RegisterPage'
 import AccountPage from './auth/AccountPage'
+import FamilyPage from './family/FamilyPage'
 import './App.css'
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/meal-plans" element={<MealPlanList />} />
             <Route path="/meal-plans/:id" element={<MealPlanView />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/family" element={<FamilyPage />} />
           </Route>
         </Routes>
       </Router>

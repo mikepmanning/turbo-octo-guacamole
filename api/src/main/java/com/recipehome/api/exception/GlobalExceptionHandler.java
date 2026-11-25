@@ -87,6 +87,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
     }
 
+    @ExceptionHandler(FamilyException.class)
+    public ResponseEntity<Map<String, String>> handleFamily(FamilyException e) {
+        return ResponseEntity.status(e.getStatus()).body(Map.of("error", e.getMessage()));
+    }
+
     // A field error, like a validation failure, so the form can show it next to the field.
     @ExceptionHandler(IncorrectPasswordException.class)
     public ResponseEntity<Map<String, String>> handleIncorrectPassword(IncorrectPasswordException e) {

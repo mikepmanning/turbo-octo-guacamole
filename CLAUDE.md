@@ -140,6 +140,13 @@ Every page except `/login` and `/register` needs a login. `App` wraps the routes
 - `/account` (`AccountPage`, linked as "My account" from the top bar) edits the user's names, email and date of birth (`PUT /api/auth/me`, then "Your details were saved." and `updateUser` refreshes the session) and changes the password (current password, new one twice; `PUT /api/auth/me/password`, then "Your password was changed." and the fields empty). Each form shows its own errors; a wrong current password appears next to that field. The checks are `validateProfile` / `validatePasswordChange` in `accountRules.js`, and the account forms share `FormField`.
 - Use `useAuth()` (`authContext.js`) for `{ user, login, register, logout, updateUser }`. Tests render pages with a stand-in context via `src/test/renderWithAuth.jsx`.
 
+### Family
+`/family` (`src/family/FamilyPage.jsx`, linked as "Family" in the top bar) lets a user create or join a family, and manage it. A user is in at most one family; its creator is the owner. API calls are `familyApi` in `api.js` (`getMyFamily` resolves to null when the user isn't in one).
+- Not in a family: "Create a family" (name) and "Join a family" (invite code, any case, with or without the dash).
+- In a family: the name (owner: Rename), the members (owner first, "(you)" and an Owner badge). The owner also gets the invite code card (shown as `ABCD-2345` with Copy; "New code" asks first because the old code stops working; "Revoke code" asks, then "Create invite code" makes one without asking) and, per other member, "Make owner" and "Remove". Members see "ask <owner> for the invite code" instead.
+- Leaving: members can leave; the owner can only leave as the last member (that deletes the family), otherwise they make someone else the owner first. The owner can delete the family. Destructive actions use `ConfirmDialog`; a failure stays in the dialog. Results are shown as a notice ("You left “…”.").
+- `familyFormat.js`: `formatInviteCode`, `fullName`, `ownerOf`. Test fixtures are in `src/test/fixtures/families.js`.
+
 ### Recipe Search
 Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeFilters.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only. The search bar and the Select button are always shown, also while the recipes load (typed filters apply once they arrive); Select is disabled while there are no cards to select (loading, failed to load, no recipes, or no matches). The Filters panel also has "Only recipes excluded from meal plans" (`excludedOnly`, a boolean in the filters).
 
@@ -227,6 +234,7 @@ The application follows a three-tier architecture:
 - `RecipeController` exposes `/api/recipes` endpoints
 - `MealPlanController` exposes `/api/meal-plans` (list, create, get, update and delete meal plans)
 - `AuthController` exposes `/api/auth` (register, login, get and edit me, change password). Every other `/api` endpoint needs a login token (`SecurityConfig`)
+- `FamilyController` exposes `/api/family` (create, join with an invite code, manage and leave the user's family). **Family** → **FamilyMember** (OWNER or MEMBER) → **User**; a user is in at most one family
 - Steps and ingredients are embedded in Recipe payloads (no separate endpoints)
 - All recipe operations handled through a single unified endpoint
 - See `api/CLAUDE.md` for complete API endpoint documentation

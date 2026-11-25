@@ -231,6 +231,45 @@ export const recipeApi = {
   }
 };
 
+// Family requests: rejects with the server's own message ("Only the family owner can do that"),
+// or the fallback; plus fieldErrors when the server named fields (e.g. { name: '...' }).
+const familyRequest = async (path, method, fallback, body) => {
+  const response = await apiFetch(`${API_BASE_URL}/family${path}`, body === undefined
+    ? { method }
+    : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!response.ok) throw await authError(response, fallback);
+  return response.status === 204 ? null : response.json();
+};
+
+// The logged-in user's family. Most calls resolve to the family as the user sees it:
+// { id, name, myRole: 'OWNER' | 'MEMBER', inviteCode, inviteCodeCreatedAt, createdAt,
+//   members: [{ userId, firstName, lastName, email, role, joinedAt }] }
+// inviteCode is only sent to the owner, and is null after it was revoked.
+export const familyApi = {
+  // The family, or null when the user isn't in one
+  getMyFamily: () => familyRequest('', 'GET', 'Failed to load your family'),
+
+  createFamily: (name) => familyRequest('', 'POST', 'Could not create the family', { name }),
+
+  renameFamily: (name) => familyRequest('', 'PUT', 'Could not rename the family', { name }),
+
+  // Owner only; everyone is removed from the family
+  deleteFamily: () => familyRequest('', 'DELETE', 'Could not delete the family'),
+
+  // Owner only: a new code (the old one stops working), or no code at all
+  newInviteCode: () => familyRequest('/invite-code', 'POST', 'Could not create a new invite code'),
+  revokeInviteCode: () => familyRequest('/invite-code', 'DELETE', 'Could not revoke the invite code'),
+
+  // The code may be typed in any case, with or without the dash
+  joinFamily: (code) => familyRequest('/join', 'POST', 'Could not join the family', { code }),
+
+  leaveFamily: () => familyRequest('/leave', 'POST', 'Could not leave the family'),
+
+  // Owner only
+  removeMember: (userId) => familyRequest(`/members/${userId}`, 'DELETE', 'Could not remove them'),
+  makeOwner: (userId) => familyRequest(`/members/${userId}/make-owner`, 'POST', 'Could not change the owner'),
+};
+
 export const mealPlanApi = {
   // Save a new meal plan: { name, startDate, days, mealTypes, entries: [{ date, mealType, recipeId }] }.
   // Resolves to the saved plan, with a recipe summary in each entry.

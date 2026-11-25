@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { render, screen, within, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import RecipeSearch from './RecipeSearch'
-import { emptyFilters } from './recipeSearch'
+import { emptyFilters } from './recipeFilters'
 
 // RecipeSearch with real state, reporting every change to `onChange`.
 function renderSearch(initial = {}, categories = ['Dinner', 'Dessert']) {

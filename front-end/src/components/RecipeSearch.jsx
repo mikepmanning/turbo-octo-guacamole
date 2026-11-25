@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react'
-import { activeFilters, emptyFilters } from './recipeSearch'
+import { activeFilters, emptyFilters } from './recipeFilters'
 import './RecipeSearch.css'
 
 const PANEL_FIELDS = ['category', 'ingredient', 'maxPrepTimeMinutes', 'maxCookTimeMinutes', 'maxTotalTimeMinutes', 'excludedOnly']

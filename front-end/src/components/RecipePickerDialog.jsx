@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react'
-import { emptyFilters, filterRecipes } from './recipeSearch'
+import { emptyFilters, filterRecipes } from './recipeFilters'
 import { formatShortDate, mealLabel, recipeMeta, recipesForMeal, usesIngredient } from './mealPlan'
 import './ConfirmDialog.css'
 import './MealPlan.css'

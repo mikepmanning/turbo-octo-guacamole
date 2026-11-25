@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   emptyFilters, matchesFilters, filterRecipes, matchNotes, activeFilters, hasActiveFilters, knownCategories,
-} from './recipeSearch'
+} from './recipeFilters'
 
 const recipe = (fields) => ({
   title: 'Untitled', description: null, categories: [], ingredients: [], equipment: [],

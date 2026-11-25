@@ -5,7 +5,7 @@ import ImportRecipeModal from './ImportRecipeModal'
 import ConfirmDialog from './ConfirmDialog'
 import SelectionBar from './SelectionBar'
 import RecipeSearch from './RecipeSearch'
-import { emptyFilters, filterRecipes, hasActiveFilters, knownCategories, matchNotes } from './recipeSearch'
+import { emptyFilters, filterRecipes, hasActiveFilters, knownCategories, matchNotes } from './recipeFilters'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -55,7 +55,7 @@ function RecipeList() {
   const [error, setError] = useState(null)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
-  // Search: filters the loaded recipes in the browser (see recipeSearch.js).
+  // Search: filters the loaded recipes in the browser (see recipeFilters.js).
   const [filters, setFilters] = useState(emptyFilters)
   const searchInputRef = useRef(null)
   const visibleRecipes = useMemo(() => filterRecipes(recipes, filters), [recipes, filters])

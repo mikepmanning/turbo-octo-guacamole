@@ -15,13 +15,14 @@ const ada = { id: 1, email: 'ada@example.com', firstName: 'Ada', lastName: 'Love
 const session = { token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: ada }
 
 function Probe() {
-  const { user, login, register, logout } = useAuth()
+  const { user, login, register, logout, updateUser } = useAuth()
   return (
     <div>
       <p>{user ? `User: ${user.firstName}` : 'Logged out'}</p>
       <button onClick={() => login('ada@example.com', 'pw').catch(() => {})}>login</button>
       <button onClick={() => register({ email: 'ada@example.com' })}>register</button>
       <button onClick={logout}>logout</button>
+      <button onClick={() => updateUser({ ...ada, firstName: 'Augusta' })}>update</button>
     </div>
   )
 }
@@ -113,6 +114,18 @@ describe('AuthProvider', () => {
     act(() => window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT)))
 
     expect(screen.getByText('Logged out')).toBeInTheDocument()
+  })
+
+  it('updateUser shows and saves the new details, keeping the token', async () => {
+    const user = userEvent.setup()
+    saveSession(session)
+    renderProvider()
+    await screen.findByText('User: Ada')
+
+    await user.click(screen.getByRole('button', { name: 'update' }))
+
+    expect(screen.getByText('User: Augusta')).toBeInTheDocument()
+    expect(getSession()).toEqual({ ...session, user: { ...ada, firstName: 'Augusta' } })
   })
 
   it('useAuth outside the provider is a mistake', () => {

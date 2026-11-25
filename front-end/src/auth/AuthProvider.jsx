@@ -54,7 +54,17 @@ export default function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
-  const value = useMemo(() => ({ user, login, register, logout }), [user, login, register, logout])
+  // After the user edits their details: keep the token, show the new details everywhere.
+  const updateUser = useCallback((updated) => {
+    const session = getSession()
+    if (session) saveSession({ ...session, user: updated })
+    setUser(updated)
+  }, [])
+
+  const value = useMemo(
+    () => ({ user, login, register, logout, updateUser }),
+    [user, login, register, logout, updateUser]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -93,6 +93,29 @@ export const authApi = {
     if (!response.ok) throw new Error(await errorMessage(response, 'Failed to load your account'));
     return response.json();
   },
+
+  // Save the logged-in user's { email, firstName, lastName, dateOfBirth }; resolves to the updated user.
+  // Rejects like register: the message, plus fieldErrors when the server named the fields.
+  updateProfile: async (profile) => {
+    const response = await apiFetch(`${API_BASE_URL}/auth/me`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile),
+    });
+    if (!response.ok) throw await authError(response, 'Could not save your details');
+    return response.json();
+  },
+
+  // Change the logged-in user's password. A wrong current password rejects with
+  // fieldErrors.currentPassword (a 400, so it doesn't log the user out).
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await apiFetch(`${API_BASE_URL}/auth/me/password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    if (!response.ok) throw await authError(response, 'Could not change your password');
+  },
 };
 
 export const recipeApi = {

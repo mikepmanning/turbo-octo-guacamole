@@ -39,6 +39,7 @@ describe('RequireAuth', () => {
 
     expect(screen.getByText('Meal plans page')).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'My account' })).toHaveAttribute('href', '/account')
 
     await user.click(screen.getByRole('button', { name: 'Log out' }))
     expect(logout).toHaveBeenCalled()

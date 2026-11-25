@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './authContext'
 import './Auth.css'
 
@@ -18,6 +18,7 @@ export default function RequireAuth() {
     <>
       <div className="account-bar">
         <span>Signed in as <strong>{user.firstName} {user.lastName}</strong></span>
+        <Link to="/account" className="account-bar-link">My account</Link>
         <button type="button" className="account-bar-logout" onClick={logout}>Log out</button>
       </div>
       <Outlet />

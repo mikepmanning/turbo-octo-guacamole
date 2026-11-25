@@ -5,6 +5,7 @@ import {
   destinationAfterLogin, validateAccount, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
 } from './accountRules'
 import { toDateString } from '../components/mealPlan'
+import FormField from './FormField'
 import './Auth.css'
 
 const EMPTY = { firstName: '', lastName: '', email: '', dateOfBirth: '', password: '', confirmPassword: '' }
@@ -52,21 +53,15 @@ export default function RegisterPage() {
     }
   }
 
-  // The error sits outside the <label> so it isn't part of the field's name.
   const field = (name, label, props) => (
-    <div className="auth-field">
-      <label>
-        {label}
-        <input
-          value={account[name]}
-          onChange={update(name)}
-          aria-invalid={fieldErrors[name] ? true : undefined}
-          aria-describedby={fieldErrors[name] ? `${name}-error` : undefined}
-          {...props}
-        />
-      </label>
-      {fieldErrors[name] && <span id={`${name}-error`} className="field-error">{fieldErrors[name]}</span>}
-    </div>
+    <FormField
+      name={name}
+      label={label}
+      value={account[name]}
+      onChange={update(name)}
+      error={fieldErrors[name]}
+      {...props}
+    />
   )
 
   return (

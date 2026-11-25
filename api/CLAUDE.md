@@ -187,6 +187,13 @@ All endpoints are prefixed with `/api`
   `{"error": "Invalid email or password"}` for an unknown email or a wrong password (the same message and
   about the same time, so a login doesn't reveal which emails have accounts)
 - `GET /api/auth/me` - the logged-in user; 401 if the token's user no longer exists
+- `PUT /api/auth/me` - edit the logged-in user: body `{"email", "firstName", "lastName", "dateOfBirth"}` (all
+  required, same rules as register); returns the updated user. 409 if the email belongs to another user. The
+  token keeps working (its subject is the id; its `email` claim may then be out of date, so don't rely on it)
+- `PUT /api/auth/me/password` - body `{"currentPassword", "newPassword"}` (8-72 characters); 204. A wrong current
+  password is a 400 field error `{"currentPassword": "Current password is incorrect"}`
+  (`IncorrectPasswordException`), deliberately not 401, which the front end treats as "log in again".
+  Tokens issued before the change stay valid until they expire
 - Passwords are stored only as BCrypt hashes (`User.passwordHash`, never returned)
 - Tokens are HS256 JWTs (Spring Security's OAuth2 resource server, Nimbus): subject = user id, claim `email`,
   issuer `recipehome`, lasting `recipehome.jwt.expiration` (`JWT_EXPIRATION`, default 7d). Signed with

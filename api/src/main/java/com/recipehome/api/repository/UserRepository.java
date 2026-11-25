@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /** Any user with this email, including deactivated ones: emails stay unique. */
     boolean existsByEmail(String email);
+
+    /** Whether another user (active or not) already has this email. */
+    boolean existsByEmailAndIdNot(String email, Long id);
 }

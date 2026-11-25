@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-// { user, login(email, password), register(account), logout() }; see AuthProvider.
+// { user, login(email, password), register(account), logout(), updateUser(user) }; see AuthProvider.
 export const AuthContext = createContext(null)
 
 export function useAuth() {

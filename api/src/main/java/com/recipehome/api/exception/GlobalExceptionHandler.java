@@ -87,6 +87,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
     }
 
+    // A field error, like a validation failure, so the form can show it next to the field.
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<Map<String, String>> handleIncorrectPassword(IncorrectPasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("currentPassword", e.getMessage()));
+    }
+
     /** The JSON field Jackson couldn't read, like "entries[0].date"; empty if it isn't known. */
     private static String fieldPath(Throwable e) {
         for (Throwable cause = e; cause != null; cause = cause.getCause()) {

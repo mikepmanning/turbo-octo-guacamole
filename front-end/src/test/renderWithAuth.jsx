@@ -14,7 +14,7 @@ function LocationProbe() {
  * Returns the render result plus `auth`, the context value.
  */
 export function renderWithAuth(element, { route = '/', path = route, state, user = null, routes = {}, ...overrides } = {}) {
-  const auth = { user, login: vi.fn(), register: vi.fn(), logout: vi.fn(), ...overrides }
+  const auth = { user, login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateUser: vi.fn(), ...overrides }
   const result = render(
     <AuthContext.Provider value={auth}>
       <MemoryRouter initialEntries={[{ pathname: route, state }]}>

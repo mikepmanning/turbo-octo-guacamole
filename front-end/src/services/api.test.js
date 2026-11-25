@@ -436,3 +436,56 @@ describe('authApi', () => {
     await expect(authApi.getCurrentUser()).rejects.toThrow('Failed to load your account')
   })
 })
+
+describe('authApi account changes', () => {
+  beforeEach(() => {
+    saveSession({ token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { id: 1 } })
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('updateProfile PUTs the details to /api/auth/me with the token', async () => {
+    const profile = { firstName: 'Ada', lastName: 'L', email: 'ada@example.com', dateOfBirth: '1990-12-10' }
+    fetch.mockResolvedValue(response({ id: 1, ...profile }))
+
+    await expect(authApi.updateProfile(profile)).resolves.toEqual({ id: 1, ...profile })
+    expect(fetch).toHaveBeenCalledWith('/api/auth/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer tok' },
+      body: JSON.stringify(profile),
+    })
+  })
+
+  it('updateProfile rejects with the server\'s message', async () => {
+    fetch.mockResolvedValue(response({ error: 'An account with this email already exists' }, { ok: false }))
+
+    await expect(authApi.updateProfile({})).rejects.toThrow('An account with this email already exists')
+  })
+
+  it('changePassword PUTs both passwords to /api/auth/me/password', async () => {
+    fetch.mockResolvedValue({ ok: true, status: 204 })
+
+    await expect(authApi.changePassword('old password', 'new password')).resolves.toBeUndefined()
+    expect(fetch).toHaveBeenCalledWith('/api/auth/me/password', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer tok' },
+      body: JSON.stringify({ currentPassword: 'old password', newPassword: 'new password' }),
+    })
+  })
+
+  it('a wrong current password is a field error and keeps the user logged in', async () => {
+    fetch.mockResolvedValue({
+      ...response({ currentPassword: 'Current password is incorrect' }, { ok: false }), status: 400,
+    })
+
+    const error = await authApi.changePassword('wrong', 'new password').catch(e => e)
+
+    expect(error.fieldErrors).toEqual({ currentPassword: 'Current password is incorrect' })
+    expect(getSession()).not.toBeNull()
+  })
+
+  it('changePassword falls back to a general message', async () => {
+    fetch.mockResolvedValue(response(new Error('not json'), { ok: false }))
+
+    await expect(authApi.changePassword('a', 'b')).rejects.toThrow('Could not change your password')
+  })
+})

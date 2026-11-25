@@ -137,6 +137,43 @@
   font-weight: 600;
 }
 
+.account-page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+.account-page h1 {
+  font-size: 2rem;
+  color: #646cff;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.account-back {
+  font-size: 0.95rem;
+}
+
+.account-section {
+  max-width: none;
+  margin-bottom: 1.5rem;
+}
+
+.account-section h2 {
+  text-align: left;
+}
+
+.auth-notice {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.account-bar-link {
+  font-size: 0.9rem;
+}
+
 .account-bar-logout {
   padding: 0.35rem 0.9rem;
   font-size: 0.9rem;

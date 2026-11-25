@@ -1,0 +1,205 @@
+package com.recipehome.api.controller;
+
+import com.recipehome.api.entity.User;
+import com.recipehome.api.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Registering, logging in and using the token, through the whole stack (real security filters, H2 database).
+ */
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class AuthIntegrationTest {
+
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private UserRepository userRepository;
+    @Autowired private JwtEncoder jwtEncoder;
+
+    @AfterEach
+    void cleanUp() {
+        userRepository.deleteAll();
+    }
+
+    private Map<String, Object> registration() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("email", "Ada@Example.com ");
+        body.put("password", "correct horse");
+        body.put("firstName", "Ada");
+        body.put("lastName", "Lovelace");
+        body.put("dateOfBirth", "1990-12-10");
+        return body;
+    }
+
+    private ResultActions postJson(String url, Object body) throws Exception {
+        return mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body)));
+    }
+
+    private String tokenFrom(ResultActions result) throws Exception {
+        JsonNode json = objectMapper.readTree(result.andReturn().getResponse().getContentAsString());
+        return json.get("token").asString();
+    }
+
+    @Test
+    void registerCreatesTheUserWithAHashedPasswordAndLogsThemIn() throws Exception {
+        String token = tokenFrom(postJson("/api/auth/register", registration())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.token").value(not(emptyOrNullString())))
+                .andExpect(jsonPath("$.expiresAt").exists())
+                .andExpect(jsonPath("$.user.email").value("ada@example.com"))
+                .andExpect(jsonPath("$.user.firstName").value("Ada"))
+                .andExpect(jsonPath("$.user.lastName").value("Lovelace"))
+                .andExpect(jsonPath("$.user.dateOfBirth").value("1990-12-10"))
+                .andExpect(jsonPath("$.user.passwordHash").doesNotExist())
+                .andExpect(jsonPath("$.user.password").doesNotExist()));
+
+        User saved = userRepository.findByEmailAndIsActiveTrue("ada@example.com").orElseThrow();
+        assertThat(saved.getPasswordHash()).isNotEqualTo("correct horse").startsWith("$2");
+        assertThat(saved.getDateOfBirth()).isEqualTo(LocalDate.of(1990, 12, 10));
+
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("ada@example.com"));
+    }
+
+    @Test
+    void anEmailCanOnlyBeRegisteredOnce_ignoringCase() throws Exception {
+        postJson("/api/auth/register", registration()).andExpect(status().isCreated());
+
+        Map<String, Object> again = registration();
+        again.put("email", "ADA@example.COM");
+        postJson("/api/auth/register", again)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("An account with this email already exists"));
+    }
+
+    @Test
+    void registerValidatesEveryField() throws Exception {
+        Map<String, Object> body = new HashMap<>();
+        body.put("email", "not-an-email");
+        body.put("password", "short");
+        body.put("firstName", " ");
+        body.put("dateOfBirth", LocalDate.now().plusDays(1).toString());
+
+        postJson("/api/auth/register", body)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.email").value("Enter a valid email address"))
+                .andExpect(jsonPath("$.password").value("Password must be 8 to 72 characters"))
+                .andExpect(jsonPath("$.firstName").value("First name is required"))
+                .andExpect(jsonPath("$.lastName").value("Last name is required"))
+                .andExpect(jsonPath("$.dateOfBirth").value("Date of birth must be in the past"));
+        assertThat(userRepository.count()).isZero();
+    }
+
+    @Test
+    void loginReturnsATokenThatOpensTheApi() throws Exception {
+        postJson("/api/auth/register", registration()).andExpect(status().isCreated());
+
+        String token = tokenFrom(postJson("/api/auth/login", Map.of("email", " ADA@example.com", "password", "correct horse"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.firstName").value("Ada")));
+
+        mockMvc.perform(get("/api/recipes").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void loginWithAWrongPasswordOrUnknownEmailIsRefusedTheSameWay() throws Exception {
+        postJson("/api/auth/register", registration()).andExpect(status().isCreated());
+
+        postJson("/api/auth/login", Map.of("email", "ada@example.com", "password", "wrong password"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("Invalid email or password"));
+        postJson("/api/auth/login", Map.of("email", "nobody@example.com", "password", "correct horse"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("Invalid email or password"));
+    }
+
+    @Test
+    void theApiNeedsAToken() throws Exception {
+        mockMvc.perform(get("/api/recipes"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("Please log in"));
+        mockMvc.perform(get("/api/auth/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void aTamperedOrExpiredTokenIsRefused() throws Exception {
+        String token = tokenFrom(postJson("/api/auth/register", registration()));
+
+        mockMvc.perform(get("/api/recipes").header("Authorization", "Bearer " + token + "x"))
+                .andExpect(status().isUnauthorized());
+
+        Instant past = Instant.now().minusSeconds(3600);
+        JwtClaimsSet expiredClaims = JwtClaimsSet.builder()
+                .issuer("recipehome").subject("1")
+                .issuedAt(past.minusSeconds(60)).expiresAt(past)
+                .build();
+        String expired = jwtEncoder.encode(JwtEncoderParameters.from(
+                JwsHeader.with(MacAlgorithm.HS256).build(), expiredClaims)).getTokenValue();
+        mockMvc.perform(get("/api/recipes").header("Authorization", "Bearer " + expired))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void aTokenFromAnotherIssuerIsRefused() throws Exception {
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("someone-else").subject("1")
+                .issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(3600))
+                .build();
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(
+                JwsHeader.with(MacAlgorithm.HS256).build(), claims)).getTokenValue();
+
+        mockMvc.perform(get("/api/recipes").header("Authorization", "Bearer " + token))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void meRefusesATokenForAUserWhoNoLongerExists() throws Exception {
+        String token = tokenFrom(postJson("/api/auth/register", registration()));
+        userRepository.deleteAll();
+
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void theAlexaEndpointStaysOpen() throws Exception {
+        // Amazon calls it without our token: it must not get "Please log in" (whatever the skill then answers).
+        int status = mockMvc.perform(post("/alexa").contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andReturn().getResponse().getStatus();
+        assertThat(status).isNotEqualTo(401).isNotEqualTo(403);
+    }
+}

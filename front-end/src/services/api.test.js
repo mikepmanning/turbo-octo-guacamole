@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { recipeApi, mealPlanApi } from './api'
+import {
+  recipeApi, mealPlanApi, authApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
+} from './api'
 
 // Minimal stand-in for a fetch Response.
 const response = (body, { ok = true } = {}) => ({
@@ -296,5 +298,141 @@ describe('mealPlanApi', () => {
       await expect(mealPlanApi.getMealPlan(4)).rejects
         .toThrow(new Error('Failed to load meal plan: Meal plan not found with id: 4'))
     })
+  })
+})
+
+describe('login session', () => {
+  const session = { token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { firstName: 'Ada' } }
+
+  beforeEach(() => {
+    clearSession()
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('saves, reads and clears the session in localStorage', () => {
+    expect(getSession()).toBeNull()
+    saveSession(session)
+    expect(JSON.parse(localStorage.getItem(SESSION_KEY))).toEqual(session)
+    expect(getSession()).toEqual(session)
+    clearSession()
+    expect(getSession()).toBeNull()
+  })
+
+  it('treats an expired session as none and removes it', () => {
+    saveSession({ ...session, expiresAt: '2000-01-01T00:00:00Z' })
+    expect(getSession()).toBeNull()
+    expect(localStorage.getItem(SESSION_KEY)).toBeNull()
+  })
+
+  it('ignores a stored value that is not a session', () => {
+    localStorage.setItem(SESSION_KEY, 'not json')
+    expect(getSession()).toBeNull()
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: {} }))
+    expect(getSession()).toBeNull()
+  })
+
+  it('sends the token with every API request, keeping other headers', async () => {
+    saveSession(session)
+    fetch.mockResolvedValue(response({ id: 7 }))
+
+    await recipeApi.getAllRecipes()
+    expect(fetch).toHaveBeenCalledWith('/api/recipes', { headers: { Authorization: 'Bearer tok' } })
+
+    await recipeApi.createRecipe({ title: 'Tacos' })
+    expect(fetch).toHaveBeenLastCalledWith('/api/recipes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer tok' },
+      body: JSON.stringify({ title: 'Tacos' }),
+    })
+  })
+
+  it('forgets the session and tells the app when the server rejects the token', async () => {
+    saveSession(session)
+    const expired = vi.fn()
+    window.addEventListener(SESSION_EXPIRED_EVENT, expired)
+    fetch.mockResolvedValue({ ...response({ error: 'Please log in' }, { ok: false }), status: 401 })
+
+    await expect(mealPlanApi.getMealPlans()).rejects.toThrow('Failed to load meal plans: Please log in')
+
+    expect(getSession()).toBeNull()
+    expect(expired).toHaveBeenCalledTimes(1)
+    window.removeEventListener(SESSION_EXPIRED_EVENT, expired)
+  })
+
+  it('a 401 without a session does not fire the event', async () => {
+    const expired = vi.fn()
+    window.addEventListener(SESSION_EXPIRED_EVENT, expired)
+    fetch.mockResolvedValue({ ...response({}, { ok: false }), status: 401 })
+
+    await expect(recipeApi.getAllRecipes()).rejects.toThrow()
+
+    expect(expired).not.toHaveBeenCalled()
+    window.removeEventListener(SESSION_EXPIRED_EVENT, expired)
+  })
+})
+
+describe('authApi', () => {
+  const result = { token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { id: 1 } }
+
+  beforeEach(() => {
+    clearSession()
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('login POSTs the email and password and returns the session', async () => {
+    fetch.mockResolvedValue(response(result))
+
+    await expect(authApi.login('ada@example.com', 'pw')).resolves.toEqual(result)
+    expect(fetch).toHaveBeenCalledWith('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'ada@example.com', password: 'pw' }),
+    })
+  })
+
+  it('login rejects with the server\'s message', async () => {
+    fetch.mockResolvedValue(response({ error: 'Invalid email or password' }, { ok: false }))
+
+    await expect(authApi.login('a', 'b')).rejects.toThrow('Invalid email or password')
+  })
+
+  it('login falls back to a general message', async () => {
+    fetch.mockResolvedValue(response(new Error('not json'), { ok: false }))
+
+    await expect(authApi.login('a', 'b')).rejects.toThrow('Could not log in')
+  })
+
+  it('register POSTs the account and returns the session', async () => {
+    fetch.mockResolvedValue(response(result))
+    const account = { email: 'ada@example.com', password: 'pw', firstName: 'Ada', lastName: 'L', dateOfBirth: '1990-12-10' }
+
+    await expect(authApi.register(account)).resolves.toEqual(result)
+    expect(fetch).toHaveBeenCalledWith('/api/auth/register', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify(account),
+    }))
+  })
+
+  it('register rejects with the field errors the server sent', async () => {
+    fetch.mockResolvedValue(response({ email: 'Enter a valid email address' }, { ok: false }))
+
+    const error = await authApi.register({}).catch(e => e)
+
+    expect(error.message).toBe('Enter a valid email address')
+    expect(error.fieldErrors).toEqual({ email: 'Enter a valid email address' })
+  })
+
+  it('getCurrentUser GETs /api/auth/me with the token', async () => {
+    saveSession(result)
+    fetch.mockResolvedValue(response({ id: 1, firstName: 'Ada' }))
+
+    await expect(authApi.getCurrentUser()).resolves.toEqual({ id: 1, firstName: 'Ada' })
+    expect(fetch).toHaveBeenCalledWith('/api/auth/me', { headers: { Authorization: 'Bearer tok' } })
+  })
+
+  it('getCurrentUser throws when the response is not ok', async () => {
+    fetch.mockResolvedValue(response({}, { ok: false }))
+
+    await expect(authApi.getCurrentUser()).rejects.toThrow('Failed to load your account')
   })
 })

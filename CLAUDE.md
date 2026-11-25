@@ -133,8 +133,14 @@ To run both backend and frontend together:
 ### API Integration
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
 
+### Login
+Every page except `/login` and `/register` needs a login. `App` wraps the routes in `AuthProvider` (`src/auth/`), and the logged-in pages sit under the `RequireAuth` layout route, which redirects visitors to `/login` (remembering the page in router state as `from`, so they return there after logging in) and shows "Signed in as …" with "Log out" above every page.
+- `LoginPage` (email, password) and `RegisterPage` (first and last name, email, date of birth, password and a confirmation) link to each other. Both log the user in and go on to `from` or `/`. Register checks the fields in the browser first (`validateAccount` in `accountRules.js`: 8-72 character password, date of birth before today) and shows the server's field errors next to the fields.
+- The session `{ token, expiresAt, user }` is kept in localStorage as `recipehome.session` (`getSession`/`saveSession`/`clearSession` in `api.js`), so a refresh or a new tab stays logged in until the token expires. Every API call goes through `apiFetch`, which adds `Authorization: Bearer <token>`. A 401 clears the session and fires `recipehome:session-expired`, and `AuthProvider` then logs out (back to the login page). On start `AuthProvider` refreshes the user from `GET /api/auth/me`.
+- Use `useAuth()` (`authContext.js`) for `{ user, login, register, logout }`. Tests render pages with a stand-in context via `src/test/renderWithAuth.jsx`.
+
 ### Recipe Search
-Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeSearch.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only. The search bar and the Select button are always shown, also while the recipes load (typed filters apply once they arrive); Select is disabled while there are no cards to select (loading, failed to load, no recipes, or no matches). The Filters panel also has "Only recipes excluded from meal plans" (`excludedOnly`, a boolean in the filters).
+Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeFilters.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only. The search bar and the Select button are always shown, also while the recipes load (typed filters apply once they arrive); Select is disabled while there are no cards to select (loading, failed to load, no recipes, or no matches). The Filters panel also has "Only recipes excluded from meal plans" (`excludedOnly`, a boolean in the filters).
 
 ### Meal Planning
 "Plan Meals" on the Meal Plans page (`/meal-plans`) opens `MealPlanSetupModal`: pick meals (Breakfast, Lunch, Snack, Dinner), 1-7 days and a start date. The page loads the recipes in the background when it opens; if the dialog is opened sooner it says "Loading recipes..." (with Retry if they fail) and shows the form once they arrive. Generate builds a draft in the browser from the recipes already loaded (`generatePlan` in `src/components/mealPlan.js`) and opens it at `/meal-plan/new` (`NewMealPlan`) in the router state; nothing is saved until "Save plan" (`POST /api/meal-plans`), which then shows the saved plan at `/meal-plans/:id` (`MealPlanView`).
@@ -178,6 +184,8 @@ The domain model uses a soft-delete pattern with audit timestamps:
 - JPA auditing enabled via `@EnableJpaAuditing` in main application class
 - Soft delete methods: `softDelete()` and `restore()` toggle `isActive` flag
 
+**User** (table `users`) - `email` (unique, stored trimmed and lower-cased), `passwordHash` (BCrypt), `firstName`, `lastName`, `dateOfBirth`. Recipes and meal plans are not linked to users yet: every logged-in user sees the same data.
+
 **Recipe** → **Step** and **Ingredient** (One-to-Many bidirectional)
 - Recipe has `steps` (ordered by `stepOrder`) and `ingredients`
 - Both Step and Ingredient have `@ManyToOne` back-reference to Recipe
@@ -217,6 +225,7 @@ The application follows a three-tier architecture:
 **REST API** (`api/src/main/java/com/recipehome/api/controller/`)
 - `RecipeController` exposes `/api/recipes` endpoints
 - `MealPlanController` exposes `/api/meal-plans` (list, create, get, update and delete meal plans)
+- `AuthController` exposes `/api/auth` (register, login, me). Every other `/api` endpoint needs a login token (`SecurityConfig`)
 - Steps and ingredients are embedded in Recipe payloads (no separate endpoints)
 - All recipe operations handled through a single unified endpoint
 - See `api/CLAUDE.md` for complete API endpoint documentation
@@ -246,5 +255,7 @@ Environment variables:
 - `DB_USERNAME`, `DB_PASSWORD` - Credentials
 - `HIBERNATE_DDL_AUTO` - Schema management (update/validate/etc.)
 - `SEED_DATA` - Load the 86 sample recipes into an empty database at startup (default: true)
+- `JWT_SECRET` - Signs login tokens; at least 32 characters. If it is not set, a random key is used, so everyone is logged out when the server restarts (fine for development; set it everywhere else)
+- `JWT_EXPIRATION` - How long a login lasts (default: `7d`)
 
 See `api/CLAUDE.md` for detailed setup instructions.

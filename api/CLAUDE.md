@@ -70,7 +70,9 @@ mvnw.cmd spring-boot:run
 
 The application follows standard Spring Boot Maven project layout:
 - `src/main/java/com/recipehome/api/` - Main application code
-  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, MealPlan, MealPlanEntry, BaseEntity)
+  - `entity/` - JPA entity classes (Recipe, Step, Ingredient, MealPlan, MealPlanEntry, User, BaseEntity)
+  - `config/` - `JpaConfig` (auditing) and `SecurityConfig` (which endpoints need a login, BCrypt, JWT keys)
+  - `security/` - `TokenService` (issues login tokens) and `JwtProperties` (`recipehome.jwt.*`)
   - `enums/` - `Unit` (ingredient units) and `MealType` (Breakfast, Lunch, Snack, Dinner)
   - `exception/` - `GlobalExceptionHandler` and the not-found exceptions it maps to 404
   - `repository/` - Spring Data JPA repositories
@@ -105,6 +107,8 @@ Base package: `com.recipehome.api`
   - `DB_PASSWORD` - Database password (required, no default)
   - `HIBERNATE_DDL_AUTO` - Schema generation strategy (default: update)
   - `SEED_DATA` - Load sample recipes at startup (default: true; see Sample Data below)
+  - `JWT_SECRET` - Signs login tokens, at least 32 characters (blank: a random key per run; see Login below)
+  - `JWT_EXPIRATION` - How long a login lasts (default: 7d)
 
 ### Sample Data
 - `src/main/resources/seed/recipes.json` holds 86 sample recipes in the `POST /api/recipes` body shape
@@ -168,6 +172,29 @@ The application follows a standard three-tier architecture:
 ### REST API Endpoints
 
 All endpoints are prefixed with `/api`
+
+**Login** (`/api/auth`) - `AuthService`, `SecurityConfig`, `security/TokenService`
+- Every `/api` endpoint needs `Authorization: Bearer <token>` except `POST /api/auth/register` and
+  `POST /api/auth/login`. With no token, or one that is invalid, expired or from another issuer, the response is
+  401 `{"error": "Please log in"}`. Paths outside `/api` (the Alexa endpoint `/alexa`) stay open. The API is
+  stateless (no session or cookie), so CSRF protection is off
+- `POST /api/auth/register` - body `{"email", "password", "firstName", "lastName", "dateOfBirth": "1990-12-10"}`,
+  all required; returns 201 `{"token", "expiresAt", "user": {id, email, firstName, lastName, dateOfBirth}}`
+  (the new user is logged in). 400 field errors (invalid email; password not 8-72 characters, since BCrypt
+  only uses the first 72 bytes; date of birth not in the past); 409 `{"error": "An account with this email
+  already exists"}`. Emails are trimmed and lower-cased, so they are unique regardless of case
+- `POST /api/auth/login` - body `{"email", "password"}`; returns the same response as register, or 401
+  `{"error": "Invalid email or password"}` for an unknown email or a wrong password (the same message and
+  about the same time, so a login doesn't reveal which emails have accounts)
+- `GET /api/auth/me` - the logged-in user; 401 if the token's user no longer exists
+- Passwords are stored only as BCrypt hashes (`User.passwordHash`, never returned)
+- Tokens are HS256 JWTs (Spring Security's OAuth2 resource server, Nimbus): subject = user id, claim `email`,
+  issuer `recipehome`, lasting `recipehome.jwt.expiration` (`JWT_EXPIRATION`, default 7d). Signed with
+  `JWT_SECRET` (at least 32 characters, or startup fails). If it is blank, a random key is made per run, so
+  logins end on restart. In a controller, take `@AuthenticationPrincipal Jwt jwt` and use `jwt.getSubject()`
+- There is no logout endpoint: the browser forgets the token. A token stays valid until it expires
+- Tests: `@WebMvcTest` classes use `@AutoConfigureMockMvc(addFilters = false)` (controller logic only);
+  `@SpringBootTest` + MockMvc classes use `@WithMockUser`; `AuthIntegrationTest` covers the real login flow
 
 **Recipe Endpoints** (`/api/recipes`)
 - `POST /api/recipes` - Create a new recipe (with steps and ingredients)

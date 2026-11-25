@@ -3,6 +3,7 @@ package com.recipehome.api.controller;
 import com.recipehome.api.enums.Unit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -11,7 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// Controller logic only: login is covered by AuthIntegrationTest.
 @WebMvcTest(UnitController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class UnitControllerTest {
 
     @Autowired

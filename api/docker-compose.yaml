@@ -11,10 +11,11 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
-    # Maps the container port 5432 to your host machine's port 5432
-    # This allows your local Spring Boot IDE run configuration to connect.
+    # Maps the container port 5432 to DB_PORT on your host machine (5432 if not set), the
+    # same port the Spring Boot app connects to. Set DB_PORT in .env (e.g. 5433) when another
+    # Postgres already uses 5432.
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
 
     # This creates a Docker volume to persist your data.
     # Even if you stop and remove the container, your data remains in the volume.

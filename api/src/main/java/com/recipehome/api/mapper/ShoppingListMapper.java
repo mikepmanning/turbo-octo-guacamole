@@ -2,6 +2,7 @@ package com.recipehome.api.mapper;
 
 import com.recipehome.api.dto.CreatorDTO;
 import com.recipehome.api.dto.ShoppingListDTO;
+import com.recipehome.api.dto.ShoppingListSummaryDTO;
 import com.recipehome.api.entity.MealPlan;
 import com.recipehome.api.entity.ShoppingList;
 import com.recipehome.api.entity.ShoppingListItem;
@@ -17,14 +18,31 @@ public class ShoppingListMapper {
 
     public ShoppingListDTO toDTO(ShoppingList list) {
         MealPlan plan = list.getMealPlan();
-        boolean planChanged = plan.getUpdatedAt() != null && plan.getUpdatedAt().isAfter(list.getGeneratedAt());
         return new ShoppingListDTO(
                 plan.getId(),
                 list.getGeneratedAt(),
                 CreatorDTO.of(list.getGeneratedBy()),
-                planChanged,
+                planChanged(plan, list),
                 List.copyOf(list.getLeftOutRecipes()),
                 list.getItems().stream().map(ShoppingListMapper::toDTO).toList());
+    }
+
+    public ShoppingListSummaryDTO toSummaryDTO(ShoppingList list) {
+        MealPlan plan = list.getMealPlan();
+        return new ShoppingListSummaryDTO(
+                plan.getId(),
+                plan.getName(),
+                plan.getStartDate(),
+                plan.getEndDate(),
+                plan.getDays(),
+                list.getItems().size(),
+                (int) list.getItems().stream().filter(ShoppingListItem::isChecked).count(),
+                list.getGeneratedAt(),
+                planChanged(plan, list));
+    }
+
+    private static boolean planChanged(MealPlan plan, ShoppingList list) {
+        return plan.getUpdatedAt() != null && plan.getUpdatedAt().isAfter(list.getGeneratedAt());
     }
 
     private static ShoppingListDTO.Item toDTO(ShoppingListItem item) {

@@ -55,6 +55,14 @@ public class ShoppingListService {
         this.userRepository = userRepository;
     }
 
+    /** Every list the viewer can see: those of active meal plans by them or their family, latest plan first. */
+    @Transactional(readOnly = true)
+    public List<ShoppingList> getVisibleLists() {
+        Viewer viewer = currentViewer.get();
+        if (viewer.isAnonymous()) return List.of();
+        return repository.findForPlansCreatedBy(viewer.groupUserIds());
+    }
+
     /** The plan's list, or empty when nobody has made one yet. */
     @Transactional(readOnly = true)
     public Optional<ShoppingList> getForPlan(Long planId) {

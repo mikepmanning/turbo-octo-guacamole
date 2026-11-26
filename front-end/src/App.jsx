@@ -6,6 +6,7 @@ import NewMealPlan from './components/NewMealPlan'
 import MealPlanList from './components/MealPlanList'
 import MealPlanView from './components/MealPlanView'
 import ShoppingList from './components/ShoppingList'
+import ShoppingLists from './components/ShoppingLists'
 import AuthProvider from './auth/AuthProvider'
 import RequireAuth from './auth/RequireAuth'
 import LoginPage from './auth/LoginPage'
@@ -30,6 +31,7 @@ function App() {
             <Route path="/meal-plans" element={<MealPlanList />} />
             <Route path="/meal-plans/:id" element={<MealPlanView />} />
             <Route path="/meal-plans/:id/shopping-list" element={<ShoppingList />} />
+            <Route path="/shopping-lists" element={<ShoppingLists />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/family" element={<FamilyPage />} />
           </Route>

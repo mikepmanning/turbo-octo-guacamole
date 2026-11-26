@@ -322,6 +322,9 @@ recipes and no meal plans. Access follows the creator's current family (leaving 
 **Shopping List Endpoints** (`/api/meal-plans/{id}/shopping-list`) - `ShoppingListService`, `ShoppingListMapper`
 - Access follows the plan (`MealPlanService.getMealPlan`): anyone who can see it (the creator's family) can do all of
   this; others get the plan's 404
+- `GET /api/shopping-lists` - every list the viewer can see (of active plans by them or their family), latest plan
+  first, as summaries `{mealPlanId, mealPlanName, startDate, endDate, days, itemCount, checkedCount, generatedAt,
+  planChangedSince}`; empty for anyone else
 - `GET` - 200 the list, or 204 when nobody has made one for the plan yet
 - `POST` - make the list, or remake it from the plan as it is now. Ingredients of the plan's recipes are added up per
   line: same name (trimmed, spaces collapsed, ignoring case), unit, package quantity and package unit (`itemKey`). A

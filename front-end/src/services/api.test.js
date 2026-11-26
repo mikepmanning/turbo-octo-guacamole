@@ -589,3 +589,17 @@ describe('shoppingListApi', () => {
     await expect(shoppingListApi.setItemChecked(9, 1, true)).rejects.toThrow("That item isn't on this shopping list")
   })
 })
+
+describe('shoppingListApi.getShoppingLists', () => {
+  beforeEach(() => {
+    saveSession({ token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { id: 1 } })
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('GETs every list the user can see', async () => {
+    fetch.mockResolvedValue({ ...response([{ mealPlanId: 9 }]), status: 200 })
+
+    await expect(shoppingListApi.getShoppingLists()).resolves.toEqual([{ mealPlanId: 9 }])
+    expect(fetch).toHaveBeenCalledWith('/api/shopping-lists', { method: 'GET', headers: { Authorization: 'Bearer tok' } })
+  })
+})

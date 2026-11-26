@@ -146,6 +146,7 @@ describe('RecipeList', () => {
     renderList()
 
     expect(screen.getByRole('link', { name: 'Meal Plans' })).toHaveAttribute('href', '/meal-plans')
+    expect(screen.getByRole('link', { name: 'Shopping Lists' })).toHaveAttribute('href', '/shopping-lists')
     await screen.findByText(/No recipes found/)
     expect(screen.getByRole('link', { name: 'Meal Plans' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Plan Meals' })).not.toBeInTheDocument()   // on the Meal Plans page
@@ -432,7 +433,7 @@ describe('RecipeList', () => {
       expect(await screen.findByRole('status')).toHaveTextContent('Deleted 2 recipes.')
       await waitFor(() => expect(screen.queryByRole('link', { name: /Pancakes/ })).not.toBeInTheDocument())
       expect(screen.getAllByRole('link', { name: /./ }).map(a => a.getAttribute('href')))
-        .toEqual(['/recipe/new', '/meal-plans', '/recipe/2', '/recipe/4', '/recipe/5', '/recipe/6', '/recipe/7'])
+        .toEqual(['/recipe/new', '/shopping-lists', '/meal-plans', '/recipe/2', '/recipe/4', '/recipe/5', '/recipe/6', '/recipe/7'])
       expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
       expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
       expect(screen.queryByText('Loading recipes...')).not.toBeInTheDocument()

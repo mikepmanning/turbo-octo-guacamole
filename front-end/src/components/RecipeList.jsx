@@ -220,6 +220,9 @@ function RecipeList() {
           <button type="button" onClick={()=> setIsImportModalOpen(true)} className="create-recipe-btn secondary-btn">
             + Import Recipe
           </button>
+          <Link to="/shopping-lists" className="create-recipe-btn secondary-btn">
+            Shopping Lists
+          </Link>
           <Link to="/meal-plans" className="create-recipe-btn secondary-btn">
             Meal Plans
           </Link>

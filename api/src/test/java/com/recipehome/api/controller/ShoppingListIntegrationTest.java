@@ -217,6 +217,27 @@ class ShoppingListIntegrationTest {
     }
 
     @Test
+    void theOverviewListsTheFamilysListsWithTheirProgress() throws Exception {
+        asAda.perform(get("/api/shopping-lists")).andExpect(jsonPath("$", empty()));
+        send(asAda, post(listUrl), Map.of());
+        send(asGrace, put(listUrl + "/items/" + itemId(asGrace, "onion")), Map.of("checked", true));
+
+        asGrace.perform(get("/api/shopping-lists"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].mealPlanId", contains((int) plan)))
+                .andExpect(jsonPath("$[0].mealPlanName").value("Week"))
+                .andExpect(jsonPath("$[0].startDate").value("2026-06-01"))
+                .andExpect(jsonPath("$[0].endDate").value("2026-06-03"))
+                .andExpect(jsonPath("$[0].itemCount").value(4))
+                .andExpect(jsonPath("$[0].checkedCount").value(1))
+                .andExpect(jsonPath("$[0].planChangedSince").value(false));
+        asAlan.perform(get("/api/shopping-lists")).andExpect(jsonPath("$", empty()));
+
+        asAda.perform(delete("/api/meal-plans/" + plan));
+        asGrace.perform(get("/api/shopping-lists")).andExpect(jsonPath("$", empty()));
+    }
+
+    @Test
     void aDeletedPlansListIsGone() throws Exception {
         send(asAda, post(listUrl), Map.of());
         asAda.perform(delete("/api/meal-plans/" + plan)).andExpect(status().isNoContent());

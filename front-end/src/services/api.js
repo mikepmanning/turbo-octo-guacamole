@@ -250,6 +250,11 @@ const familyRequest = (path, method, fallback, body) =>
 //   items: [{ id, text, name, quantity, unit, packageQuantity, packageUnit, recipes,
 //             checked, checkedBy, checkedAt }] }
 export const shoppingListApi = {
+  // The lists of the user's and their family's meal plans, latest plan first:
+  // [{ mealPlanId, mealPlanName, startDate, endDate, days, itemCount, checkedCount, generatedAt, planChangedSince }]
+  getShoppingLists: () =>
+    jsonRequest(`${API_BASE_URL}/shopping-lists`, 'GET', 'Failed to load shopping lists'),
+
   // The list, or null when nobody has made one for this plan yet
   getShoppingList: (planId) =>
     jsonRequest(`${API_BASE_URL}/meal-plans/${planId}/shopping-list`, 'GET', 'Failed to load the shopping list'),

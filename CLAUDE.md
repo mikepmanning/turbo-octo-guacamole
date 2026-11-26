@@ -272,6 +272,9 @@ The application follows a three-tier architecture:
 
 5. **Transaction Management**: Services use `@Transactional` annotation. Read-only operations use `@Transactional(readOnly = true)` for optimization.
 
+### Database Migrations
+The schema is managed by Flyway: versioned SQL files in `api/src/main/resources/db/migration` (`V1__initial_schema.sql`, `V2__…`), run at startup. Hibernate only validates the entities against the tables. **Every entity change needs a new migration** (`V3__what_changed.sql`, never edit one that has run); `MigrationsTest` runs them all on a real PostgreSQL in Docker and fails if the entities don't match. Details in `api/CLAUDE.md`.
+
 ### Database Configuration
 
 Database credentials are managed via a `.env` file (not committed to git):
@@ -283,7 +286,7 @@ Database credentials are managed via a `.env` file (not committed to git):
 Environment variables:
 - `DB_HOST`, `DB_PORT`, `DB_NAME` - Connection details
 - `DB_USERNAME`, `DB_PASSWORD` - Credentials
-- `HIBERNATE_DDL_AUTO` - Schema management (update/validate/etc.)
+- `HIBERNATE_DDL_AUTO` - Keep on `validate` (the default): Flyway owns the schema (see Database Migrations in `api/CLAUDE.md`)
 - `SEED_DATA` - Load the 86 sample recipes into an empty database at startup (default: true)
 - `SEED_TOP_UP` - For a single run: also add the sample recipes missing from a database that already has recipes, by title (default: false)
 - `JWT_SECRET` - Signs login tokens; at least 32 characters. If it is not set, a random key is used, so everyone is logged out when the server restarts (fine for development; set it everywhere else)

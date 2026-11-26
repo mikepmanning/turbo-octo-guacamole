@@ -303,3 +303,13 @@ describe('MealPlanView – sharing', () => {
     expect(screen.queryByText(/Created by/)).not.toBeInTheDocument()
   })
 })
+
+describe('MealPlanView – shopping list', () => {
+  it('links to the plan\'s shopping list', async () => {
+    mealPlanApi.getMealPlan.mockResolvedValue(savedMealPlan)
+    recipeApi.getAllRecipes.mockResolvedValue(planningRecipes)
+    renderView()
+
+    expect(await screen.findByRole('link', { name: 'Shopping List' })).toHaveAttribute('href', '/meal-plans/9/shopping-list')
+  })
+})

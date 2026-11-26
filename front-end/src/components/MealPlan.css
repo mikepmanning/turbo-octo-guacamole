@@ -708,3 +708,12 @@
   display: block;
   margin-top: 0.25rem;
 }
+
+/* "Shopping List" is a link styled like the plan's buttons */
+.shopping-list-link {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.15;
+}

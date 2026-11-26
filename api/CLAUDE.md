@@ -118,6 +118,9 @@ Base package: `com.recipehome.api`
   the database has no recipes (including soft-deleted ones), so it never duplicates or changes data.
   Each recipe is validated like an API request before any is saved; a bad file stops startup with
   the recipe title and field
+- To add the samples to a database that already has recipes, run once with `SEED_TOP_UP=true`
+  (`recipehome.seed.top-up`), e.g. in PowerShell `$env:SEED_TOP_UP='true'; .\mvnw.cmd spring-boot:run`: it adds
+  only the samples whose title isn't there yet (ignoring case; deleted recipes count) and changes nothing else
 - To re-seed, empty the database, e.g. `TRUNCATE meal_plan_entries, meal_plan_meal_types, meal_plans,
   recipes, steps, ingredients, recipe_equipment, recipe_categories RESTART IDENTITY;` (meal plans
   reference recipes, so they must go too), then restart. Set `SEED_DATA=false` before production
@@ -315,6 +318,24 @@ recipes and no meal plans. Access follows the creator's current family (leaving 
   place the same way. Recipes already in the plan may stay, in any meal, even if deleted since (so older plans
   stay editable and movable); recipes new to the plan must be active
 - The plan is generated in the browser (front-end `mealPlan.js`); the server only validates and stores it
+
+**Shopping List Endpoints** (`/api/meal-plans/{id}/shopping-list`) - `ShoppingListService`, `ShoppingListMapper`
+- Access follows the plan (`MealPlanService.getMealPlan`): anyone who can see it (the creator's family) can do all of
+  this; others get the plan's 404
+- `GET` - 200 the list, or 204 when nobody has made one for the plan yet
+- `POST` - make the list, or remake it from the plan as it is now. Ingredients of the plan's recipes are added up per
+  line: same name (trimmed, spaces collapsed, ignoring case), unit, package quantity and package unit (`itemKey`). A
+  recipe planned twice counts twice; units aren't converted. Lines are alphabetical; the name is the first recipe's
+  spelling. Remaking replaces the items but keeps the tick (and who/when) of lines with the same key. Recipes that are
+  deleted or no longer visible are left out and listed in `leftOutRecipes`
+- `PUT /items/{itemId}` `{"checked": true}` - tick or untick; records `checkedBy`/`checkedAt`; returns the whole list.
+  404 "This meal plan has no shopping list yet" / "That item isn't on this shopping list"; 400 without `checked`
+- Response `{mealPlanId, generatedAt, generatedBy, planChangedSince, leftOutRecipes, items: [{id, text, name, quantity,
+  unit, packageQuantity, packageUnit, recipes, checked, checkedBy, checkedAt}]}`. `text` reads like "2 cans (15 ounces)
+  black beans" (unit singular up to 1, plural above; EACH has no word). `planChangedSince`: the plan's `updatedAt` is
+  after `generatedAt`
+- Model: `ShoppingList` (`shopping_lists`, unique `meal_plan_id`, `shopping_list_left_out`) → `ShoppingListItem`
+  (`shopping_list_items`). A deleted plan's list stays in the database but can't be reached
 
 **Missing query parameters** - a required parameter that isn't there (e.g. `?title=` on search, `?from=` on
 planned meals) is a 400 `{"error": "Missing parameter: from"}`

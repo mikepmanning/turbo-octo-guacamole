@@ -233,12 +233,35 @@ export const recipeApi = {
 
 // Family requests: rejects with the server's own message ("Only the family owner can do that"),
 // or the fallback; plus fieldErrors when the server named fields (e.g. { name: '...' }).
-const familyRequest = async (path, method, fallback, body) => {
-  const response = await apiFetch(`${API_BASE_URL}/family${path}`, body === undefined
+// A JSON request that resolves to the body, or null on 204 (No Content).
+const jsonRequest = async (url, method, fallback, body) => {
+  const response = await apiFetch(url, body === undefined
     ? { method }
     : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   if (!response.ok) throw await authError(response, fallback);
   return response.status === 204 ? null : response.json();
+};
+
+const familyRequest = (path, method, fallback, body) =>
+  jsonRequest(`${API_BASE_URL}/family${path}`, method, fallback, body);
+
+// A meal plan's shopping list, for anyone in the plan creator's family:
+// { mealPlanId, generatedAt, generatedBy, planChangedSince, leftOutRecipes,
+//   items: [{ id, text, name, quantity, unit, packageQuantity, packageUnit, recipes,
+//             checked, checkedBy, checkedAt }] }
+export const shoppingListApi = {
+  // The list, or null when nobody has made one for this plan yet
+  getShoppingList: (planId) =>
+    jsonRequest(`${API_BASE_URL}/meal-plans/${planId}/shopping-list`, 'GET', 'Failed to load the shopping list'),
+
+  // Make the list, or remake it from the plan as it is now (ticked lines that remain stay ticked)
+  generateShoppingList: (planId) =>
+    jsonRequest(`${API_BASE_URL}/meal-plans/${planId}/shopping-list`, 'POST', 'Could not make the shopping list'),
+
+  // Tick or untick an item; resolves to the whole list (with everyone's ticks)
+  setItemChecked: (planId, itemId, checked) =>
+    jsonRequest(`${API_BASE_URL}/meal-plans/${planId}/shopping-list/items/${itemId}`, 'PUT',
+      'Could not update the item', { checked }),
 };
 
 // The logged-in user's family. Most calls resolve to the family as the user sees it:

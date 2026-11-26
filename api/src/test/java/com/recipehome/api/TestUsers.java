@@ -6,6 +6,7 @@ import com.recipehome.api.repository.FamilyRepository;
 import com.recipehome.api.repository.MealPlanExclusionRepository;
 import com.recipehome.api.repository.MealPlanRepository;
 import com.recipehome.api.repository.RecipeRepository;
+import com.recipehome.api.repository.ShoppingListRepository;
 import com.recipehome.api.repository.UserRepository;
 import com.recipehome.api.security.TokenService;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +35,7 @@ public final class TestUsers {
      */
     public static void clearDatabase(ApplicationContext context) {
         context.getBean(MealPlanExclusionRepository.class).deleteAll();
+        context.getBean(ShoppingListRepository.class).deleteAll();
         context.getBean(MealPlanRepository.class).deleteAll();
         context.getBean(RecipeRepository.class).deleteAll();
         context.getBean(FamilyMemberRepository.class).deleteAll();

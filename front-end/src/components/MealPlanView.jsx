@@ -151,6 +151,9 @@ function MealPlanView() {
       <div className="detail-actions">
         {backButton}
         <div className="detail-actions-end">
+          <Link to={`/meal-plans/${plan.id}/shopping-list`} className="edit-button shopping-list-link">
+            Shopping List
+          </Link>
           <button type="button" className="edit-button" onClick={() => { setNotice(null); setEditing(true) }}>
             Edit Plan
           </button>

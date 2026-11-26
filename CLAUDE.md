@@ -154,6 +154,13 @@ Recipes are Public (everyone) or Private (you and your family); meal plans are s
 - Recipe cards tag Private recipes and say "Added by …" on recipes that aren't yours. In Select mode, Delete is disabled ("You can only delete recipes you added") when the selection includes someone else's recipe; Exclude/Include still work.
 - `MealPlanView` hides Delete Plan unless `canDelete` (family members can still Edit Plan) and says "Created by …" on someone else's plan; `MealPlanList` cards say so too.
 
+### Shopping List
+"Shopping List" on a saved meal plan opens `/meal-plans/:id/shopping-list` (`ShoppingList.jsx`, API `shoppingListApi` in `api.js`). The list belongs to the plan, so everyone who can see the plan (the creator's family) can make it, update it and tick items.
+- No list yet: "Make shopping list". The server adds up the plan's ingredients (`POST`): the same ingredient (ignoring case and spacing) in the same unit and package size is one line, a recipe planned twice counts twice, and lines come alphabetically with ready-made text ("2 cans (15 ounces) black beans") and the recipes they are for. Different units of the same ingredient stay separate lines (no conversion).
+- "To buy (N)" and "In the cart (N)" sections; ticking moves an item at once (and back if saving fails), then shows the list the server returns, so others' ticks appear. Ticked items show "✓ <first name>". "Made by … on … · N of M in the cart".
+- "Update from meal plan" remakes the list; ticked lines that are still on it stay ticked. When the plan was edited after the list was made, a notice says so (`planChangedSince`). Recipes that were deleted or are no longer visible are left out and named.
+- Others' ticks arrive on "Refresh" or when the window gets focus again (no live push). Fixture: `src/test/fixtures/shoppingLists.js`.
+
 ### Recipe Search
 Search on the recipe list filters in the browser: `GET /api/recipes` already returns every recipe with its categories, ingredients and times, so no search endpoint is called. The rules are in `src/components/recipeFilters.js`; the UI is `RecipeSearch.jsx`. The search box needs every word to appear somewhere in the recipe (title, description, categories, ingredient names, equipment); the Filters panel adds category and ingredient "contains" filters and "at most N minutes" for prep/cook/total; everything is combined with AND and ignores case and accents. When a card matches only through something it doesn't show (ingredients, equipment), it gets a "Matches ingredient: …" note. Select mode works on the filtered results only. The search bar and the Select button are always shown, also while the recipes load (typed filters apply once they arrive); Select is disabled while there are no cards to select (loading, failed to load, no recipes, or no matches). The Filters panel also has "Only recipes excluded from meal plans" (`excludedOnly`, a boolean in the filters).
 
@@ -246,6 +253,7 @@ The application follows a three-tier architecture:
 - `RecipeController` exposes `/api/recipes` endpoints
 - `MealPlanController` exposes `/api/meal-plans` (list, create, get, update and delete meal plans)
 - `AuthController` exposes `/api/auth` (register, login, get and edit me, change password). Every other `/api` endpoint needs a login token (`SecurityConfig`)
+- `ShoppingListController` exposes `/api/meal-plans/{id}/shopping-list` (get, make or remake, tick items); **ShoppingList** (one per MealPlan) → **ShoppingListItem**
 - `FamilyController` exposes `/api/family` (create, join with an invite code, manage and leave the user's family). **Family** → **FamilyMember** (OWNER or MEMBER) → **User**; a user is in at most one family
 - Steps and ingredients are embedded in Recipe payloads (no separate endpoints)
 - All recipe operations handled through a single unified endpoint
@@ -276,6 +284,7 @@ Environment variables:
 - `DB_USERNAME`, `DB_PASSWORD` - Credentials
 - `HIBERNATE_DDL_AUTO` - Schema management (update/validate/etc.)
 - `SEED_DATA` - Load the 86 sample recipes into an empty database at startup (default: true)
+- `SEED_TOP_UP` - For a single run: also add the sample recipes missing from a database that already has recipes, by title (default: false)
 - `JWT_SECRET` - Signs login tokens; at least 32 characters. If it is not set, a random key is used, so everyone is logged out when the server restarts (fine for development; set it everywhere else)
 - `JWT_EXPIRATION` - How long a login lasts (default: `7d`)
 

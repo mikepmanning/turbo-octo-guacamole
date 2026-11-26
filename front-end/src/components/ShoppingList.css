@@ -1,0 +1,101 @@
+.shopping-page {
+  max-width: 720px;
+}
+
+.shopping-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+.shopping-empty {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.shopping-empty p {
+  color: #888;
+  margin-bottom: 1.25rem;
+}
+
+.shopping-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.shopping-made {
+  color: #888;
+  margin: 0;
+}
+
+.shopping-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.shopping-actions button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.shopping-notice {
+  background-color: rgba(100, 108, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.shopping-section {
+  margin-top: 1.5rem;
+}
+
+.shopping-section h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.shopping-section-empty {
+  color: #888;
+}
+
+.shopping-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.shopping-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.shopping-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+.shopping-item input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.shopping-item-meta {
+  color: #888;
+  font-size: 0.85rem;
+  margin-left: 2rem;
+}
+
+.shopping-item.checked .shopping-item-text {
+  text-decoration: line-through;
+  color: #888;
+}

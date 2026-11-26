@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
-  recipeApi, mealPlanApi, authApi, familyApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
+  recipeApi, mealPlanApi, authApi, familyApi, shoppingListApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
 } from './api'
 
 // Minimal stand-in for a fetch Response.
@@ -540,5 +540,52 @@ describe('familyApi', () => {
     fetch.mockResolvedValue(response(new Error('not json'), { ok: false }))
 
     await expect(familyApi.joinFamily('X')).rejects.toThrow('Could not join the family')
+  })
+})
+
+describe('shoppingListApi', () => {
+  const list = { mealPlanId: 9, items: [] }
+  const auth = { Authorization: 'Bearer tok' }
+
+  beforeEach(() => {
+    saveSession({ token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { id: 1 } })
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('GETs the list of a plan', async () => {
+    fetch.mockResolvedValue({ ...response(list), status: 200 })
+
+    await expect(shoppingListApi.getShoppingList(9)).resolves.toEqual(list)
+    expect(fetch).toHaveBeenCalledWith('/api/meal-plans/9/shopping-list', { method: 'GET', headers: auth })
+  })
+
+  it('resolves to null when the plan has no list yet (204)', async () => {
+    fetch.mockResolvedValue({ ok: true, status: 204, json: vi.fn() })
+
+    await expect(shoppingListApi.getShoppingList(9)).resolves.toBeNull()
+  })
+
+  it('POSTs to make the list', async () => {
+    fetch.mockResolvedValue({ ...response(list), status: 200 })
+
+    await expect(shoppingListApi.generateShoppingList(9)).resolves.toEqual(list)
+    expect(fetch).toHaveBeenCalledWith('/api/meal-plans/9/shopping-list', { method: 'POST', headers: auth })
+  })
+
+  it('PUTs a tick and resolves to the whole list', async () => {
+    fetch.mockResolvedValue({ ...response(list), status: 200 })
+
+    await expect(shoppingListApi.setItemChecked(9, 101, true)).resolves.toEqual(list)
+    expect(fetch).toHaveBeenCalledWith('/api/meal-plans/9/shopping-list/items/101', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer tok' },
+      body: JSON.stringify({ checked: true }),
+    })
+  })
+
+  it('rejects with the server\'s message', async () => {
+    fetch.mockResolvedValue({ ...response({ error: "That item isn't on this shopping list" }, { ok: false }), status: 404 })
+
+    await expect(shoppingListApi.setItemChecked(9, 1, true)).rejects.toThrow("That item isn't on this shopping list")
   })
 })

@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
     }
 
-    @ExceptionHandler({RecipeNotFoundException.class, MealPlanNotFoundException.class})
+    @ExceptionHandler({RecipeNotFoundException.class, MealPlanNotFoundException.class, ShoppingListNotFoundException.class})
     public ResponseEntity<Map<String, String>> handleNotFound(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", e.getMessage()));

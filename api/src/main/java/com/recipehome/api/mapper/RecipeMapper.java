@@ -1,10 +1,16 @@
 package com.recipehome.api.mapper;
 
+import com.recipehome.api.dto.CreatorDTO;
 import com.recipehome.api.dto.RecipeDTO;
 import com.recipehome.api.entity.Recipe;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
+import com.recipehome.api.service.MealPlanExclusions;
 import com.recipehome.api.service.impl.RecipeServiceImpl;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -12,17 +18,34 @@ public class RecipeMapper {
 
     private final StepMapper stepMapper;
     private final IngredientMapper ingredientMapper;
+    private final CurrentViewer currentViewer;
+    private final MealPlanExclusions exclusions;
 
-    public RecipeMapper(StepMapper stepMapper, IngredientMapper ingredientMapper) {
+    public RecipeMapper(StepMapper stepMapper, IngredientMapper ingredientMapper, CurrentViewer currentViewer,
+                        MealPlanExclusions exclusions) {
         this.stepMapper = stepMapper;
         this.ingredientMapper = ingredientMapper;
+        this.currentViewer = currentViewer;
+        this.exclusions = exclusions;
     }
 
+    /** One recipe as the current viewer sees it (canEdit, excludedFromMealPlans). */
     public RecipeDTO toDTO(Recipe recipe) {
         if (recipe == null) {
             return null;
         }
+        Viewer viewer = currentViewer.get();
+        return toDTO(recipe, viewer, exclusions.excludedRecipeIds(viewer));
+    }
 
+    /** Several recipes as the current viewer sees them, looking up their exclusion list once. */
+    public List<RecipeDTO> toDTOs(List<Recipe> recipes) {
+        Viewer viewer = currentViewer.get();
+        Set<Long> excluded = exclusions.excludedRecipeIds(viewer);
+        return recipes.stream().map(recipe -> toDTO(recipe, viewer, excluded)).toList();
+    }
+
+    private RecipeDTO toDTO(Recipe recipe, Viewer viewer, Set<Long> excluded) {
         RecipeDTO dto = new RecipeDTO();
         dto.setId(recipe.getId());
         dto.setTitle(recipe.getTitle());
@@ -36,7 +59,10 @@ public class RecipeMapper {
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
         dto.setSourceUrl(recipe.getSourceUrl());
-        dto.setExcludedFromMealPlans(recipe.getExcludedFromMealPlans());
+        dto.setVisibility(recipe.getVisibility());
+        dto.setCreatedBy(CreatorDTO.of(recipe.getCreatedBy()));
+        dto.setCanEdit(viewer.isCreatorOf(recipe));
+        dto.setExcludedFromMealPlans(excluded.contains(recipe.getId()));
 
         // Map steps and ingredients
         dto.setSteps(recipe.getSteps().stream()
@@ -49,6 +75,7 @@ public class RecipeMapper {
         return dto;
     }
 
+    /** A new recipe from a request. Its creator is set by RecipeService; visibility defaults to PRIVATE. */
     public Recipe toEntity(RecipeDTO dto) {
         if (dto == null) {
             return null;
@@ -57,6 +84,9 @@ public class RecipeMapper {
         Recipe recipe = new Recipe();
         RecipeServiceImpl.populateRecipe(recipe, dto.getTitle(), dto.getDescription(), dto.getServings(), dto.getPrepTimeMinutes(), dto.getCookTimeMinutes(), dto.getTotalTimeMinutes(), dto.getEquipment(), dto.getCategories(), recipe);
         recipe.setSourceUrl(dto.getSourceUrl());
+        if (dto.getVisibility() != null) {
+            recipe.setVisibility(dto.getVisibility());
+        }
 
         // Map steps and ingredients
         if (dto.getSteps() != null) {

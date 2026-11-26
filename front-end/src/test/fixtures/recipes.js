@@ -31,6 +31,10 @@ export const importedBurritoBowls = {
 // A saved recipe as returned by GET /api/recipes/:id.
 export const savedBurritoBowls = {
   id: 1,
+  visibility: 'PRIVATE',
+  createdBy: { id: 1, firstName: 'Ada', lastName: 'Lovelace' },
+  // The viewer added it, so they may edit and delete it.
+  canEdit: true,
   title: 'Instant Pot Chicken Burrito Bowls',
   description: 'Burrito bowls made in the Instant Pot.',
   servings: 4,

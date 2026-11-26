@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,8 @@ public interface MealPlanRepository extends JpaRepository<MealPlan, Long> {
     // meal type. Meal types load in a batch instead (@BatchSize on MealPlan.mealTypes).
     @EntityGraph(attributePaths = "entries")
     List<MealPlan> findByIsActiveTrueOrderByStartDateDescIdDesc();
+
+    // The same, for plans created by these users (a user and their family)
+    @EntityGraph(attributePaths = {"entries", "createdBy"})
+    List<MealPlan> findByCreatedByIdInAndIsActiveTrueOrderByStartDateDescIdDesc(Collection<Long> userIds);
 }

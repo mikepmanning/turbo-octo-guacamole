@@ -2,10 +2,11 @@
  * The bar shown while selecting recipes on the list: how many are selected, Select all /
  * Clear, and the actions: exclude from or include in meal plans, Cancel, and Delete. It sticks
  * to the top of the screen while scrolling. `busy` disables the meal plan actions while saving.
+ * `deleteBlockedReason` (e.g. some selected recipes are someone else's) disables Delete and says why.
  */
 function SelectionBar({
   selectedCount, totalCount, onSelectAll, onClear, onCancel, onDelete, deleteButtonRef,
-  onExclude, onInclude, busy = false,
+  onExclude, onInclude, busy = false, deleteBlockedReason = null,
 }) {
   return (
     <div className="selection-bar">
@@ -31,10 +32,14 @@ function SelectionBar({
         className="selection-delete"
         ref={deleteButtonRef}
         onClick={onDelete}
-        disabled={selectedCount === 0}
+        disabled={selectedCount === 0 || Boolean(deleteBlockedReason)}
+        aria-describedby={deleteBlockedReason ? 'selection-delete-blocked' : undefined}
       >
         Delete ({selectedCount})
       </button>
+      {deleteBlockedReason && (
+        <span id="selection-delete-blocked" className="selection-hint">{deleteBlockedReason}</span>
+      )}
     </div>
   )
 }

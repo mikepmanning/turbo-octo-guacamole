@@ -8,7 +8,9 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.BatchSize;
@@ -47,6 +49,20 @@ public class MealPlan extends BaseEntity {
 
     @OneToMany(mappedBy = "mealPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealPlanEntry> entries = new ArrayList<>();
+
+    // Who made it. The plan is shared with the creator's family (who may edit it); only the creator may
+    // delete it. Null for plans saved before there were users: nobody sees those.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private User createdBy;
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public MealPlan() {
     }

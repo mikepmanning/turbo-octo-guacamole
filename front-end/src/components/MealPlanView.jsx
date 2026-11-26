@@ -4,6 +4,7 @@ import { mealPlanApi } from '../services/api'
 import MealPlanGrid from './MealPlanGrid'
 import MealPlanEditor from './MealPlanEditor'
 import ConfirmDialog from './ConfirmDialog'
+import { creatorName } from './recipeSharing'
 import { defaultPlanName, formatDateRange, planFromSaved, recipeMeta, slotKey } from './mealPlan'
 import './RecipeList.css'
 import './RecipeDetail.css'
@@ -153,9 +154,12 @@ function MealPlanView() {
           <button type="button" className="edit-button" onClick={() => { setNotice(null); setEditing(true) }}>
             Edit Plan
           </button>
-          <button type="button" className="delete-button" ref={deleteButtonRef} onClick={() => setConfirmingDelete(true)}>
-            Delete Plan
-          </button>
+          {/* The family can edit a plan; only whoever created it can delete it. */}
+          {plan.canDelete && (
+            <button type="button" className="delete-button" ref={deleteButtonRef} onClick={() => setConfirmingDelete(true)}>
+              Delete Plan
+            </button>
+          )}
         </div>
       </div>
 
@@ -164,6 +168,9 @@ function MealPlanView() {
       <header className="meal-plan-header">
         <h1>{name}</h1>
         <p className="meal-plan-range">{range}</p>
+        {!plan.canDelete && creatorName(plan) && (
+          <p className="meal-plan-creator">Created by {creatorName(plan)}</p>
+        )}
       </header>
 
       <MealPlanGrid

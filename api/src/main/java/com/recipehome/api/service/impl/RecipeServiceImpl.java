@@ -7,10 +7,17 @@ import com.recipehome.api.entity.BaseEntity;
 import com.recipehome.api.entity.Ingredient;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.entity.Step;
+import com.recipehome.api.enums.RecipeVisibility;
+import com.recipehome.api.exception.ForbiddenException;
+import com.recipehome.api.exception.InvalidCredentialsException;
 import com.recipehome.api.exception.RecipeNotFoundException;
 import com.recipehome.api.mapper.IngredientMapper;
 import com.recipehome.api.mapper.StepMapper;
 import com.recipehome.api.repository.RecipeRepository;
+import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
+import com.recipehome.api.service.MealPlanExclusions;
 import com.recipehome.api.service.RecipeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +35,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Recipes as the current viewer ({@link CurrentViewer}) may see and change them: reads only return recipes the
+ * viewer can see (others are "not found"), and only a recipe's creator may edit, delete or restore it (403).
+ */
 @Service
 @Transactional
 public class RecipeServiceImpl implements RecipeService {
@@ -35,22 +46,46 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final StepMapper stepMapper;
     private final IngredientMapper ingredientMapper;
+    private final CurrentViewer currentViewer;
+    private final UserRepository userRepository;
+    private final MealPlanExclusions exclusions;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository, StepMapper stepMapper, IngredientMapper ingredientMapper) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, StepMapper stepMapper, IngredientMapper ingredientMapper,
+                             CurrentViewer currentViewer, UserRepository userRepository, MealPlanExclusions exclusions) {
         this.recipeRepository = recipeRepository;
         this.stepMapper = stepMapper;
         this.ingredientMapper = ingredientMapper;
+        this.currentViewer = currentViewer;
+        this.userRepository = userRepository;
+        this.exclusions = exclusions;
     }
 
+    /**
+     * Saves a new recipe added by the current user. Without a user (the seeder loading the sample recipes) the
+     * recipe has no creator, so it is public and nobody can edit it.
+     */
     @Override
     public Recipe createRecipe(Recipe recipe) {
+        Viewer viewer = currentViewer.get();
+        if (viewer.isAnonymous()) {
+            recipe.setCreatedBy(null);
+            recipe.setVisibility(RecipeVisibility.PUBLIC);
+        } else {
+            recipe.setCreatedBy(userRepository.findByIdAndIsActiveTrue(viewer.userId())
+                    .orElseThrow(InvalidCredentialsException::new));
+            if (recipe.getVisibility() == null) recipe.setVisibility(RecipeVisibility.PRIVATE);
+        }
         return recipeRepository.save(recipe);
     }
 
     @Override
     public Recipe updateRecipe(Long id, RecipeDTO dto) {
+        Viewer viewer = currentViewer.get();
         Recipe recipe = recipeRepository.findByIdAndIsActiveTrue(id)
+                .filter(viewer::canSee)
                 .orElseThrow(() -> new RecipeNotFoundException(id));
+        if (!viewer.isCreatorOf(recipe)) throw ForbiddenException.recipeCreatorOnly();
+        if (dto.getVisibility() != null) recipe.setVisibility(dto.getVisibility());
 
         List<StepDTO> stepDTOs = orEmpty(dto.getSteps());
         List<IngredientDTO> ingredientDTOs = orEmpty(dto.getIngredients());
@@ -175,87 +210,111 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Recipe> getRecipeById(Long id) {
-        return recipeRepository.findByIdAndIsActiveTrue(id);
+        return recipeRepository.findByIdAndIsActiveTrue(id).filter(currentViewer.get()::canSee);
     }
 
+    /** Public recipes, plus private ones added by the viewer or their family. */
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> getAllActiveRecipes() {
-        return recipeRepository.findByIsActiveTrue();
+        Viewer viewer = currentViewer.get();
+        return viewer.isAnonymous()
+                ? recipeRepository.findByVisibilityAndIsActiveTrue(RecipeVisibility.PUBLIC)
+                : recipeRepository.findVisibleTo(viewer.groupUserIds(), RecipeVisibility.PUBLIC);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> searchRecipesByTitle(String title) {
-        return recipeRepository.findByTitleContainingIgnoreCaseAndIsActiveTrue(title);
+        return visible(recipeRepository.findByTitleContainingIgnoreCaseAndIsActiveTrue(title));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> getRecipesByCategory(String category) {
-        return recipeRepository.findByCategoryAndIsActiveTrue(category);
+        return visible(recipeRepository.findByCategoryAndIsActiveTrue(category));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> getRecipesByMaxPrepTime(Integer maxPrepTimeMinutes) {
-        return recipeRepository.findByPrepTimeMinutesLessThanEqualAndIsActiveTrue(maxPrepTimeMinutes);
+        return visible(recipeRepository.findByPrepTimeMinutesLessThanEqualAndIsActiveTrue(maxPrepTimeMinutes));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> getRecipesByMaxTotalTime(Integer maxTotalTimeMinutes) {
-        return recipeRepository.findByTotalTimeMinutesLessThanEqualAndIsActiveTrue(maxTotalTimeMinutes);
+        return visible(recipeRepository.findByTotalTimeMinutesLessThanEqualAndIsActiveTrue(maxTotalTimeMinutes));
     }
 
+    private List<Recipe> visible(List<Recipe> recipes) {
+        Viewer viewer = currentViewer.get();
+        return recipes.stream().filter(viewer::canSee).toList();
+    }
+
+    /** Unknown, deleted and unseen recipes are skipped (204, as before); someone else's recipe is a 403. */
     @Override
     public void deleteRecipe(Long id) {
+        Viewer viewer = currentViewer.get();
         recipeRepository.findById(id)
+                .filter(recipe -> recipe.getIsActive() && viewer.canSee(recipe))
                 .ifPresent(recipe -> {
+                    if (!viewer.isCreatorOf(recipe)) throw ForbiddenException.recipeCreatorOnly();
                     recipe.softDelete();
                     recipeRepository.save(recipe);
                 });
     }
 
+    /** All or nothing: if any of the recipes is someone else's, nothing is deleted (403). */
     @Override
     public List<Long> deleteRecipes(Collection<Long> ids) {
-        Set<Long> uniqueIds = new LinkedHashSet<>(ids);
-        Map<Long, Recipe> found = byId(recipeRepository.findAllById(uniqueIds));
-        List<Recipe> toDelete = uniqueIds.stream()
-                .map(found::get)
-                .filter(recipe -> recipe != null && recipe.getIsActive())
+        Viewer viewer = currentViewer.get();
+        List<Recipe> toDelete = activeVisible(ids, viewer);
+        List<String> notMine = toDelete.stream()
+                .filter(recipe -> !viewer.isCreatorOf(recipe))
+                .map(Recipe::getTitle)
                 .toList();
+        if (!notMine.isEmpty()) {
+            throw new ForbiddenException("You can only delete recipes you added. Not yours: " + String.join(", ", notMine));
+        }
         toDelete.forEach(Recipe::softDelete);
         recipeRepository.saveAll(toDelete);
         return toDelete.stream().map(Recipe::getId).toList();
     }
 
+    /** Changes the viewer's family list (or their own), so any recipe they can see may be excluded. */
     @Override
     public List<Long> setExcludedFromMealPlans(Collection<Long> ids, boolean excluded) {
+        Viewer viewer = currentViewer.get();
+        List<Recipe> recipes = activeVisible(ids, viewer);
+        exclusions.setExcluded(viewer, recipes, excluded);
+        return recipes.stream().map(Recipe::getId).toList();
+    }
+
+    /** The active recipes with these ids that the viewer can see, in the order given, without repeats. */
+    private List<Recipe> activeVisible(Collection<Long> ids, Viewer viewer) {
         Set<Long> uniqueIds = new LinkedHashSet<>(ids);
         Map<Long, Recipe> found = byId(recipeRepository.findAllById(uniqueIds));
-        List<Recipe> recipes = uniqueIds.stream()
+        return uniqueIds.stream()
                 .map(found::get)
-                .filter(recipe -> recipe != null && recipe.getIsActive())
+                .filter(recipe -> recipe != null && recipe.getIsActive() && viewer.canSee(recipe))
                 .toList();
-        recipes.forEach(recipe -> recipe.setExcludedFromMealPlans(excluded));
-        recipeRepository.saveAll(recipes);
-        return recipes.stream().map(Recipe::getId).toList();
     }
 
     @Override
     public Recipe restoreRecipe(Long id) {
-        return recipeRepository.findById(id)
-                .map(recipe -> {
-                    recipe.restore();
-                    return recipeRepository.save(recipe);
-                })
-                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+        Viewer viewer = currentViewer.get();
+        Recipe recipe = recipeRepository.findById(id)
+                .filter(viewer::canSee)
+                .orElseThrow(() -> new RecipeNotFoundException(id));
+        if (!viewer.isCreatorOf(recipe)) throw ForbiddenException.recipeCreatorOnly();
+        recipe.restore();
+        return recipeRepository.save(recipe);
     }
 
     @Override
     @Transactional(readOnly = true)
     public long countActiveRecipes() {
-        return recipeRepository.countByIsActiveTrue();
+        return getAllActiveRecipes().size();
     }
 }

@@ -278,3 +278,28 @@ describe('MealPlanView', () => {
     })
   })
 })
+
+describe('MealPlanView – sharing', () => {
+  beforeEach(() => {
+    recipeApi.getAllRecipes.mockResolvedValue(planningRecipes)
+  })
+
+  it('lets a family member edit a plan but not delete it, and says who made it', async () => {
+    mealPlanApi.getMealPlan.mockResolvedValue({
+      ...savedMealPlan, createdBy: { id: 2, firstName: 'Grace', lastName: 'Hopper' }, canDelete: false,
+    })
+    renderView()
+
+    expect(await screen.findByText('Created by Grace Hopper')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit Plan' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Delete Plan' })).not.toBeInTheDocument()
+  })
+
+  it('does not name the creator on their own plan', async () => {
+    mealPlanApi.getMealPlan.mockResolvedValue(savedMealPlan)
+    renderView()
+
+    expect(await screen.findByRole('button', { name: 'Delete Plan' })).toBeInTheDocument()
+    expect(screen.queryByText(/Created by/)).not.toBeInTheDocument()
+  })
+})

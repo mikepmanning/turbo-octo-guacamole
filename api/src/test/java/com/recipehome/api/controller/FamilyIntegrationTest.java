@@ -3,7 +3,9 @@ package com.recipehome.api.controller;
 import com.recipehome.api.repository.FamilyMemberRepository;
 import com.recipehome.api.repository.FamilyRepository;
 import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.TestUsers;
 import org.junit.jupiter.api.AfterEach;
+import org.springframework.context.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FamilyIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
+    @Autowired private ApplicationContext context;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private UserRepository userRepository;
     @Autowired private FamilyRepository familyRepository;
@@ -54,6 +57,7 @@ class FamilyIntegrationTest {
 
     @BeforeEach
     void registerUsers() throws Exception {
+        TestUsers.clearDatabase(context);
         ada = register("ada@example.com", "Ada");
         grace = register("grace@example.com", "Grace");
         alan = register("alan@example.com", "Alan");
@@ -63,9 +67,7 @@ class FamilyIntegrationTest {
 
     @AfterEach
     void cleanUp() {
-        memberRepository.deleteAll();
-        familyRepository.deleteAll();
-        userRepository.deleteAll();
+        TestUsers.clearDatabase(context);
     }
 
     private String register(String email, String firstName) throws Exception {

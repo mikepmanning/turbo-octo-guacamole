@@ -1,11 +1,13 @@
 package com.recipehome.api.mapper;
 
+import com.recipehome.api.dto.CreatorDTO;
 import com.recipehome.api.dto.MealPlanDTO;
 import com.recipehome.api.dto.MealPlanSummaryDTO;
 import com.recipehome.api.dto.PlannedMealDTO;
 import com.recipehome.api.entity.MealPlan;
 import com.recipehome.api.entity.MealPlanEntry;
 import com.recipehome.api.entity.Recipe;
+import com.recipehome.api.security.CurrentViewer;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -16,6 +18,12 @@ public class MealPlanMapper {
     private static final Comparator<MealPlanEntry> BY_DAY_THEN_MEAL = Comparator
             .comparing(MealPlanEntry::getDate)
             .thenComparing(MealPlanEntry::getMealType);   // enum order: Breakfast, Lunch, Snack, Dinner
+
+    private final CurrentViewer currentViewer;
+
+    public MealPlanMapper(CurrentViewer currentViewer) {
+        this.currentViewer = currentViewer;
+    }
 
     public MealPlanDTO toDTO(MealPlan plan) {
         if (plan == null) {
@@ -29,6 +37,8 @@ public class MealPlanMapper {
                 plan.getDays(),
                 plan.getMealTypes().stream().sorted().toList(),
                 plan.getEntries().stream().sorted(BY_DAY_THEN_MEAL).map(MealPlanMapper::toDTO).toList(),
+                CreatorDTO.of(plan.getCreatedBy()),
+                currentViewer.get().isCreatorOf(plan),
                 plan.getCreatedAt(),
                 plan.getUpdatedAt());
     }
@@ -45,6 +55,8 @@ public class MealPlanMapper {
                 plan.getDays(),
                 plan.getMealTypes().stream().sorted().toList(),
                 plan.getEntries().size(),
+                CreatorDTO.of(plan.getCreatedBy()),
+                currentViewer.get().isCreatorOf(plan),
                 plan.getCreatedAt(),
                 plan.getUpdatedAt());
     }

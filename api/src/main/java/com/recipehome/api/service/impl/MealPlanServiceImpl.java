@@ -5,11 +5,16 @@ import com.recipehome.api.entity.MealPlan;
 import com.recipehome.api.entity.MealPlanEntry;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.enums.MealType;
+import com.recipehome.api.exception.ForbiddenException;
+import com.recipehome.api.exception.InvalidCredentialsException;
 import com.recipehome.api.exception.InvalidDateRangeException;
 import com.recipehome.api.exception.MealPlanNotFoundException;
 import com.recipehome.api.repository.MealPlanEntryRepository;
 import com.recipehome.api.repository.MealPlanRepository;
 import com.recipehome.api.repository.RecipeRepository;
+import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
 import com.recipehome.api.service.MealPlanService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +32,10 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Meal plans as the current viewer ({@link CurrentViewer}) may use them: a plan is shared with its creator's
+ * family, who may see and edit it; only the creator may delete it. Plans the viewer can't see are "not found".
+ */
 @Service
 @Transactional
 public class MealPlanServiceImpl implements MealPlanService {
@@ -39,21 +48,29 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanEntryRepository mealPlanEntryRepository;
     private final RecipeRepository recipeRepository;
+    private final CurrentViewer currentViewer;
+    private final UserRepository userRepository;
 
     public MealPlanServiceImpl(MealPlanRepository mealPlanRepository, MealPlanEntryRepository mealPlanEntryRepository,
-                               RecipeRepository recipeRepository) {
+                               RecipeRepository recipeRepository, CurrentViewer currentViewer,
+                               UserRepository userRepository) {
         this.mealPlanRepository = mealPlanRepository;
         this.mealPlanEntryRepository = mealPlanEntryRepository;
         this.recipeRepository = recipeRepository;
+        this.currentViewer = currentViewer;
+        this.userRepository = userRepository;
     }
 
     @Override
     public MealPlan createMealPlan(MealPlanRequest request) {
         // Check every entry before saving anything.
         checkEntries(request);
-        Map<Long, Recipe> recipes = activeRecipes(request.entries().stream().map(MealPlanRequest.Entry::recipeId).toList());
+        Viewer viewer = currentViewer.get();
+        Map<Long, Recipe> recipes = activeRecipes(request.entries().stream().map(MealPlanRequest.Entry::recipeId).toList(), viewer);
 
         MealPlan plan = new MealPlan();
+        plan.setCreatedBy(viewer.isAnonymous() ? null : userRepository.findByIdAndIsActiveTrue(viewer.userId())
+                .orElseThrow(InvalidCredentialsException::new));
         setDetails(plan, request);
         for (MealPlanRequest.Entry entry : request.entries()) {
             plan.addEntry(new MealPlanEntry(entry.date(), entry.mealType(), recipes.get(entry.recipeId())));
@@ -65,13 +82,16 @@ public class MealPlanServiceImpl implements MealPlanService {
     @Transactional(readOnly = true)
     public MealPlan getMealPlan(Long id) {
         return mealPlanRepository.findByIdAndIsActiveTrue(id)
+                .filter(currentViewer.get()::canSee)
                 .orElseThrow(() -> new MealPlanNotFoundException(id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<MealPlan> getMealPlans() {
-        return mealPlanRepository.findByIsActiveTrueOrderByStartDateDescIdDesc();
+        Viewer viewer = currentViewer.get();
+        if (viewer.isAnonymous()) return List.of();
+        return mealPlanRepository.findByCreatedByIdInAndIsActiveTrueOrderByStartDateDescIdDesc(viewer.groupUserIds());
     }
 
     @Override
@@ -90,7 +110,7 @@ public class MealPlanServiceImpl implements MealPlanService {
                 .map(MealPlanRequest.Entry::recipeId)
                 .filter(recipeId -> !recipes.containsKey(recipeId))
                 .toList();
-        recipes.putAll(activeRecipes(newRecipeIds));
+        recipes.putAll(activeRecipes(newRecipeIds, currentViewer.get()));
 
         setDetails(plan, request);
 
@@ -117,10 +137,14 @@ public class MealPlanServiceImpl implements MealPlanService {
         return mealPlanRepository.saveAndFlush(plan);
     }
 
+    /** Unknown, deleted and unseen plans are skipped (204, as before); a family member's plan is a 403. */
     @Override
     public void deleteMealPlan(Long id) {
+        Viewer viewer = currentViewer.get();
         mealPlanRepository.findById(id)
+                .filter(plan -> plan.getIsActive() && viewer.canSee(plan))
                 .ifPresent(plan -> {
+                    if (!viewer.isCreatorOf(plan)) throw ForbiddenException.mealPlanCreatorOnly();
                     plan.softDelete();
                     mealPlanRepository.save(plan);
                 });
@@ -135,7 +159,9 @@ public class MealPlanServiceImpl implements MealPlanService {
         if (ChronoUnit.DAYS.between(from, to) + 1 > MAX_PLANNED_MEALS_RANGE_DAYS) {
             throw new InvalidDateRangeException("The date range can be at most " + MAX_PLANNED_MEALS_RANGE_DAYS + " days");
         }
-        return mealPlanEntryRepository.findPlannedBetween(from, to).stream()
+        Viewer viewer = currentViewer.get();
+        if (viewer.isAnonymous()) return List.of();
+        return mealPlanEntryRepository.findPlannedBetweenByCreators(from, to, viewer.groupUserIds()).stream()
                 .sorted(BY_DAY_THEN_MEAL)
                 .toList();
     }
@@ -167,14 +193,14 @@ public class MealPlanServiceImpl implements MealPlanService {
         }
     }
 
-    /** The active recipes with these ids, by id; fails naming any that are unknown or deleted. */
-    private Map<Long, Recipe> activeRecipes(List<Long> recipeIds) {
+    /** The active recipes with these ids that the viewer can see, by id; fails naming any others. */
+    private Map<Long, Recipe> activeRecipes(List<Long> recipeIds, Viewer viewer) {
         Set<Long> ids = new HashSet<>(recipeIds);
         if (ids.isEmpty()) {
             return new HashMap<>();
         }
         Map<Long, Recipe> found = recipeRepository.findAllById(ids).stream()
-                .filter(Recipe::getIsActive)
+                .filter(recipe -> recipe.getIsActive() && viewer.canSee(recipe))
                 .collect(Collectors.toMap(Recipe::getId, Function.identity()));
         Set<Long> missing = new TreeSet<>(ids);
         missing.removeAll(found.keySet());

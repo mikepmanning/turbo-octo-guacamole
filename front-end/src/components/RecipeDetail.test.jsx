@@ -217,6 +217,7 @@ describe('RecipeDetail', () => {
         prepTimeMinutes: 10,
         cookTimeMinutes: 10,
         totalTimeMinutes: 20,
+        visibility: 'PRIVATE',
         ingredients: [
           { id: 11, name: 'corn kernels (drained)', quantity: 2, unit: 'CAN', packageQuantity: 15, packageUnit: 'OUNCE' },
         ],
@@ -524,5 +525,46 @@ describe('RecipeDetail', () => {
 
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('RecipeDetail – sharing', () => {
+  const grace = { id: 2, firstName: 'Grace', lastName: 'Hopper' }
+
+  beforeEach(() => {
+    recipeApi.getUnits.mockResolvedValue(UNITS)
+  })
+
+  it('shows the creator\'s own recipe as private, with Edit and Delete', async () => {
+    recipeApi.getRecipeById.mockResolvedValue(savedBurritoBowls)
+    renderDetail()
+
+    expect(await screen.findByText('Added by Ada Lovelace')).toBeInTheDocument()
+    expect(screen.getByText('Private')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit Recipe' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Delete Recipe' })).toBeInTheDocument()
+  })
+
+  it('shows someone else\'s recipe without Edit or Delete, but it can still be excluded', async () => {
+    recipeApi.getRecipeById.mockResolvedValue({
+      ...savedBurritoBowls, visibility: 'PUBLIC', createdBy: grace, canEdit: false,
+    })
+    renderDetail()
+
+    expect(await screen.findByText('Added by Grace Hopper')).toBeInTheDocument()
+    expect(screen.getByText('Public')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Recipe' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Delete Recipe' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Exclude from meal plans' })).toBeInTheDocument()
+  })
+
+  it('marks sample recipes, which nobody can edit', async () => {
+    recipeApi.getRecipeById.mockResolvedValue({
+      ...savedBurritoBowls, visibility: 'PUBLIC', createdBy: null, canEdit: false,
+    })
+    renderDetail()
+
+    expect(await screen.findByText('RecipeHome sample recipe')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Recipe' })).not.toBeInTheDocument()
   })
 })

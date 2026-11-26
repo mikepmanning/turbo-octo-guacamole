@@ -6,11 +6,17 @@ import com.recipehome.api.dto.StepDTO;
 import com.recipehome.api.entity.Ingredient;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.entity.Step;
+import com.recipehome.api.entity.User;
+import com.recipehome.api.enums.RecipeVisibility;
 import com.recipehome.api.enums.Unit;
+import com.recipehome.api.exception.ForbiddenException;
 import com.recipehome.api.exception.RecipeNotFoundException;
 import com.recipehome.api.mapper.IngredientMapper;
 import com.recipehome.api.mapper.StepMapper;
 import com.recipehome.api.repository.RecipeRepository;
+import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
 import com.recipehome.api.service.impl.RecipeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -48,14 +54,45 @@ class RecipeServiceTest {
     @Spy
     private IngredientMapper ingredientMapper = new IngredientMapper();
 
+    @Mock
+    private CurrentViewer currentViewer;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private MealPlanExclusions exclusions;
+
     @InjectMocks
     private RecipeServiceImpl recipeService;
 
     private Recipe testRecipe;
 
+    // The viewer, user 1, with no family; and someone else, user 2.
+    private static final User ME = user(1L);
+    private static final User SOMEONE_ELSE = user(2L);
+    private static final Viewer VIEWER = new Viewer(1L, null, Set.of(1L));
+
+    private static User user(long id) {
+        User user = new User();
+        user.setId(id);
+        user.setFirstName("User");
+        user.setLastName(String.valueOf(id));
+        return user;
+    }
+
+    /** Most tests are about the viewer's own recipes. */
+    private static Recipe mine(Recipe recipe) {
+        recipe.setCreatedBy(ME);
+        return recipe;
+    }
+
     @BeforeEach
     void setUp() {
-        testRecipe = new Recipe();
+        lenient().when(currentViewer.get()).thenReturn(VIEWER);
+        lenient().when(userRepository.findByIdAndIsActiveTrue(1L)).thenReturn(Optional.of(ME));
+
+        testRecipe = mine(new Recipe());
         testRecipe.setId(1L);
         testRecipe.setTitle("Test Recipe");
         testRecipe.setDescription("Test Description");
@@ -352,12 +389,12 @@ class RecipeServiceTest {
     @Test
     void getAllActiveRecipes_ShouldReturnAllRecipes() {
         // Given
-        Recipe recipe2 = new Recipe();
+        Recipe recipe2 = mine(new Recipe());
         recipe2.setId(2L);
         recipe2.setTitle("Another Recipe");
         recipe2.setServings(2);
 
-        when(recipeRepository.findByIsActiveTrue()).thenReturn(Arrays.asList(testRecipe, recipe2));
+        when(recipeRepository.findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(Arrays.asList(testRecipe, recipe2));
 
         // When
         List<Recipe> recipes = recipeService.getAllActiveRecipes();
@@ -366,7 +403,7 @@ class RecipeServiceTest {
         assertThat(recipes).hasSize(2);
         assertThat(recipes).extracting(Recipe::getTitle)
                 .containsExactly("Test Recipe", "Another Recipe");
-        verify(recipeRepository, times(1)).findByIsActiveTrue();
+        verify(recipeRepository, times(1)).findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC);
     }
 
     @Test
@@ -465,7 +502,7 @@ class RecipeServiceTest {
     class DeleteRecipes {
 
         private Recipe recipe(long id, boolean active) {
-            Recipe recipe = new Recipe("Recipe " + id);
+            Recipe recipe = mine(new Recipe("Recipe " + id));
             recipe.setId(id);
             recipe.setIsActive(active);
             return recipe;
@@ -506,51 +543,190 @@ class RecipeServiceTest {
     @Nested
     class SetExcludedFromMealPlans {
 
-        private Recipe recipe(long id, boolean active, boolean excluded) {
+        private Recipe recipe(long id, boolean active, User creator, RecipeVisibility visibility) {
             Recipe recipe = new Recipe("Recipe " + id);
             recipe.setId(id);
             recipe.setIsActive(active);
-            recipe.setExcludedFromMealPlans(excluded);
+            recipe.setCreatedBy(creator);
+            recipe.setVisibility(visibility);
             return recipe;
         }
 
         @Test
-        void newRecipesAreIncluded() {
-            assertThat(new Recipe("Toast").getExcludedFromMealPlans()).isFalse();
-        }
-
-        @Test
-        void excludesEachActiveRecipe_andReturnsTheirIdsInRequestOrder() {
-            Recipe one = recipe(1L, true, false), two = recipe(2L, true, true);
-            when(recipeRepository.findAllById(any())).thenReturn(List.of(one, two));
+        void changesTheViewersListForEachRecipeTheyCanSee_inRequestOrder() {
+            // Someone else's public recipe can be excluded too: it only changes the viewer's own list.
+            Recipe own = recipe(1L, true, ME, RecipeVisibility.PRIVATE);
+            Recipe othersPublic = recipe(2L, true, SOMEONE_ELSE, RecipeVisibility.PUBLIC);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(own, othersPublic));
 
             List<Long> updated = recipeService.setExcludedFromMealPlans(List.of(2L, 1L), true);
 
-            assertThat(updated).containsExactly(2L, 1L);   // 2 was already excluded: still "set as asked"
-            assertThat(List.of(one, two)).allSatisfy(r -> assertThat(r.getExcludedFromMealPlans()).isTrue());
-            verify(recipeRepository).saveAll(List.of(two, one));
+            assertThat(updated).containsExactly(2L, 1L);
+            verify(exclusions).setExcluded(VIEWER, List.of(othersPublic, own), true);
         }
 
         @Test
         void includesThemAgain() {
-            Recipe one = recipe(1L, true, true);
-            when(recipeRepository.findAllById(any())).thenReturn(List.of(one));
+            Recipe own = recipe(1L, true, ME, RecipeVisibility.PRIVATE);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(own));
 
             assertThat(recipeService.setExcludedFromMealPlans(List.of(1L), false)).containsExactly(1L);
-            assertThat(one.getExcludedFromMealPlans()).isFalse();
+            verify(exclusions).setExcluded(VIEWER, List.of(own), false);
         }
 
         @Test
-        void skipsUnknownDeletedAndRepeatedIds() {
-            Recipe active = recipe(1L, true, false), deleted = recipe(2L, false, false);
-            when(recipeRepository.findAllById(any())).thenReturn(List.of(active, deleted));
+        void skipsUnknownDeletedUnseenAndRepeatedIds() {
+            Recipe active = recipe(1L, true, ME, RecipeVisibility.PRIVATE);
+            Recipe deleted = recipe(2L, false, ME, RecipeVisibility.PRIVATE);
+            Recipe othersPrivate = recipe(3L, true, SOMEONE_ELSE, RecipeVisibility.PRIVATE);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(active, deleted, othersPrivate));
 
-            List<Long> updated = recipeService.setExcludedFromMealPlans(List.of(1L, 2L, 1L, 999L), true);
+            List<Long> updated = recipeService.setExcludedFromMealPlans(List.of(1L, 2L, 3L, 1L, 999L), true);
 
             assertThat(updated).containsExactly(1L);
-            assertThat(deleted.getExcludedFromMealPlans()).isFalse();
-            verify(recipeRepository).findAllById(Set.of(1L, 2L, 999L));
-            verify(recipeRepository).saveAll(List.of(active));
+            verify(recipeRepository).findAllById(Set.of(1L, 2L, 3L, 999L));
+            verify(exclusions).setExcluded(VIEWER, List.of(active), true);
+        }
+    }
+
+    @Nested
+    class Access {
+
+        private Recipe othersRecipe(RecipeVisibility visibility) {
+            Recipe recipe = new Recipe("Their Soup");
+            recipe.setId(7L);
+            recipe.setCreatedBy(SOMEONE_ELSE);
+            recipe.setVisibility(visibility);
+            return recipe;
+        }
+
+        @Test
+        void aNewRecipeBelongsToTheViewer_andIsPrivateUnlessSaidOtherwise() {
+            Recipe recipe = new Recipe("Soup");
+            recipe.setVisibility(null);
+            when(recipeRepository.save(recipe)).thenReturn(recipe);
+
+            recipeService.createRecipe(recipe);
+
+            assertThat(recipe.getCreatedBy()).isSameAs(ME);
+            assertThat(recipe.getVisibility()).isEqualTo(RecipeVisibility.PRIVATE);
+        }
+
+        @Test
+        void aNewRecipeKeepsTheVisibilityChosen() {
+            Recipe recipe = new Recipe("Soup");
+            recipe.setVisibility(RecipeVisibility.PUBLIC);
+            when(recipeRepository.save(recipe)).thenReturn(recipe);
+
+            recipeService.createRecipe(recipe);
+
+            assertThat(recipe.getVisibility()).isEqualTo(RecipeVisibility.PUBLIC);
+        }
+
+        @Test
+        void withoutAUser_aNewRecipeIsAPublicSampleWithoutACreator() {
+            when(currentViewer.get()).thenReturn(Viewer.anonymous());
+            Recipe recipe = new Recipe("Sample");
+            when(recipeRepository.save(recipe)).thenReturn(recipe);
+
+            recipeService.createRecipe(recipe);
+
+            assertThat(recipe.getCreatedBy()).isNull();
+            assertThat(recipe.getVisibility()).isEqualTo(RecipeVisibility.PUBLIC);
+        }
+
+        @Test
+        void anonymousViewersOnlyGetPublicRecipes() {
+            when(currentViewer.get()).thenReturn(Viewer.anonymous());
+            when(recipeRepository.findByVisibilityAndIsActiveTrue(RecipeVisibility.PUBLIC)).thenReturn(List.of(testRecipe));
+
+            assertThat(recipeService.getAllActiveRecipes()).containsExactly(testRecipe);
+        }
+
+        @Test
+        void someoneElsesPrivateRecipeIsNotFound() {
+            when(recipeRepository.findByIdAndIsActiveTrue(7L)).thenReturn(Optional.of(othersRecipe(RecipeVisibility.PRIVATE)));
+
+            assertThat(recipeService.getRecipeById(7L)).isEmpty();
+            assertThatThrownBy(() -> recipeService.updateRecipe(7L, new RecipeDTO(null, "Mine now")))
+                    .isInstanceOf(RecipeNotFoundException.class);
+        }
+
+        @Test
+        void searchesLeaveOutRecipesTheViewerCannotSee() {
+            Recipe hidden = othersRecipe(RecipeVisibility.PRIVATE);
+            when(recipeRepository.findByTitleContainingIgnoreCaseAndIsActiveTrue("soup")).thenReturn(List.of(hidden, testRecipe));
+
+            assertThat(recipeService.searchRecipesByTitle("soup")).containsExactly(testRecipe);
+        }
+
+        @Test
+        void someoneElsesPublicRecipeCanBeReadButNotChanged() {
+            Recipe theirs = othersRecipe(RecipeVisibility.PUBLIC);
+            when(recipeRepository.findByIdAndIsActiveTrue(7L)).thenReturn(Optional.of(theirs));
+            when(recipeRepository.findById(7L)).thenReturn(Optional.of(theirs));
+
+            assertThat(recipeService.getRecipeById(7L)).contains(theirs);
+            assertThatThrownBy(() -> recipeService.updateRecipe(7L, new RecipeDTO(null, "Mine now")))
+                    .isInstanceOf(ForbiddenException.class);
+            assertThatThrownBy(() -> recipeService.deleteRecipe(7L)).isInstanceOf(ForbiddenException.class);
+            assertThatThrownBy(() -> recipeService.restoreRecipe(7L)).isInstanceOf(ForbiddenException.class);
+            assertThat(theirs.getIsActive()).isTrue();
+            verify(recipeRepository, never()).save(any());
+        }
+
+        @Test
+        void sampleRecipesWithoutACreatorAreReadOnly() {
+            Recipe sample = othersRecipe(RecipeVisibility.PUBLIC);
+            sample.setCreatedBy(null);
+            when(recipeRepository.findByIdAndIsActiveTrue(7L)).thenReturn(Optional.of(sample));
+
+            assertThatThrownBy(() -> recipeService.updateRecipe(7L, new RecipeDTO(null, "Mine now")))
+                    .isInstanceOf(ForbiddenException.class);
+        }
+
+        @Test
+        void bulkDeleteIsRefusedWhole_whenAnyRecipeIsSomeoneElses() {
+            Recipe theirs = othersRecipe(RecipeVisibility.PUBLIC);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(testRecipe, theirs));
+
+            assertThatThrownBy(() -> recipeService.deleteRecipes(List.of(1L, 7L)))
+                    .isInstanceOf(ForbiddenException.class)
+                    .hasMessageContaining("Their Soup");
+            assertThat(testRecipe.getIsActive()).isTrue();
+            verify(recipeRepository, never()).saveAll(any());
+        }
+
+        @Test
+        void deletingSomeoneElsesPrivateRecipeIsSilentlySkipped() {
+            // The viewer can't see it, so it is treated like an unknown id (as before: 204).
+            when(recipeRepository.findById(7L)).thenReturn(Optional.of(othersRecipe(RecipeVisibility.PRIVATE)));
+
+            recipeService.deleteRecipe(7L);
+
+            verify(recipeRepository, never()).save(any());
+        }
+
+        @Test
+        void theCreatorCanChangeTheVisibility() {
+            when(recipeRepository.findByIdAndIsActiveTrue(1L)).thenReturn(Optional.of(testRecipe));
+            when(recipeRepository.saveAndFlush(testRecipe)).thenReturn(testRecipe);
+            RecipeDTO dto = new RecipeDTO(null, "Test Recipe");
+            dto.setVisibility(RecipeVisibility.PUBLIC);
+
+            recipeService.updateRecipe(1L, dto);
+
+            assertThat(testRecipe.getVisibility()).isEqualTo(RecipeVisibility.PUBLIC);
+        }
+
+        @Test
+        void leavingOutTheVisibilityKeepsIt() {
+            when(recipeRepository.findByIdAndIsActiveTrue(1L)).thenReturn(Optional.of(testRecipe));
+            when(recipeRepository.saveAndFlush(testRecipe)).thenReturn(testRecipe);
+
+            recipeService.updateRecipe(1L, new RecipeDTO(null, "Test Recipe"));
+
+            assertThat(testRecipe.getVisibility()).isEqualTo(RecipeVisibility.PRIVATE);
         }
     }
 
@@ -587,13 +763,13 @@ class RecipeServiceTest {
     @Test
     void countActiveRecipes_ShouldReturnCount() {
         // Given
-        when(recipeRepository.countByIsActiveTrue()).thenReturn(5L);
+        when(recipeRepository.findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(List.of(testRecipe, testRecipe, testRecipe, testRecipe, testRecipe));
 
         // When
         long count = recipeService.countActiveRecipes();
 
         // Then
         assertThat(count).isEqualTo(5L);
-        verify(recipeRepository, times(1)).countByIsActiveTrue();
+        verify(recipeRepository, times(1)).findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC);
     }
 }

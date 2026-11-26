@@ -49,6 +49,8 @@ export const savedMealPlan = {
     { id: 33, date: '2026-06-02', mealType: 'DINNER',
       recipe: { id: 5, title: 'Kung Pao Chicken', totalTimeMinutes: 25, servings: 4, deleted: false } },
   ],
+  createdBy: { id: 1, firstName: 'Ada', lastName: 'Lovelace' },
+  canDelete: true,
   createdAt: '2026-05-30T10:00:00',
   updatedAt: '2026-05-30T10:00:00',
 }

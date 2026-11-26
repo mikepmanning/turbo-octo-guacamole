@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/recipes")
@@ -56,43 +55,33 @@ public class RecipeController {
 
     @GetMapping
     public ResponseEntity<List<RecipeDTO>> getAllRecipes() {
-        List<RecipeDTO> recipes = recipeService.getAllActiveRecipes().stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getAllActiveRecipes());
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<RecipeDTO>> searchRecipes(@RequestParam String title) {
         logger.debug("Searching recipes with title: {}", title);
-        List<RecipeDTO> recipes = recipeService.searchRecipesByTitle(title).stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.searchRecipesByTitle(title));
         logger.debug("Found {} recipes matching '{}'", recipes.size(), title);
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/category/{category}")
     public ResponseEntity<List<RecipeDTO>> getRecipesByCategory(@PathVariable String category) {
-        List<RecipeDTO> recipes = recipeService.getRecipesByCategory(category).stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByCategory(category));
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/filter/prep-time")
     public ResponseEntity<List<RecipeDTO>> getRecipesByMaxPrepTime(@RequestParam Integer maxMinutes) {
-        List<RecipeDTO> recipes = recipeService.getRecipesByMaxPrepTime(maxMinutes).stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByMaxPrepTime(maxMinutes));
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/filter/total-time")
     public ResponseEntity<List<RecipeDTO>> getRecipesByMaxTotalTime(@RequestParam Integer maxMinutes) {
-        List<RecipeDTO> recipes = recipeService.getRecipesByMaxTotalTime(maxMinutes).stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByMaxTotalTime(maxMinutes));
         return ResponseEntity.ok(recipes);
     }
 

@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * A saved meal plan, as returned by /api/meal-plans. {@code mealTypes} are in display order
- * (Breakfast, Lunch, Snack, Dinner); {@code entries} are sorted by date, then meal.
+ * (Breakfast, Lunch, Snack, Dinner); {@code entries} are sorted by date, then meal. Anyone in the creator's
+ * family may edit it; {@code canDelete} is true only for its creator.
  */
 public record MealPlanDTO(
         Long id,
@@ -18,6 +19,8 @@ public record MealPlanDTO(
         Integer days,
         List<MealType> mealTypes,
         List<Entry> entries,
+        CreatorDTO createdBy,
+        boolean canDelete,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 

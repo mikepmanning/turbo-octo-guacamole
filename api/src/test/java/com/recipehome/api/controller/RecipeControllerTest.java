@@ -59,6 +59,12 @@ class RecipeControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Lists are mapped in one call (toDTOs); map each recipe with whatever toDTO is stubbed to return.
+        lenient().when(recipeMapper.toDTOs(anyList())).thenAnswer(invocation -> {
+            List<Recipe> recipes = invocation.getArgument(0);
+            return recipes.stream().map(recipeMapper::toDTO).toList();
+        });
+
         // Set up entity
         testRecipe = new Recipe();
         testRecipe.setId(1L);

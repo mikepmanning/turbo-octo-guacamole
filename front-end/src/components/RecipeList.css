@@ -335,3 +335,28 @@ header p {
   accent-color: #646cff;
   cursor: pointer;
 }
+
+/* Someone else's recipe: who added it */
+.recipe-card-byline {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+
+.recipe-meta .visibility-tag {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: rgba(100, 108, 255, 0.15);
+  color: #646cff;
+}
+
+/* Why Delete is disabled in Select mode */
+.selection-hint {
+  flex-basis: 100%;
+  text-align: right;
+  color: #888;
+  font-size: 0.85rem;
+}

@@ -181,3 +181,18 @@ describe('MealPlanList', () => {
     })
   })
 })
+
+describe('MealPlanList – sharing', () => {
+  it('says who made the plans other family members created', async () => {
+    mealPlanApi.getMealPlans.mockResolvedValue([
+      { ...mealPlanSummaries[0], canDelete: true, createdBy: { id: 1, firstName: 'Ada', lastName: 'Lovelace' } },
+      { ...mealPlanSummaries[1], canDelete: false, createdBy: { id: 2, firstName: 'Grace', lastName: 'Hopper' } },
+    ])
+    recipeApi.getAllRecipes.mockResolvedValue(planningRecipes)
+    renderList()
+
+    await screen.findAllByRole('link', { name: /Summer week/ })
+    expect(cards()[0]).not.toHaveTextContent('Created by')
+    expect(cards()[1]).toHaveTextContent('Created by Grace Hopper')
+  })
+})

@@ -258,8 +258,9 @@ describe('RecipeList', () => {
 
   describe('selecting recipes to delete', () => {
     const TITLES = ['Pancakes', 'Waffles', 'Crepes', 'Omelette', 'Porridge', 'Granola', 'Toast']
+    // The viewer added them all, so they may delete them (canEdit).
     const RECIPES = TITLES.map((title, i) => ({
-      id: i + 1, title, description: `${title}.`, totalTimeMinutes: 10, servings: 2, categories: [],
+      id: i + 1, title, description: `${title}.`, totalTimeMinutes: 10, servings: 2, categories: [], canEdit: true,
     }))
     const checkbox = (title) => screen.getByRole('checkbox', { name: title })
     const card = (title) => checkbox(title).closest('.recipe-card')
@@ -529,7 +530,7 @@ describe('RecipeList', () => {
         ingredients: [{ name: 'chicken thighs' }, { name: 'yogurt' }],
         prepTimeMinutes: 20, cookTimeMinutes: 40, totalTimeMinutes: 240, servings: 6 },
       { id: 6, title: 'House Vinaigrette', categories: [], ingredients: [{ name: 'olive oil' }] },
-    ]
+    ].map(recipe => ({ ...recipe, canEdit: true }))   // the viewer's own, so Select mode can delete them
 
     const shownTitles = () =>
       [...document.querySelectorAll('.recipe-grid h2')].map(h2 => h2.textContent)
@@ -785,5 +786,45 @@ describe('RecipeList', () => {
         expect(screen.getByRole('searchbox')).toHaveValue('soup')
       })
     })
+  })
+})
+
+describe('RecipeList – sharing', () => {
+  const grace = { id: 2, firstName: 'Grace', lastName: 'Hopper' }
+  const RECIPES = [
+    { id: 1, title: 'My Pancakes', description: '', totalTimeMinutes: 10, servings: 2, categories: [],
+      visibility: 'PRIVATE', canEdit: true },
+    { id: 2, title: 'Grace Waffles', description: '', totalTimeMinutes: 10, servings: 2, categories: [],
+      visibility: 'PUBLIC', createdBy: grace, canEdit: false },
+  ]
+  const card = (title) => screen.getByRole('heading', { name: title }).closest('.recipe-card')
+
+  beforeEach(() => {
+    recipeApi.getAllRecipes.mockResolvedValue(RECIPES)
+  })
+
+  it('tags private recipes and says who added other people\'s', async () => {
+    renderList()
+
+    await screen.findByRole('heading', { name: 'My Pancakes' })
+    expect(within(card('My Pancakes')).getByText('Private')).toBeInTheDocument()
+    expect(within(card('My Pancakes')).queryByText(/Added by/)).not.toBeInTheDocument()
+    expect(within(card('Grace Waffles')).queryByText('Private')).not.toBeInTheDocument()
+    expect(within(card('Grace Waffles')).getByText('Added by Grace Hopper')).toBeInTheDocument()
+  })
+
+  it('only deletes recipes the user added, but can exclude any of them', async () => {
+    const user = userEvent.setup()
+    renderList()
+    await user.click(await selectButtonWhenReady())
+
+    await user.click(screen.getByRole('checkbox', { name: 'My Pancakes' }))
+    expect(screen.getByRole('button', { name: 'Delete (1)' })).toBeEnabled()
+
+    await user.click(screen.getByRole('checkbox', { name: 'Grace Waffles' }))
+    const deleteButton = screen.getByRole('button', { name: 'Delete (2)' })
+    expect(deleteButton).toBeDisabled()
+    expect(deleteButton).toHaveAccessibleDescription('You can only delete recipes you added')
+    expect(screen.getByRole('button', { name: 'Exclude from meal plans' })).toBeEnabled()
   })
 })

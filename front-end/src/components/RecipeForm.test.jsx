@@ -79,6 +79,7 @@ describe('RecipeForm', () => {
         prepTimeMinutes: 5,
         cookTimeMinutes: null,
         totalTimeMinutes: null,
+        visibility: 'PRIVATE',
         ingredients: [
           { name: 'black beans', quantity: 2, unit: 'CAN', packageQuantity: 15, packageUnit: 'OUNCE' },
         ],
@@ -360,5 +361,30 @@ describe('RecipeForm', () => {
 
       expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/)
     })
+  })
+})
+
+describe('RecipeForm – sharing', () => {
+  beforeEach(() => {
+    recipeApi.getUnits.mockResolvedValue(UNITS)
+    recipeApi.createRecipe.mockResolvedValue({ id: 42 })
+  })
+
+  it('starts private, for new and imported recipes', async () => {
+    await renderForm(importedBurritoBowls)
+
+    const sharing = section('Sharing')
+    expect(sharing.getByRole('radio', { name: /Private/ })).toBeChecked()
+    expect(sharing.getByRole('radio', { name: /Public/ })).not.toBeChecked()
+    expect(sharing.getByText('Only you and your family')).toBeInTheDocument()
+  })
+
+  it('sends the choice with the recipe', async () => {
+    const user = await renderForm(importedBurritoBowls)
+
+    await user.click(section('Sharing').getByRole('radio', { name: /Public/ }))
+    await user.click(screen.getByRole('button', { name: 'Add Recipe' }))
+
+    expect(recipeApi.createRecipe.mock.calls[0][0].visibility).toBe('PUBLIC')
   })
 })

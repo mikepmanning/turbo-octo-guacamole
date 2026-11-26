@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { mealPlanApi, recipeApi } from '../services/api'
 import MealPlanSetupModal from './MealPlanSetupModal'
 import { defaultPlanName, formatDateRange, mealLabel, planStatus, todayString } from './mealPlan'
+import { creatorName } from './recipeSharing'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -112,6 +113,9 @@ function MealPlanList() {
                   <span className="meal-plan-card-meta">
                     {plan.mealTypes.map(mealLabel).join(' · ')} — {mealCount(plan.mealCount)}
                   </span>
+                  {!plan.canDelete && creatorName(plan) && (
+                    <span className="meal-plan-card-creator">Created by {creatorName(plan)}</span>
+                  )}
                 </Link>
               </li>
             )

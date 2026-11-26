@@ -1,5 +1,6 @@
 package com.recipehome.api.entity;
 
+import com.recipehome.api.enums.RecipeVisibility;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -55,11 +56,18 @@ public class Recipe extends BaseEntity {
     @Column(name = "source_url")
     private String sourceUrl;
 
-    // Never chosen automatically for meal plans. The database default lets ddl-auto=update add
-    // the column to a table that already has recipes.
-    @Column(name = "excluded_from_meal_plans", nullable = false)
-    @ColumnDefault("false")
-    private Boolean excludedFromMealPlans = false;
+    // Who added it; null for the sample recipes and recipes from before there were users (public and
+    // read-only: nobody can edit or delete them).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private User createdBy;
+
+    // The database default lets ddl-auto=update add the column to a table that already has recipes,
+    // which all become public.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    @ColumnDefault("'PUBLIC'")
+    private RecipeVisibility visibility = RecipeVisibility.PRIVATE;
 
 
     // Constructors
@@ -186,11 +194,19 @@ public class Recipe extends BaseEntity {
         this.sourceUrl = sourceUrl;
     }
 
-    public Boolean getExcludedFromMealPlans() {
-        return excludedFromMealPlans;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
-    public void setExcludedFromMealPlans(Boolean excludedFromMealPlans) {
-        this.excludedFromMealPlans = excludedFromMealPlans;
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public RecipeVisibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(RecipeVisibility visibility) {
+        this.visibility = visibility;
     }
 }

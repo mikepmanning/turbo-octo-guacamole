@@ -692,3 +692,19 @@
   background-color: #2a2a2a;
   color: #999;
 }
+
+/* A family member's plan: who made it */
+.meal-plan-creator,
+.meal-plan-card-creator {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.meal-plan-creator {
+  margin: 0.25rem 0 0;
+}
+
+.meal-plan-card-creator {
+  display: block;
+  margin-top: 0.25rem;
+}

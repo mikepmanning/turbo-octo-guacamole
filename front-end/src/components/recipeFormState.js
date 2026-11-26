@@ -46,6 +46,8 @@ export function recipeToFormState(recipe) {
       prepTimeMinutes: toField(recipe?.prepTimeMinutes),
       cookTimeMinutes: toField(recipe?.cookTimeMinutes),
       totalTimeMinutes: toField(recipe?.totalTimeMinutes),
+      // PUBLIC: everyone; PRIVATE: you and your family. New and imported recipes start private.
+      visibility: recipe?.visibility || 'PRIVATE',
     },
     // Not shown in the form; passed through so an imported recipe keeps its source.
     sourceUrl: recipe?.sourceUrl || null,

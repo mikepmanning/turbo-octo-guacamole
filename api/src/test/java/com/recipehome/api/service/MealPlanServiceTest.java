@@ -10,6 +10,12 @@ import com.recipehome.api.exception.InvalidDateRangeException;
 import com.recipehome.api.repository.MealPlanEntryRepository;
 import com.recipehome.api.repository.MealPlanRepository;
 import com.recipehome.api.repository.RecipeRepository;
+import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
+import com.recipehome.api.entity.User;
+import com.recipehome.api.enums.RecipeVisibility;
+import com.recipehome.api.exception.ForbiddenException;
 import com.recipehome.api.service.impl.MealPlanServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -33,8 +39,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyIterable;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,13 +54,40 @@ class MealPlanServiceTest {
     @Mock private MealPlanEntryRepository mealPlanEntryRepository;
     @Mock private RecipeRepository recipeRepository;
 
+    @Mock private CurrentViewer currentViewer;
+    @Mock private UserRepository userRepository;
+
     @InjectMocks private MealPlanServiceImpl mealPlanService;
 
     private Recipe pancakes;
     private Recipe tacos;
 
+    // The viewer (user 1) is in a family with user 2; user 3 is someone else.
+    private static final User ME = user(1L);
+    private static final User FAMILY_MEMBER = user(2L);
+    private static final User SOMEONE_ELSE = user(3L);
+    private static final Viewer VIEWER = new Viewer(1L, 10L, Set.of(1L, 2L));
+
+    private static User user(long id) {
+        User user = new User();
+        user.setId(id);
+        return user;
+    }
+
+    private static MealPlan ownPlan() {
+        return planBy(ME);
+    }
+
+    private static MealPlan planBy(User creator) {
+        MealPlan plan = new MealPlan();
+        plan.setCreatedBy(creator);
+        return plan;
+    }
+
     @BeforeEach
     void setUp() {
+        lenient().when(currentViewer.get()).thenReturn(VIEWER);
+        lenient().when(userRepository.findByIdAndIsActiveTrue(1L)).thenReturn(Optional.of(ME));
         pancakes = recipe(1L, "Pancakes", "Breakfast");
         tacos = recipe(2L, "Tacos", "Dinner");
     }
@@ -156,7 +191,7 @@ class MealPlanServiceTest {
         @BeforeEach
         void savedPlan() {
             waffles = recipe(3L, "Waffles", "Breakfast");
-            plan = new MealPlan();
+            plan = ownPlan();
             plan.setId(5L);
             plan.setName("Old name");
             plan.setStartDate(JUNE_1);
@@ -290,7 +325,7 @@ class MealPlanServiceTest {
 
         @Test
         void softDeletesThePlan() {
-            MealPlan plan = new MealPlan();
+            MealPlan plan = ownPlan();
             when(mealPlanRepository.findById(5L)).thenReturn(Optional.of(plan));
 
             mealPlanService.deleteMealPlan(5L);
@@ -323,7 +358,7 @@ class MealPlanServiceTest {
                 entry.setId(id++);   // BaseEntity.equals compares ids
             }
             // The query sorts by date only (meal types would sort by name)
-            when(mealPlanEntryRepository.findPlannedBetween(JUNE_1, JUNE_1.plusDays(6)))
+            when(mealPlanEntryRepository.findPlannedBetweenByCreators(JUNE_1, JUNE_1.plusDays(6), Set.of(1L, 2L)))
                     .thenReturn(List.of(mondayDinner, mondayBreakfast, mondayLunch, tuesdayBreakfast));
 
             assertThat(mealPlanService.getPlannedMeals(JUNE_1, JUNE_1.plusDays(6)))
@@ -332,7 +367,7 @@ class MealPlanServiceTest {
 
         @Test
         void acceptsOneDayAndUpTo366Days() {
-            when(mealPlanEntryRepository.findPlannedBetween(any(), any())).thenReturn(List.of());
+            when(mealPlanEntryRepository.findPlannedBetweenByCreators(any(), any(), any())).thenReturn(List.of());
 
             assertThat(mealPlanService.getPlannedMeals(JUNE_1, JUNE_1)).isEmpty();
             assertThat(mealPlanService.getPlannedMeals(JUNE_1, JUNE_1.plusDays(365))).isEmpty();
@@ -346,14 +381,14 @@ class MealPlanServiceTest {
             assertThatThrownBy(() -> mealPlanService.getPlannedMeals(JUNE_1, JUNE_1.plusDays(366)))
                     .isInstanceOf(InvalidDateRangeException.class)
                     .hasMessage("The date range can be at most 366 days");
-            verify(mealPlanEntryRepository, never()).findPlannedBetween(any(), any());
+            verify(mealPlanEntryRepository, never()).findPlannedBetweenByCreators(any(), any(), any());
         }
     }
 
     @Test
     void getMealPlansReturnsTheActivePlansLatestFirst() {
-        List<MealPlan> plans = List.of(new MealPlan(), new MealPlan());
-        when(mealPlanRepository.findByIsActiveTrueOrderByStartDateDescIdDesc()).thenReturn(plans);
+        List<MealPlan> plans = List.of(ownPlan(), ownPlan());
+        when(mealPlanRepository.findByCreatedByIdInAndIsActiveTrueOrderByStartDateDescIdDesc(Set.of(1L, 2L))).thenReturn(plans);
 
         assertThat(mealPlanService.getMealPlans()).isSameAs(plans);
     }
@@ -363,7 +398,7 @@ class MealPlanServiceTest {
 
         @Test
         void returnsTheActivePlan() {
-            MealPlan plan = new MealPlan();
+            MealPlan plan = ownPlan();
             when(mealPlanRepository.findByIdAndIsActiveTrue(5L)).thenReturn(Optional.of(plan));
 
             assertThat(mealPlanService.getMealPlan(5L)).isSameAs(plan);
@@ -383,6 +418,72 @@ class MealPlanServiceTest {
         when(recipeRepository.findAllById(anyIterable())).thenReturn(List.of(recipes));
     }
 
+    @Nested
+    class Access {
+
+        @Test
+        void aNewPlanBelongsToTheViewer() {
+            givenRecipes(pancakes);
+            when(mealPlanRepository.save(any(MealPlan.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            MealPlan saved = mealPlanService.createMealPlan(request(null, 1, Set.of(BREAKFAST), entry(JUNE_1, BREAKFAST, 1L)));
+
+            assertThat(saved.getCreatedBy()).isSameAs(ME);
+        }
+
+        @Test
+        void aPlanCannotUseARecipeTheViewerCannotSee() {
+            Recipe theirs = recipe(9L, "Secret Stew", "Dinner");
+            theirs.setCreatedBy(SOMEONE_ELSE);
+            theirs.setVisibility(RecipeVisibility.PRIVATE);
+            when(recipeRepository.findAllById(any())).thenReturn(List.of(theirs));
+
+            assertThatThrownBy(() -> mealPlanService.createMealPlan(request(null, 1, Set.of(DINNER), entry(JUNE_1, DINNER, 9L))))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Recipe 9 does not exist or has been deleted");
+        }
+
+        @Test
+        void aFamilyMembersPlanCanBeSeenButOnlyItsCreatorDeletesIt() {
+            MealPlan theirs = planBy(FAMILY_MEMBER);
+            when(mealPlanRepository.findByIdAndIsActiveTrue(5L)).thenReturn(Optional.of(theirs));
+            when(mealPlanRepository.findById(5L)).thenReturn(Optional.of(theirs));
+
+            assertThat(mealPlanService.getMealPlan(5L)).isSameAs(theirs);
+            assertThatThrownBy(() -> mealPlanService.deleteMealPlan(5L))
+                    .isInstanceOf(ForbiddenException.class)
+                    .hasMessage("Only the person who created this meal plan can delete it");
+            assertThat(theirs.getIsActive()).isTrue();
+        }
+
+        @Test
+        void aPlanFromOutsideTheFamilyIsNotFound() {
+            MealPlan theirs = planBy(SOMEONE_ELSE);
+            when(mealPlanRepository.findByIdAndIsActiveTrue(5L)).thenReturn(Optional.of(theirs));
+            when(mealPlanRepository.findById(5L)).thenReturn(Optional.of(theirs));
+
+            assertThatThrownBy(() -> mealPlanService.getMealPlan(5L)).isInstanceOf(MealPlanNotFoundException.class);
+            mealPlanService.deleteMealPlan(5L);   // skipped like an unknown id
+            assertThat(theirs.getIsActive()).isTrue();
+        }
+
+        @Test
+        void plansWithoutACreatorAreHidden() {
+            when(mealPlanRepository.findByIdAndIsActiveTrue(5L)).thenReturn(Optional.of(planBy(null)));
+
+            assertThatThrownBy(() -> mealPlanService.getMealPlan(5L)).isInstanceOf(MealPlanNotFoundException.class);
+        }
+
+        @Test
+        void anonymousViewersHaveNoPlans() {
+            when(currentViewer.get()).thenReturn(Viewer.anonymous());
+
+            assertThat(mealPlanService.getMealPlans()).isEmpty();
+            assertThat(mealPlanService.getPlannedMeals(JUNE_1, JUNE_1)).isEmpty();
+            verifyNoInteractions(mealPlanRepository, mealPlanEntryRepository);
+        }
+    }
+
     private static MealPlanRequest request(String name, int days, Set<MealType> mealTypes, MealPlanRequest.Entry... entries) {
         return new MealPlanRequest(name, JUNE_1, days, mealTypes, List.of(entries));
     }
@@ -394,6 +495,7 @@ class MealPlanServiceTest {
     private static Recipe recipe(Long id, String title, String category) {
         Recipe recipe = new Recipe(title);
         recipe.setId(id);
+        recipe.setCreatedBy(ME);
         recipe.getCategories().add(category);
         return recipe;
     }

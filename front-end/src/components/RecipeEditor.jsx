@@ -247,6 +247,40 @@ function RecipeEditor({
           </div>
         </section>
 
+        {/* Who can see it */}
+        <section className="form-section">
+          <h2>Sharing</h2>
+          <fieldset className="visibility-options">
+            <legend>Who can see this recipe?</legend>
+            <label className="visibility-option">
+              <input
+                type="radio"
+                name="visibility"
+                value="PRIVATE"
+                checked={formData.visibility === 'PRIVATE'}
+                onChange={handleInputChange}
+              />
+              <span>
+                <strong>Private</strong>
+                <span className="visibility-hint">Only you and your family</span>
+              </span>
+            </label>
+            <label className="visibility-option">
+              <input
+                type="radio"
+                name="visibility"
+                value="PUBLIC"
+                checked={formData.visibility === 'PUBLIC'}
+                onChange={handleInputChange}
+              />
+              <span>
+                <strong>Public</strong>
+                <span className="visibility-hint">Everyone using RecipeHome</span>
+              </span>
+            </label>
+          </fieldset>
+        </section>
+
         {/* Categories */}
         <section className="form-section">
           <h2>Categories</h2>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { recipeApi } from '../services/api'
 import RecipeEditor from './RecipeEditor'
 import ConfirmDialog from './ConfirmDialog'
+import { recipeByline, visibilityLabel } from './recipeSharing'
 import './RecipeDetail.css'
 import './MealPlan.css'
 
@@ -147,19 +148,24 @@ function RecipeDetail() {
           ← Back to Recipes
         </button>
         <div className="detail-actions-end">
-          <button className="edit-button" onClick={startEditing}>
-            Edit Recipe
-          </button>
+          {/* Only whoever added the recipe can change or delete it; anyone can exclude it from their family's plans. */}
+          {recipe.canEdit && (
+            <button className="edit-button" onClick={startEditing}>
+              Edit Recipe
+            </button>
+          )}
           <button className="edit-button" onClick={toggleMealPlanExclusion} disabled={exclusionBusy}>
             {recipe.excludedFromMealPlans ? 'Include in meal plans' : 'Exclude from meal plans'}
           </button>
-          <button
-            className="delete-button"
-            ref={deleteButtonRef}
-            onClick={() => setConfirmingDelete(true)}
-          >
-            Delete Recipe
-          </button>
+          {recipe.canEdit && (
+            <button
+              className="delete-button"
+              ref={deleteButtonRef}
+              onClick={() => setConfirmingDelete(true)}
+            >
+              Delete Recipe
+            </button>
+          )}
         </div>
       </div>
 
@@ -182,6 +188,12 @@ function RecipeDetail() {
 
       <header className="recipe-header">
         <h1>{recipe.title}</h1>
+        <p className="recipe-byline">
+          <span className={`visibility-tag visibility-${visibilityLabel(recipe).toLowerCase()}`}>
+            {visibilityLabel(recipe)}
+          </span>
+          {recipeByline(recipe)}
+        </p>
         {recipe.excludedFromMealPlans && <p className="excluded-tag">Excluded from meal plans</p>}
         {recipe.description && <p className="description">{recipe.description}</p>}
 

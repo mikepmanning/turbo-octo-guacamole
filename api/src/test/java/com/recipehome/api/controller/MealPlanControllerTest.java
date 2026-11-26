@@ -7,6 +7,9 @@ import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.exception.InvalidDateRangeException;
 import com.recipehome.api.exception.MealPlanNotFoundException;
 import com.recipehome.api.mapper.MealPlanMapper;
+import com.recipehome.api.security.CurrentViewer;
+import com.recipehome.api.security.Viewer;
+import org.junit.jupiter.api.BeforeEach;
 import com.recipehome.api.service.MealPlanService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,14 @@ class MealPlanControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private MealPlanService mealPlanService;
+
+    // The real mapper asks who is viewing (for canDelete): an anonymous viewer here.
+    @MockitoBean private CurrentViewer currentViewer;
+
+    @BeforeEach
+    void anonymousViewer() {
+        when(currentViewer.get()).thenReturn(Viewer.anonymous());
+    }
 
     @Test
     void createReturns201WithTheSavedPlan() throws Exception {

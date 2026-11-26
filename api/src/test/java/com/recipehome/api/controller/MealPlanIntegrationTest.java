@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import com.recipehome.api.TestUsers;
+import com.recipehome.api.entity.User;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,11 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.datasource.url=jdbc:h2:mem:mealplans;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1",
 })
 @AutoConfigureMockMvc
-@WithMockUser // every /api request needs a logged-in user
 @ActiveProfiles("test")
 class MealPlanIntegrationTest {
 
-    @Autowired private MockMvc mockMvc;
+    @Autowired private WebApplicationContext context;
+    private MockMvc mockMvc;   // sends `me`'s login token (TestUsers)
+    private User me;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private MealPlanRepository mealPlanRepository;
     @Autowired private RecipeRepository recipeRepository;
@@ -50,6 +53,9 @@ class MealPlanIntegrationTest {
 
     @BeforeEach
     void createRecipes() throws Exception {
+        TestUsers.clearDatabase(context);
+        me = TestUsers.createUser(context, "Ada");
+        mockMvc = TestUsers.mockMvcAs(context, me);
         pancakesId = createRecipe("Pancakes", "Breakfast");
         tacosId = createRecipe("Tacos", "Dinner");
     }

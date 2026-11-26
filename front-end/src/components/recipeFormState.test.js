@@ -8,6 +8,7 @@ describe('recipeToFormState', () => {
 
     expect(state.formData).toEqual({
       title: '', description: '', servings: '', prepTimeMinutes: '', cookTimeMinutes: '', totalTimeMinutes: '',
+      visibility: 'PRIVATE',
     })
     expect(state.sourceUrl).toBeNull()
     expect(state.ingredients).toEqual([blankIngredient()])
@@ -79,7 +80,8 @@ describe('formStateToPayload', () => {
   })
 
   it('turns a round trip of a saved recipe back into the same recipe', () => {
-    const { id: _id, ...recipe } = savedBurritoBowls
+    // createdBy and canEdit are read-only: the payload leaves them out.
+    const { id: _id, createdBy: _by, canEdit: _canEdit, ...recipe } = savedBurritoBowls
     const payload = formStateToPayload(recipeToFormState(savedBurritoBowls))
 
     expect(payload).toEqual({

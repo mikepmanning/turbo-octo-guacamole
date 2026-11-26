@@ -4,6 +4,7 @@ import { recipeApi } from '../services/api'
 import ImportRecipeModal from './ImportRecipeModal'
 import ConfirmDialog from './ConfirmDialog'
 import SelectionBar from './SelectionBar'
+import { recipeByline } from './recipeSharing'
 import RecipeSearch from './RecipeSearch'
 import { emptyFilters, filterRecipes, hasActiveFilters, knownCategories, matchNotes } from './recipeFilters'
 import './RecipeList.css'
@@ -36,8 +37,10 @@ function RecipeCardContent({ recipe, titleId, notes = [] }) {
       <div className="recipe-meta">
         <span>⏱️ {recipe.totalTimeMinutes} min</span>
         <span>🍽️ {recipe.servings} servings</span>
+        {recipe.visibility === 'PRIVATE' && <span className="visibility-tag visibility-private">Private</span>}
         {recipe.excludedFromMealPlans && <span className="excluded-tag">Not in meal plans</span>}
       </div>
+      {!recipe.canEdit && <p className="recipe-card-byline">{recipeByline(recipe)}</p>}
       {recipe.categories && recipe.categories.length > 0 && (
         <div className="categories">
           {recipe.categories.map((cat, idx) => (
@@ -286,6 +289,9 @@ function RecipeList() {
             onCancel={stopSelecting}
             onDelete={() => setConfirmingDelete(true)}
             deleteButtonRef={deleteButtonRef}
+            deleteBlockedReason={selectedRecipes.some(recipe => !recipe.canEdit)
+              ? 'You can only delete recipes you added'
+              : null}
             onExclude={() => setMealPlanExclusion(true)}
             onInclude={() => setMealPlanExclusion(false)}
             busy={updatingMealPlans}

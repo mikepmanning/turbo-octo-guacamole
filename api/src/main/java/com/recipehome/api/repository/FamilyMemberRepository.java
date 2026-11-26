@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,8 @@ public interface FamilyMemberRepository extends JpaRepository<FamilyMember, Long
     Optional<FamilyMember> findByUserId(@Param("userId") Long userId);
 
     boolean existsByUserId(Long userId);
+
+    /** Everyone in the family, by user id. */
+    @Query("SELECT m.user.id FROM FamilyMember m WHERE m.family.id = :familyId")
+    List<Long> findUserIdsByFamilyId(@Param("familyId") Long familyId);
 }

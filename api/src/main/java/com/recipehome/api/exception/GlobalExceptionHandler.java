@@ -87,6 +87,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, String>> handleForbidden(ForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+    }
+
     @ExceptionHandler(FamilyException.class)
     public ResponseEntity<Map<String, String>> handleFamily(FamilyException e) {
         return ResponseEntity.status(e.getStatus()).body(Map.of("error", e.getMessage()));

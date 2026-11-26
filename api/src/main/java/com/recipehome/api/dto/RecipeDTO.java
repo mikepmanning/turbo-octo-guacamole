@@ -1,5 +1,6 @@
 package com.recipehome.api.dto;
 
+import com.recipehome.api.enums.RecipeVisibility;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -34,12 +35,43 @@ public class RecipeDTO {
     private Set<String> categories = new HashSet<>();
     private String sourceUrl;
 
-    // Read-only here: set with PUT /api/recipes/meal-plan-exclusion. Creating or updating a
-    // recipe ignores it, so an edit can't clear it by leaving it out.
+    // Read-only here: whether the viewer's family (or the viewer, without a family) excluded it from
+    // meal plans; set with PUT /api/recipes/meal-plan-exclusion.
     private Boolean excludedFromMealPlans;
+
+    // PUBLIC (everyone) or PRIVATE (the creator's family). Optional on create (PRIVATE) and update (unchanged).
+    private RecipeVisibility visibility;
+
+    // Read-only: who added it (null for sample recipes), and whether the viewer may edit or delete it.
+    private CreatorDTO createdBy;
+    private boolean canEdit;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public RecipeVisibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(RecipeVisibility visibility) {
+        this.visibility = visibility;
+    }
+
+    public CreatorDTO getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(CreatorDTO createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public boolean isCanEdit() {
+        return canEdit;
+    }
+
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
+    }
 
     // Constructors
     public RecipeDTO() {

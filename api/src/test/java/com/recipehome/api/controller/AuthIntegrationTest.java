@@ -2,7 +2,10 @@ package com.recipehome.api.controller;
 
 import com.recipehome.api.entity.User;
 import com.recipehome.api.repository.UserRepository;
+import com.recipehome.api.TestUsers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.context.ApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,13 +45,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
+    @Autowired private ApplicationContext context;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private UserRepository userRepository;
     @Autowired private JwtEncoder jwtEncoder;
 
+    @BeforeEach
     @AfterEach
     void cleanUp() {
-        userRepository.deleteAll();
+        TestUsers.clearDatabase(context);
     }
 
     private Map<String, Object> registration() {

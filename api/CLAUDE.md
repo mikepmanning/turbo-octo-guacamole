@@ -224,7 +224,30 @@ All endpoints are prefixed with `/api`
 - `POST /api/family/members/{userId}/make-owner` - hand over ownership; the caller becomes a member (owner)
 - Errors are `FamilyException` with `{"error"}`: 404 not in a family / invalid or revoked code / not a member,
   409 already in a family, 403 owner only, 422 rule (owner leaving others behind, removing yourself)
-- Recipes and meal plans are not linked to families yet
+- A family shares its members' private recipes and meal plans (see Sharing below)
+
+**Sharing** (`security/CurrentViewer`, `security/Viewer`) - the recipe and meal plan services check every request
+against the viewer: the user from the token and everyone in their family (`groupUserIds`; just the user without a
+family). There is no token on `/alexa` or at startup (seeder), so those viewers are anonymous and see only public
+recipes and no meal plans. Access follows the creator's current family (leaving takes your private things with you)
+- Recipes have `createdBy` (null for samples and old recipes) and `visibility` (`PUBLIC` / `PRIVATE`; the column defaults
+  to `'PUBLIC'` so older rows become public). Anything that reads recipes (list, by id, search, category, time filters,
+  count) returns only public ones plus private ones by the viewer's group; others are 404 / left out
+- Only the creator may `PUT`, `DELETE` or restore a recipe: 403 `{"error": "Only the person who added this recipe can
+  change or delete it"}` (`ForbiddenException`). Recipes without a creator are read-only. A `DELETE` of a recipe the
+  viewer can't see is skipped like an unknown id (204). Bulk delete is all or nothing: if any visible recipe is someone
+  else's it is 403 "You can only delete recipes you added. Not yours: …" and nothing is deleted
+- Responses add `visibility`, `createdBy: {id, firstName, lastName}` (no email) and `canEdit` (viewer is the creator).
+  `POST` takes an optional `visibility` (default PRIVATE); `PUT` changes it when sent, keeps it when left out. Created
+  without a user (the seeder), a recipe is public with no creator
+- `excludedFromMealPlans` is the viewer's family list (`MealPlanExclusion`, `service/MealPlanExclusions`; per user when
+  they have no family), so excluding someone else's public recipe only affects your family
+- Meal plans have `createdBy`: list, get, update and planned meals cover plans created by the viewer's group, who may
+  all edit them; only the creator may delete (403 "Only the person who created this meal plan can delete it"). Plans
+  without a creator are hidden. Responses add `createdBy` and `canDelete`. A plan can only use recipes the planner
+  can see (otherwise the usual 422 "Recipe N does not exist or has been deleted")
+- Tests: `TestUsers` (test sources) creates real users and a MockMvc that sends their token, and `clearDatabase`
+  empties every table children first; `SharingIntegrationTest` covers these rules with a family and an outsider
 
 **Recipe Endpoints** (`/api/recipes`)
 - `POST /api/recipes` - Create a new recipe (with steps and ingredients)
@@ -237,8 +260,8 @@ All endpoints are prefixed with `/api`
 - `POST /api/recipes/{id}/restore` - Restore a soft-deleted recipe
 - `PUT /api/recipes/meal-plan-exclusion` - Exclude recipes from meal plans or include them again: body
   `{"ids": [1, 2], "excluded": true}` (1-100 ids), returns `{"updatedIds": [...]}` (the recipes now set that way, in
-  request order; unknown, deleted and repeated ids are skipped). Recipes return the setting as `excludedFromMealPlans`;
-  `POST`/`PUT /api/recipes` ignore it, so editing a recipe never changes it
+  request order; unknown, deleted, unseen and repeated ids are skipped). It changes the viewer's family list, so any
+  recipe they can see may be excluded. Recipes return it as `excludedFromMealPlans`; `POST`/`PUT /api/recipes` ignore it
 - `GET /api/recipes/search?title={title}` - Search recipes by title
 - `GET /api/recipes/category/{category}` - Get recipes by category
 - `GET /api/recipes/filter/prep-time?maxMinutes={minutes}` - Filter by max prep time

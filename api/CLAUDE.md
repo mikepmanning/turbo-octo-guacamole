@@ -187,6 +187,12 @@ The application follows a standard three-tier architecture:
 - Uses DTOs for request/response payloads
 - Mappers convert between entities and DTOs
 - Validation handled via `@Valid` annotation on DTOs
+- `spring.jpa.open-in-view=false`: lazy collections only load inside a transaction. Controllers that map entities
+  to DTOs (Recipe, MealPlan, ShoppingList) are `@Transactional` (`readOnly` on GETs; recipe import has none, so a slow
+  page fetch doesn't hold a connection). DTOs must copy collections, not hand out Hibernate's (they're serialized
+  after the transaction). `hibernate.default_batch_fetch_size=100` loads children for many entities per query;
+  `QueryCountIntegrationTest` keeps `GET /api/recipes` at a fixed handful of queries
+- SQL logging is off by default: `LOG_LEVEL_SQL=DEBUG` shows statements, `LOG_LEVEL_SQL_PARAMS=TRACE` their values
 
 **DTO and Mapper Pattern**
 - DTOs (`com.recipehome.api.dto`) separate API contracts from domain entities

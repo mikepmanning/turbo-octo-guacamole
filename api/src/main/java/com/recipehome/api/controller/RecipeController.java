@@ -14,12 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+// Entities are turned into DTOs here, inside the transaction: open-in-view is off, so lazy collections
+// (steps, ingredients, entries, items...) can only load while one is open.
+@Transactional
 @RestController
 @RequestMapping("/api/recipes")
 public class RecipeController {
@@ -46,6 +51,7 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<RecipeDTO> getRecipeById(@PathVariable Long id) {
         logger.debug("Fetching recipe with id: {}", id);
         return recipeService.getRecipeById(id)
@@ -54,12 +60,14 @@ public class RecipeController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDTO>> getAllRecipes() {
         List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getAllActiveRecipes());
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/search")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDTO>> searchRecipes(@RequestParam String title) {
         logger.debug("Searching recipes with title: {}", title);
         List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.searchRecipesByTitle(title));
@@ -68,18 +76,21 @@ public class RecipeController {
     }
 
     @GetMapping("/category/{category}")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDTO>> getRecipesByCategory(@PathVariable String category) {
         List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByCategory(category));
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/filter/prep-time")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDTO>> getRecipesByMaxPrepTime(@RequestParam Integer maxMinutes) {
         List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByMaxPrepTime(maxMinutes));
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/filter/total-time")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDTO>> getRecipesByMaxTotalTime(@RequestParam Integer maxMinutes) {
         List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getRecipesByMaxTotalTime(maxMinutes));
         return ResponseEntity.ok(recipes);
@@ -125,11 +136,14 @@ public class RecipeController {
     }
 
     @GetMapping("/count")
+    @Transactional(readOnly = true)
     public ResponseEntity<Long> countActiveRecipes() {
         return ResponseEntity.ok(recipeService.countActiveRecipes());
     }
 
+    // No transaction: fetching the page can take seconds, and it would hold a database connection meanwhile.
     @GetMapping("/import")
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public ResponseEntity<RecipeDTO> importRecipe(@RequestParam String url) throws IOException {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("URL parameter is required");

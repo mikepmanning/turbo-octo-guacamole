@@ -45,9 +45,18 @@ class MigrationsTest {
     @Test
     void anEmptyDatabaseGetsEveryMigration_andTheEntitiesMatchIt() {
         List<String> applied = Arrays.stream(flyway.info().applied()).map(m -> m.getVersion().getVersion()).toList();
-        assertThat(applied).containsExactly("1", "2");
+        assertThat(applied).containsExactly("1", "2", "3");
         assertThat(flyway.info().pending()).isEmpty();
         assertThat(recipeRepository.count()).isEqualTo(86);   // the seeder could save into the migrated schema
+    }
+
+    @Test
+    void v3AddsTheLookupIndexes() throws Exception {
+        assertThat(query("public", "SELECT indexname FROM pg_indexes WHERE schemaname = 'public' AND indexname LIKE 'idx\\_%'"))
+                .containsExactlyInAnyOrder("idx_steps_recipe", "idx_ingredients_recipe", "idx_recipe_categories_recipe",
+                        "idx_recipe_equipment_recipe", "idx_recipes_created_by", "idx_meal_plans_created_by_start",
+                        "idx_meal_plan_entries_date", "idx_family_members_family", "idx_shopping_list_items_list",
+                        "idx_shopping_list_left_out_list");
     }
 
     @Test
@@ -68,7 +77,7 @@ class MigrationsTest {
 
         MigrationInfo[] applied = app.info().applied();
         assertThat(applied).extracting(m -> m.getVersion().getVersion() + " " + m.getType())
-                .containsExactly("1 BASELINE", "2 SQL");
+                .containsExactly("1 BASELINE", "2 SQL", "3 SQL");
         assertThat(query("legacy", "SELECT column_name FROM information_schema.columns "
                 + "WHERE table_schema = 'legacy' AND table_name = 'recipes' AND column_name = 'excluded_from_meal_plans'"))
                 .isEmpty();

@@ -7,6 +7,7 @@ import com.recipehome.api.mapper.ShoppingListMapper;
 import com.recipehome.api.service.ShoppingListService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +20,10 @@ import java.util.List;
 
 /**
  * Shopping lists: all of the viewer's lists (/api/shopping-lists), and one meal plan's list, for anyone who can see
- * the plan (its creator's family).
+ * the plan (its creator's family). Entities are turned into DTOs inside the transaction: open-in-view is off, so
+ * lazy collections can only load while one is open.
  */
+@Transactional
 @RestController
 @RequestMapping("/api")
 public class ShoppingListController {
@@ -37,12 +40,14 @@ public class ShoppingListController {
 
     /** The lists of the viewer's and their family's meal plans, latest plan first, as summaries. */
     @GetMapping("/shopping-lists")
+    @Transactional(readOnly = true)
     public List<ShoppingListSummaryDTO> getShoppingLists() {
         return shoppingListService.getVisibleLists().stream().map(mapper::toSummaryDTO).toList();
     }
 
     /** 200 with the list, or 204 when nobody has made one for this plan yet. */
     @GetMapping(LIST)
+    @Transactional(readOnly = true)
     public ResponseEntity<ShoppingListDTO> getShoppingList(@PathVariable Long planId) {
         return shoppingListService.getForPlan(planId)
                 .map(list -> ResponseEntity.ok(mapper.toDTO(list)))

@@ -9,6 +9,8 @@ import com.recipehome.api.service.MealPlanExclusions;
 import com.recipehome.api.service.impl.RecipeServiceImpl;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,8 +56,9 @@ public class RecipeMapper {
         dto.setPrepTimeMinutes(recipe.getPrepTimeMinutes());
         dto.setCookTimeMinutes(recipe.getCookTimeMinutes());
         dto.setTotalTimeMinutes(recipe.getTotalTimeMinutes());
-        dto.setEquipment(recipe.getEquipment());
-        dto.setCategories(recipe.getCategories());
+        // Copies: the DTO is serialized after the transaction, when Hibernate's lazy collections can no longer load.
+        dto.setEquipment(new ArrayList<>(recipe.getEquipment()));
+        dto.setCategories(new LinkedHashSet<>(recipe.getCategories()));
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
         dto.setSourceUrl(recipe.getSourceUrl());

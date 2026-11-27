@@ -43,6 +43,7 @@ export const clearSession = () => localStorage.removeItem(SESSION_KEY);
 
 // fetch with the logged-in user's token. With no session the arguments go through unchanged.
 // A 401 means the token no longer works: forget it and tell the app.
+// Any change saved from this tab (a recipe, an exclusion, joining or leaving a family...) drops the cached recipe list.
 const apiFetch = async (url, options) => {
   const session = getSession();
   const request = session
@@ -53,7 +54,33 @@ const apiFetch = async (url, options) => {
     clearSession();
     window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
   }
+  if (response.ok && options?.method && options.method !== 'GET') clearRecipeCache();
   return response;
+};
+
+// --- Recipe list cache ---------------------------------------------------------------------
+// The recipe list, the Meal Plans page and the meal plan editor all load every recipe. They share one copy for
+// RECIPE_CACHE_MS, so moving between them doesn't download it again. It belongs to the logged-in user (a different
+// token loads afresh), a failed load isn't kept, and changes saved here drop it at once (apiFetch); changes made
+// by family members show up once it expires.
+export const RECIPE_CACHE_MS = 60_000;
+let recipeCache = null; // { token, loadedAt, promise }
+
+export const clearRecipeCache = () => {
+  recipeCache = null;
+};
+
+const cachedRecipeList = (load) => {
+  const token = getSession()?.token ?? null;
+  if (recipeCache && recipeCache.token === token && Date.now() - recipeCache.loadedAt < RECIPE_CACHE_MS) {
+    return recipeCache.promise;
+  }
+  const entry = { token, loadedAt: Date.now(), promise: load() };
+  recipeCache = entry;
+  entry.promise.catch(() => {
+    if (recipeCache === entry) recipeCache = null;
+  });
+  return entry.promise;
 };
 
 // Error for a failed register/login: the message, plus `fieldErrors` ({ email: '...' })
@@ -119,12 +146,13 @@ export const authApi = {
 };
 
 export const recipeApi = {
-  // Get all recipes
-  getAllRecipes: async () => {
-    const response = await apiFetch(`${API_BASE_URL}/recipes`);
+  // Every recipe the user can see, without steps (the list pages don't need them; getRecipeById has them).
+  // Cached for a minute and shared between pages: see cachedRecipeList.
+  getAllRecipes: () => cachedRecipeList(async () => {
+    const response = await apiFetch(`${API_BASE_URL}/recipes?view=summary`);
     if (!response.ok) throw new Error('Failed to fetch recipes');
     return response.json();
-  },
+  }),
 
   // Get recipe by ID
   getRecipeById: async (id) => {

@@ -86,4 +86,9 @@ public interface RecipeService {
      * Count all active recipes
      */
     long countActiveRecipes();
+
+    /**
+     * A random recipe the current viewer can see (Alexa: a public one), loading only that one
+     */
+    Optional<Recipe> getRandomRecipe();
 }

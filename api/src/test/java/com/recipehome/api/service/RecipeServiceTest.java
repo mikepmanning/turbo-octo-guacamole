@@ -763,13 +763,35 @@ class RecipeServiceTest {
     @Test
     void countActiveRecipes_ShouldReturnCount() {
         // Given
-        when(recipeRepository.findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(List.of(testRecipe, testRecipe, testRecipe, testRecipe, testRecipe));
+        when(recipeRepository.countVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(5L);
 
         // When
         long count = recipeService.countActiveRecipes();
 
-        // Then
+        // Then: counted in the database, without loading the recipes
         assertThat(count).isEqualTo(5L);
-        verify(recipeRepository, times(1)).findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC);
+        verify(recipeRepository, never()).findVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC);
+    }
+
+    @Test
+    void getRandomRecipe_LoadsOneRecipeAtARandomPosition() {
+        when(recipeRepository.countVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(3L);
+        when(recipeRepository.findVisibleTo(eq(Set.of(1L)), eq(RecipeVisibility.PUBLIC), any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(List.of(testRecipe));
+
+        assertThat(recipeService.getRandomRecipe()).contains(testRecipe);
+
+        org.mockito.ArgumentCaptor<org.springframework.data.domain.Pageable> page =
+                org.mockito.ArgumentCaptor.forClass(org.springframework.data.domain.Pageable.class);
+        verify(recipeRepository).findVisibleTo(eq(Set.of(1L)), eq(RecipeVisibility.PUBLIC), page.capture());
+        assertThat(page.getValue().getPageSize()).isEqualTo(1);
+        assertThat(page.getValue().getPageNumber()).isBetween(0, 2);
+    }
+
+    @Test
+    void getRandomRecipe_IsEmptyWithoutRecipes() {
+        when(recipeRepository.countVisibleTo(Set.of(1L), RecipeVisibility.PUBLIC)).thenReturn(0L);
+
+        assertThat(recipeService.getRandomRecipe()).isEmpty();
     }
 }

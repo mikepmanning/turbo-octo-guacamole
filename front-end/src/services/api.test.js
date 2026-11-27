@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
   recipeApi, mealPlanApi, authApi, familyApi, shoppingListApi, getSession, saveSession, clearSession, SESSION_KEY, SESSION_EXPIRED_EVENT,
+  clearRecipeCache, RECIPE_CACHE_MS,
 } from './api'
 
 // Minimal stand-in for a fetch Response.
@@ -11,6 +12,9 @@ const response = (body, { ok = true } = {}) => ({
   ),
 })
 
+// The recipe list is cached between calls: start every test without it.
+beforeEach(() => clearRecipeCache())
+
 describe('recipeApi', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn())
@@ -18,7 +22,7 @@ describe('recipeApi', () => {
 
   describe('GET endpoints', () => {
     it.each([
-      { method: 'getAllRecipes', args: [], url: '/api/recipes' },
+      { method: 'getAllRecipes', args: [], url: '/api/recipes?view=summary' },
       { method: 'getRecipeById', args: [5], url: '/api/recipes/5' },
       { method: 'searchRecipes', args: ['mac & cheese'], url: '/api/recipes/search?title=mac%20%26%20cheese' },
       { method: 'getRecipesByCategory', args: ['Side Dish'], url: '/api/recipes/category/Side%20Dish' },
@@ -336,7 +340,7 @@ describe('login session', () => {
     fetch.mockResolvedValue(response({ id: 7 }))
 
     await recipeApi.getAllRecipes()
-    expect(fetch).toHaveBeenCalledWith('/api/recipes', { headers: { Authorization: 'Bearer tok' } })
+    expect(fetch).toHaveBeenCalledWith('/api/recipes?view=summary', { headers: { Authorization: 'Bearer tok' } })
 
     await recipeApi.createRecipe({ title: 'Tacos' })
     expect(fetch).toHaveBeenLastCalledWith('/api/recipes', {
@@ -601,5 +605,78 @@ describe('shoppingListApi.getShoppingLists', () => {
 
     await expect(shoppingListApi.getShoppingLists()).resolves.toEqual([{ mealPlanId: 9 }])
     expect(fetch).toHaveBeenCalledWith('/api/shopping-lists', { method: 'GET', headers: { Authorization: 'Bearer tok' } })
+  })
+})
+
+describe('recipe list cache', () => {
+  const session = { token: 'tok', expiresAt: '2999-01-01T00:00:00Z', user: { firstName: 'Ada' } }
+
+  beforeEach(() => {
+    clearSession()
+    saveSession(session)
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(response([{ id: 1 }]))))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    clearSession()
+  })
+
+  it('shares one download between calls', async () => {
+    const [first, second] = await Promise.all([recipeApi.getAllRecipes(), recipeApi.getAllRecipes()])
+    const third = await recipeApi.getAllRecipes()
+
+    expect(first).toEqual([{ id: 1 }])
+    expect(second).toBe(first)
+    expect(third).toBe(first)
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('loads again once it has expired', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    await recipeApi.getAllRecipes()
+    vi.setSystemTime(Date.now() + RECIPE_CACHE_MS - 1)
+    await recipeApi.getAllRecipes()
+    expect(fetch).toHaveBeenCalledTimes(1)
+
+    vi.setSystemTime(Date.now() + 1)
+    await recipeApi.getAllRecipes()
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('is dropped when a change is saved', async () => {
+    await recipeApi.getAllRecipes()
+    await recipeApi.setExcludedFromMealPlans([1], true)
+    await recipeApi.getAllRecipes()
+
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      '/api/recipes?view=summary', '/api/recipes/meal-plan-exclusion', '/api/recipes?view=summary',
+    ])
+  })
+
+  it('is kept after a failed change', async () => {
+    await recipeApi.getAllRecipes()
+    fetch.mockResolvedValueOnce(response({}, { ok: false }))
+    await expect(recipeApi.deleteRecipe(1)).rejects.toThrow()
+    await recipeApi.getAllRecipes()
+
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not keep a failed load', async () => {
+    fetch.mockResolvedValueOnce(response({}, { ok: false }))
+    await expect(recipeApi.getAllRecipes()).rejects.toThrow('Failed to fetch recipes')
+
+    await expect(recipeApi.getAllRecipes()).resolves.toEqual([{ id: 1 }])
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('belongs to the logged-in user', async () => {
+    await recipeApi.getAllRecipes()
+    saveSession({ ...session, token: 'someone-else' })
+    await recipeApi.getAllRecipes()
+
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch).toHaveBeenLastCalledWith('/api/recipes?view=summary', { headers: { Authorization: 'Bearer someone-else' } })
   })
 })

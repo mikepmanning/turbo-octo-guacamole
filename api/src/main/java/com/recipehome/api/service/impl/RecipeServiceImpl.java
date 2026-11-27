@@ -19,6 +19,8 @@ import com.recipehome.api.security.CurrentViewer;
 import com.recipehome.api.security.Viewer;
 import com.recipehome.api.service.MealPlanExclusions;
 import com.recipehome.api.service.RecipeService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -315,6 +318,23 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional(readOnly = true)
     public long countActiveRecipes() {
-        return getAllActiveRecipes().size();
+        Viewer viewer = currentViewer.get();
+        return viewer.isAnonymous()
+                ? recipeRepository.countByVisibilityAndIsActiveTrue(RecipeVisibility.PUBLIC)
+                : recipeRepository.countVisibleTo(viewer.groupUserIds(), RecipeVisibility.PUBLIC);
+    }
+
+    /** Counts the visible recipes, then loads the one at a random position (by id, so positions are stable). */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Recipe> getRandomRecipe() {
+        long count = countActiveRecipes();
+        if (count == 0) return Optional.empty();
+        PageRequest one = PageRequest.of(ThreadLocalRandom.current().nextInt(Math.toIntExact(count)), 1, Sort.by("id"));
+        Viewer viewer = currentViewer.get();
+        List<Recipe> page = viewer.isAnonymous()
+                ? recipeRepository.findByVisibilityAndIsActiveTrue(RecipeVisibility.PUBLIC, one)
+                : recipeRepository.findVisibleTo(viewer.groupUserIds(), RecipeVisibility.PUBLIC, one);
+        return page.stream().findFirst();
     }
 }

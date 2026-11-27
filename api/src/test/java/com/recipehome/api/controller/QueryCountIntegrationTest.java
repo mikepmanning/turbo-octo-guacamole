@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -91,8 +92,36 @@ class QueryCountIntegrationTest {
                 .andExpect(jsonPath("$[0].equipment", hasSize(2)))
                 .andExpect(jsonPath("$[0].createdBy.firstName").exists());
 
-        // Viewer (2) + recipes (1) + steps, ingredients, categories, equipment, creators (1 each) + exclusions (1),
+        // Viewer (1) + recipes (1) + steps, ingredients, categories, equipment, creators (1 each) + exclusions (1),
         // with a little room. Loading children one recipe at a time would be about 5 x 30 = 150.
-        assertThat(statistics.getPrepareStatementCount()).isLessThanOrEqualTo(12);
+        assertThat(statistics.getPrepareStatementCount()).isLessThanOrEqualTo(10);
+    }
+
+    @Test
+    void theSummaryViewLeavesOutTheSteps_withoutLoadingThem() throws Exception {
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.clear();
+
+        asAda.perform(get("/api/recipes").param("view", "summary"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(RECIPES)))
+                .andExpect(jsonPath("$[0].steps").doesNotExist())
+                .andExpect(jsonPath("$[0].ingredients", hasSize(2)))
+                .andExpect(jsonPath("$[0].categories", hasSize(2)));
+
+        assertThat(statistics.getCollectionFetchCount())
+                .as("collections loaded: ingredients, categories, equipment, but not steps")
+                .isEqualTo(3);
+    }
+
+    @Test
+    void countingRecipesDoesNotLoadThem() throws Exception {
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.clear();
+
+        asAda.perform(get("/api/recipes/count")).andExpect(status().isOk())
+                .andExpect(content().string(String.valueOf(RECIPES)));
+
+        assertThat(statistics.getEntityLoadCount()).isZero();
     }
 }

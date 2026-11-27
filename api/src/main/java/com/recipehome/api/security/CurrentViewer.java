@@ -9,6 +9,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,15 +42,13 @@ public class CurrentViewer {
         return viewer;
     }
 
-    /** The viewer for this user: them and, if they are in a family, everyone in it. */
+    /** The viewer for this user: them and, if they are in a family, everyone in it. One query. */
     public Viewer viewerFor(Long userId) {
-        return memberRepository.findByUserId(userId)
-                .map(membership -> {
-                    Long familyId = membership.getFamily().getId();
-                    Set<Long> group = new HashSet<>(memberRepository.findUserIdsByFamilyId(familyId));
-                    group.add(userId);
-                    return new Viewer(userId, familyId, group);
-                })
-                .orElseGet(() -> new Viewer(userId, null, Set.of(userId)));
+        List<FamilyMemberRepository.GroupMember> group = memberRepository.findGroupOf(userId);
+        if (group.isEmpty()) return new Viewer(userId, null, Set.of(userId));
+        Set<Long> userIds = new HashSet<>();
+        group.forEach(member -> userIds.add(member.userId()));
+        userIds.add(userId);
+        return new Viewer(userId, group.getFirst().familyId(), userIds);
     }
 }

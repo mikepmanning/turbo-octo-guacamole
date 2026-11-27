@@ -1,5 +1,6 @@
 package com.recipehome.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.recipehome.api.enums.RecipeVisibility;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -27,7 +28,9 @@ public class RecipeDTO {
     private Integer cookTimeMinutes;
     private Integer totalTimeMinutes;
 
+    // Left out of the JSON when null: GET /api/recipes?view=summary sends recipes without their steps.
     @Valid
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<StepDTO> steps = new ArrayList<>();
     @Valid
     private List<IngredientDTO> ingredients = new ArrayList<>();

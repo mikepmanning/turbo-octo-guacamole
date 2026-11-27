@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,11 +46,6 @@ public class AlexaRecipeService {
     }
 
     public Optional<Recipe> getRandomRecipe() {
-        List<Recipe> recipes = recipeService.getAllActiveRecipes();
-        if (recipes.isEmpty()) {
-            return Optional.empty();
-        }
-        Random random = new Random();
-        return Optional.of(recipes.get(random.nextInt(recipes.size())));
+        return recipeService.getRandomRecipe();
     }
 }

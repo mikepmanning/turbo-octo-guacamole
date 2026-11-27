@@ -282,7 +282,10 @@ recipes and no meal plans. Access follows the creator's current family (leaving 
 
 **Recipe Endpoints** (`/api/recipes`)
 - `POST /api/recipes` - Create a new recipe (with steps and ingredients)
-- `GET /api/recipes` - Get all active recipes
+- `GET /api/recipes` - Get all active recipes. `?view=summary` leaves out `steps` (not loaded either); the front end's
+  list pages use it
+- `GET /api/recipes/count` is a `COUNT` query, and `RecipeService.getRandomRecipe()` (Alexa) counts and loads one
+  recipe at a random position instead of loading them all. Responses over 2 KB are gzipped (`server.compression`)
 - `GET /api/recipes/{id}` - Get recipe by ID
 - `PUT /api/recipes/{id}` - Update a recipe (full replacement; see below)
 - `DELETE /api/recipes/{id}` - Soft delete a recipe

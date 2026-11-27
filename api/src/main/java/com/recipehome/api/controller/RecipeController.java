@@ -61,9 +61,10 @@ public class RecipeController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    public ResponseEntity<List<RecipeDTO>> getAllRecipes() {
-        List<RecipeDTO> recipes = recipeMapper.toDTOs(recipeService.getAllActiveRecipes());
-        return ResponseEntity.ok(recipes);
+    public ResponseEntity<List<RecipeDTO>> getAllRecipes(@RequestParam(required = false) String view) {
+        // ?view=summary leaves out the steps (the list pages don't show them, and they are most of the payload)
+        List<Recipe> recipes = recipeService.getAllActiveRecipes();
+        return ResponseEntity.ok("summary".equals(view) ? recipeMapper.toSummaryDTOs(recipes) : recipeMapper.toDTOs(recipes));
     }
 
     @GetMapping("/search")

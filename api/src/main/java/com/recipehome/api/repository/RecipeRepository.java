@@ -2,6 +2,7 @@ package com.recipehome.api.repository;
 
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.enums.RecipeVisibility;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +45,19 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
             + "AND (r.visibility = :publicVisibility OR u.id IN :userIds)")
     List<Recipe> findVisibleTo(@Param("userIds") Collection<Long> userIds,
                                @Param("publicVisibility") RecipeVisibility publicVisibility);
+
+    // Counts and pages of the same two sets, for counting and for picking a random recipe without loading them all
+    long countByVisibilityAndIsActiveTrue(RecipeVisibility visibility);
+
+    List<Recipe> findByVisibilityAndIsActiveTrue(RecipeVisibility visibility, Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM Recipe r LEFT JOIN r.createdBy u WHERE r.isActive = true "
+            + "AND (r.visibility = :publicVisibility OR u.id IN :userIds)")
+    long countVisibleTo(@Param("userIds") Collection<Long> userIds,
+                        @Param("publicVisibility") RecipeVisibility publicVisibility);
+
+    @Query("SELECT r FROM Recipe r LEFT JOIN r.createdBy u WHERE r.isActive = true "
+            + "AND (r.visibility = :publicVisibility OR u.id IN :userIds)")
+    List<Recipe> findVisibleTo(@Param("userIds") Collection<Long> userIds,
+                               @Param("publicVisibility") RecipeVisibility publicVisibility, Pageable pageable);
 }

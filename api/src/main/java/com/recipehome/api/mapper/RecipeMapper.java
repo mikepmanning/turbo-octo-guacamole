@@ -37,17 +37,27 @@ public class RecipeMapper {
             return null;
         }
         Viewer viewer = currentViewer.get();
-        return toDTO(recipe, viewer, exclusions.excludedRecipeIds(viewer));
+        return toDTO(recipe, viewer, exclusions.excludedRecipeIds(viewer), true);
     }
 
     /** Several recipes as the current viewer sees them, looking up their exclusion list once. */
     public List<RecipeDTO> toDTOs(List<Recipe> recipes) {
         Viewer viewer = currentViewer.get();
         Set<Long> excluded = exclusions.excludedRecipeIds(viewer);
-        return recipes.stream().map(recipe -> toDTO(recipe, viewer, excluded)).toList();
+        return recipes.stream().map(recipe -> toDTO(recipe, viewer, excluded, true)).toList();
     }
 
-    private RecipeDTO toDTO(Recipe recipe, Viewer viewer, Set<Long> excluded) {
+    /**
+     * Several recipes without their steps (steps is null), for lists: the recipe list, search and meal planning need
+     * everything else, and steps are most of a recipe's size. The steps aren't loaded at all.
+     */
+    public List<RecipeDTO> toSummaryDTOs(List<Recipe> recipes) {
+        Viewer viewer = currentViewer.get();
+        Set<Long> excluded = exclusions.excludedRecipeIds(viewer);
+        return recipes.stream().map(recipe -> toDTO(recipe, viewer, excluded, false)).toList();
+    }
+
+    private RecipeDTO toDTO(Recipe recipe, Viewer viewer, Set<Long> excluded, boolean withSteps) {
         RecipeDTO dto = new RecipeDTO();
         dto.setId(recipe.getId());
         dto.setTitle(recipe.getTitle());
@@ -68,9 +78,9 @@ public class RecipeMapper {
         dto.setExcludedFromMealPlans(excluded.contains(recipe.getId()));
 
         // Map steps and ingredients
-        dto.setSteps(recipe.getSteps().stream()
+        dto.setSteps(withSteps ? recipe.getSteps().stream()
                 .map(stepMapper::toDTO)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()) : null);
         dto.setIngredients(recipe.getIngredients().stream()
                 .map(ingredientMapper::toDTO)
                 .collect(Collectors.toList()));

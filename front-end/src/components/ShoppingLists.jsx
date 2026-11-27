@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { shoppingListApi } from '../services/api'
 import { defaultPlanName, formatDateRange, planStatus, todayString } from './mealPlan'
+import PageTitle from './PageTitle'
 import './MealPlan.css'
 import './ShoppingList.css'
 
@@ -47,6 +48,7 @@ export default function ShoppingLists() {
       </div>
 
       <header className="meal-plan-header">
+        <PageTitle title="Shopping Lists" />
         <h1>Shopping Lists</h1>
         <p className="meal-plan-range">Your family's shopping lists, current and upcoming first.</p>
       </header>

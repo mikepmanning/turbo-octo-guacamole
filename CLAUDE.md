@@ -132,6 +132,14 @@ To run both backend and frontend together:
 
 ### Page Loading
 `App.jsx` loads the recipe list and the login pages with the main bundle; every other page is `React.lazy` and downloads the first time it is opened, with "Loading..." from the `Suspense` in `RequireAuth` (the account bar stays). Tests that render `App` at those paths must wait for the page (`findBy...`).
+- `ErrorBoundary` (`components/`) catches a page that throws while rendering, or a lazy page that fails to download (then it says the app may have been updated), and shows "Reload page" / "Back to Recipes". `RequireAuth` wraps the page in one keyed on the path, so the next page starts fresh; `App` has an outer one for the login pages. An unknown address shows `NotFound` ("Page not found", route `*`).
+- Each page names the browser tab with `<PageTitle title="…" />` ("Guacamole · RecipeHome"; React 19 moves the `<title>` into `<head>`, ahead of the static one in `index.html`).
+
+### Styling
+Colours come from the theme variables in `src/index.css` (`--text`, `--text-strong`, `--text-muted`, `--surface`, `--border`, `--accent`, `--danger-text`, `--success-soft`, ...), each defined with `light-dark()` so the app follows the system's light or dark mode. Use these in component CSS rather than hex values; the only fixed colours left are white text on accent/danger buttons, the grey `#555` buttons, and translucent tints and shadows.
+
+### Dialogs
+Every modal uses `Modal` (`components/Modal.jsx`), a native `<dialog>` opened with `showModal()`: the browser keeps Tab inside and makes the page behind inert, Escape or a click outside calls `onClose` (not while `closeDisabled`), the control marked `data-autofocus` gets focus, and focus returns to the opener on close. `ConfirmDialog` (destructive "are you sure?", including "Discard your changes?" in `RecipeEditor` and `MealPlanEditor`), `RecipePickerDialog`, `MealPlanSetupModal` and `ImportRecipeModal` are built on it. Don't use `window.confirm`. jsdom has no `showModal`, so `src/test/setup.js` stubs it (and Escape's `cancel` event); in tests a click on the `dialog` element is a click outside the box.
 
 ### API Integration
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
@@ -183,7 +191,7 @@ Search on the recipe list filters in the browser: `recipeApi.getAllRecipes()` (`
 - Vitest is configured in the `test` block of `vite.config.js`; coverage uses the V8 provider with an 80% line threshold (`src/main.jsx` is excluded).
 - Reporters: `default` (terminal) plus `html` from `@vitest/ui`, written as a single file to `test_reports/index.html`. Coverage is written to `test_reports/coverage/`, the folder the report's Coverage tab reads, so Vitest doesn't make a second copy.
 - Tests sit next to the code they cover: `RecipeForm.jsx` -> `RecipeForm.test.jsx`.
-- `src/test/setup.js` loads the jest-dom matchers and cleans up after each test.
+- `src/test/setup.js` loads the jest-dom matchers, cleans up after each test, and stands in for `<dialog>`'s `showModal()`/`close()` (see Dialogs).
 - `src/test/renderWithRouter.jsx` renders a page inside a `MemoryRouter` (with optional router state) and exposes the current path via `data-testid="location"`.
 - `src/test/fixtures/` holds sample API payloads (units, imported and saved recipes, meal-planning recipes, draft and saved meal plans).
 - Component tests mock the API layer with `vi.mock('../services/api')`; `api.test.js` tests the API layer itself against a stubbed `fetch`.

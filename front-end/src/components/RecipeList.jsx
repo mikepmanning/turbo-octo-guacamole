@@ -7,6 +7,7 @@ import SelectionBar from './SelectionBar'
 import { recipeByline } from './recipeSharing'
 import RecipeSearch from './RecipeSearch'
 import { emptyFilters, filterRecipes, hasActiveFilters, knownCategories, matchNotes } from './recipeFilters'
+import PageTitle from './PageTitle'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -211,6 +212,7 @@ function RecipeList() {
   return (
     <div className="recipe-list">
       <header>
+        <PageTitle />
         <h1>RecipeHome</h1>
         <p>Your personal recipe collection</p>
         <div className="header-actions">

@@ -5,6 +5,7 @@ import { authApi } from '../services/api'
 import { validateProfile, validatePasswordChange, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from './accountRules'
 import { toDateString } from '../components/mealPlan'
 import FormField from './FormField'
+import PageTitle from '../components/PageTitle'
 import './Auth.css'
 
 const profileOf = (user) => ({
@@ -102,6 +103,7 @@ export default function AccountPage() {
   return (
     <div className="account-page">
       <Link to="/" className="account-back">← Back to recipes</Link>
+      <PageTitle title="My Account" />
       <h1>My Account</h1>
 
       <section className="auth-card account-section" aria-labelledby="details-heading">

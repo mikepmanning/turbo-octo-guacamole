@@ -6,6 +6,7 @@ import MealPlanEditor from './MealPlanEditor'
 import ConfirmDialog from './ConfirmDialog'
 import { creatorName } from './recipeSharing'
 import { defaultPlanName, formatDateRange, planFromSaved, recipeMeta, slotKey } from './mealPlan'
+import PageTitle from './PageTitle'
 import './RecipeList.css'
 import './RecipeDetail.css'
 import './MealPlan.css'
@@ -115,6 +116,7 @@ function MealPlanView() {
   if (editing) {
     return (
       <div className="meal-plan-page">
+        <PageTitle title={`Edit ${name}`} />
         <MealPlanEditor
           initialPlan={planFromSaved(plan)}
           title="Edit Meal Plan"
@@ -169,6 +171,7 @@ function MealPlanView() {
       {notice && <p className="list-notice" role="status" ref={noticeRef}>{notice}</p>}
 
       <header className="meal-plan-header">
+        <PageTitle title={name} />
         <h1>{name}</h1>
         <p className="meal-plan-range">{range}</p>
         {!plan.canDelete && creatorName(plan) && (

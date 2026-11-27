@@ -4,6 +4,7 @@ import { recipeApi } from '../services/api'
 import RecipeEditor from './RecipeEditor'
 import ConfirmDialog from './ConfirmDialog'
 import { recipeByline, visibilityLabel } from './recipeSharing'
+import PageTitle from './PageTitle'
 import './RecipeDetail.css'
 import './MealPlan.css'
 
@@ -128,6 +129,7 @@ function RecipeDetail() {
   if (editing) {
     return (
       <div className="recipe-detail">
+        <PageTitle title={`Edit ${recipe.title}`} />
         <h1 className="edit-heading">Edit Recipe</h1>
         <RecipeEditor
           initialRecipe={recipe}
@@ -187,6 +189,7 @@ function RecipeDetail() {
       {exclusionError && <p className="error-message" role="alert">{exclusionError}</p>}
 
       <header className="recipe-header">
+        <PageTitle title={recipe.title} />
         <h1>{recipe.title}</h1>
         <p className="recipe-byline">
           <span className={`visibility-tag visibility-${visibilityLabel(recipe).toLowerCase()}`}>

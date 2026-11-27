@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { mealPlanApi } from '../services/api'
 import MealPlanEditor from './MealPlanEditor'
+import PageTitle from './PageTitle'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -24,6 +25,7 @@ function NewMealPlan() {
   if (!draft) {
     return (
       <div className="meal-plan-page">
+        <PageTitle title="New Meal Plan" />
         <h1>Meal Plan</h1>
         <p>No meal plan in progress. Use “Plan Meals” on the Meal Plans page to start one.</p>
         <Link to="/meal-plans" className="create-recipe-btn">Go to Meal Plans</Link>
@@ -39,6 +41,7 @@ function NewMealPlan() {
 
   return (
     <div className="meal-plan-page">
+      <PageTitle title="New Meal Plan" />
       <MealPlanEditor
         initialPlan={draft}
         title="Meal Plan"

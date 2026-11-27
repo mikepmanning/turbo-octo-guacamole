@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './authContext'
 import { destinationAfterLogin } from './accountRules'
+import PageTitle from '../components/PageTitle'
 import './Auth.css'
 
 export default function LoginPage() {
@@ -33,6 +34,7 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <PageTitle title="Log in" />
         <h1>RecipeHome</h1>
         <h2>Log in</h2>
         <form onSubmit={handleSubmit} className="auth-form">

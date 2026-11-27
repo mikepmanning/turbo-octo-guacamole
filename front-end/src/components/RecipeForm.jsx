@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { recipeApi } from '../services/api'
 import RecipeEditor from './RecipeEditor'
+import PageTitle from './PageTitle'
 import './RecipeForm.css'
 
 // "Add New Recipe" page, or "Import Recipe" when the list passes an imported recipe
@@ -21,6 +22,7 @@ function RecipeForm() {
         ← Back to Recipes
       </button>
 
+      <PageTitle title={importedRecipe ? 'Import Recipe' : 'Add Recipe'} />
       <h1>{importedRecipe ? 'Import Recipe' : 'Add New Recipe'}</h1>
 
       <RecipeEditor

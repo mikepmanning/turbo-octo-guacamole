@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { mealPlanApi, shoppingListApi } from '../services/api'
 import { defaultPlanName, formatDateRange } from './mealPlan'
 import { creatorName } from './recipeSharing'
+import PageTitle from './PageTitle'
 import './MealPlan.css'
 import './ShoppingList.css'
 
@@ -98,6 +99,7 @@ export default function ShoppingList() {
     return (
       <div className="meal-plan-page shopping-page">
         {back}
+        <PageTitle title="Shopping List" />
         <h1>Shopping List</h1>
         <div className="error" role="alert">
           <p>{loadError}</p>
@@ -111,6 +113,7 @@ export default function ShoppingList() {
     return (
       <div className="meal-plan-page shopping-page">
         {back}
+        <PageTitle title="Shopping List" />
         <h1>Shopping List</h1>
         <p>Loading shopping list...</p>
       </div>
@@ -125,6 +128,7 @@ export default function ShoppingList() {
     <div className="meal-plan-page shopping-page">
       {back}
       <header className="meal-plan-header">
+        <PageTitle title="Shopping List" />
         <h1>Shopping List</h1>
         <p className="meal-plan-range">{planName} · {formatDateRange(plan.startDate, plan.days)}</p>
       </header>

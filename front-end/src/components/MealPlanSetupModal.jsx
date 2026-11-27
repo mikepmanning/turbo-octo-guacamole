@@ -5,6 +5,7 @@ import {
   excludedForMeal, ingredientMatches, isDateString, joinNames, lastPlannedByRecipe, mealCount, mealLabel, mealPlural, orderMealTypes,
   plannedInPlans, recipesForMeal, recipesUsing, shortfalls, todayString,
 } from './mealPlan'
+import Modal from './Modal'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -45,14 +46,6 @@ const rememberAvoidDays = (days) => {
 function MealPlanSetupModal({ recipes, loadError, onRetry, onClose, onGenerate }) {
   const titleId = useId()
 
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [onClose])
-
   let body
   if (loadError) {
     body = (
@@ -79,18 +72,10 @@ function MealPlanSetupModal({ recipes, loadError, onRetry, onClose, onGenerate }
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content meal-plan-setup"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id={titleId}>Plan Meals</h2>
-        {body}
-      </div>
-    </div>
+    <Modal className="modal-content meal-plan-setup" labelledBy={titleId} onClose={onClose}>
+      <h2 id={titleId}>Plan Meals</h2>
+      {body}
+    </Modal>
   )
 }
 

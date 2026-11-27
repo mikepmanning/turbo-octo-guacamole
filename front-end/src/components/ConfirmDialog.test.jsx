@@ -6,7 +6,7 @@ import ConfirmDialog from './ConfirmDialog'
 function renderDialog(props = {}) {
   const onConfirm = vi.fn()
   const onCancel = vi.fn()
-  render(
+  const { unmount } = render(
     <ConfirmDialog
       title="Delete this recipe?"
       message="“Toast” will be removed from your recipes."
@@ -17,7 +17,7 @@ function renderDialog(props = {}) {
       {...props}
     />
   )
-  return { user: userEvent.setup(), onConfirm, onCancel }
+  return { user: userEvent.setup(), onConfirm, onCancel, unmount }
 }
 
 describe('ConfirmDialog', () => {
@@ -25,8 +25,21 @@ describe('ConfirmDialog', () => {
     renderDialog()
 
     const dialog = screen.getByRole('alertdialog', { name: 'Delete this recipe?' })
-    expect(dialog).toHaveAttribute('aria-modal', 'true')
+    expect(dialog.tagName).toBe('DIALOG')
+    expect(dialog).toHaveAttribute('open')   // opened with showModal(): modal, page behind inert
     expect(dialog).toHaveAccessibleDescription('“Toast” will be removed from your recipes.')
+  })
+
+  it('gives focus back to what had it when it closes', () => {
+    const opener = document.createElement('button')
+    document.body.append(opener)
+    opener.focus()
+    const { unmount } = renderDialog()
+    expect(opener).not.toHaveFocus()
+
+    unmount()
+    expect(opener).toHaveFocus()
+    opener.remove()
   })
 
   it('starts with focus on Cancel, the safe choice', () => {
@@ -38,7 +51,7 @@ describe('ConfirmDialog', () => {
   it('confirms only from the confirm button', async () => {
     const { user, onConfirm, onCancel } = renderDialog()
 
-    await user.click(screen.getByRole('alertdialog'))
+    await user.click(screen.getByRole('heading', { name: 'Delete this recipe?' }))
     expect(onConfirm).not.toHaveBeenCalled()
     expect(onCancel).not.toHaveBeenCalled()
 
@@ -49,7 +62,7 @@ describe('ConfirmDialog', () => {
   it.each([
     ['the Cancel button', (user) => user.click(screen.getByRole('button', { name: 'Cancel' }))],
     ['Escape', (user) => user.keyboard('{Escape}')],
-    ['a click outside the dialog', (user) => user.click(document.querySelector('.confirm-overlay'))],
+    ['a click outside the dialog', (user) => user.click(document.querySelector('dialog'))],
   ])('cancels with %s', async (_, action) => {
     const { user, onConfirm, onCancel } = renderDialog()
 
@@ -65,7 +78,7 @@ describe('ConfirmDialog', () => {
     expect(screen.getByRole('button', { name: 'Deleting...' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
     await user.keyboard('{Escape}')
-    await user.click(document.querySelector('.confirm-overlay'))
+    await user.click(document.querySelector('dialog'))
 
     expect(onCancel).not.toHaveBeenCalled()
     expect(onConfirm).not.toHaveBeenCalled()

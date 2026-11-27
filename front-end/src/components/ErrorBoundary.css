@@ -1,0 +1,35 @@
+/* The error page (ErrorBoundary) and "Page not found" (NotFound). */
+.page-error {
+  max-width: 560px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.page-error h1 {
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  color: var(--text-strong);
+}
+
+.page-error p {
+  color: var(--text-muted);
+  margin: 0 0 2rem;
+}
+
+.page-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.page-error-reload {
+  background-color: var(--accent);
+  color: white;
+}
+
+.page-error-reload:hover {
+  background-color: var(--accent-hover);
+}

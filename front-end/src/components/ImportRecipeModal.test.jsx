@@ -106,7 +106,7 @@ describe('ImportRecipeModal', () => {
     await user.click(screen.getByRole('heading', { name: 'Import Recipe from URL' }))
     expect(onClose).not.toHaveBeenCalled()
 
-    await user.click(document.querySelector('.modal-overlay'))
+    await user.click(document.querySelector('dialog'))
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 })

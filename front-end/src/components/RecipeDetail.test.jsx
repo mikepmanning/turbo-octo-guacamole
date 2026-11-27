@@ -273,35 +273,36 @@ describe('RecipeDetail', () => {
     })
 
     it('Cancel with no changes goes straight back to the recipe', async () => {
-      const confirm = vi.spyOn(window, 'confirm')
       const user = await startEditing()
 
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
 
       expect(screen.getByRole('heading', { name: 'Instant Pot Chicken Burrito Bowls' })).toBeInTheDocument()
-      expect(confirm).not.toHaveBeenCalled()
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
       expect(recipeApi.updateRecipe).not.toHaveBeenCalled()
     })
 
     it('Cancel after changes asks first, and staying keeps the edits', async () => {
-      const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
       const user = await startEditing()
 
       await changeTitle(user, 'My Bowls')
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
 
-      expect(confirm).toHaveBeenCalledWith('Discard your changes?')
+      const dialog = screen.getByRole('alertdialog', { name: 'Discard your changes?' })
+      await user.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
       expect(screen.getByLabelText('Title *')).toHaveValue('My Bowls')
     })
 
     it('Cancel after changes asks first, and discarding shows the recipe as it was', async () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true)
       const user = await startEditing()
 
       await changeTitle(user, 'My Bowls')
       await user.type(screen.getAllByPlaceholderText('Ingredient name')[0], ' and peas')
       await user.click(section('Ingredients *').getAllByRole('button', { name: 'Remove' })[1])
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      await user.click(screen.getByRole('button', { name: 'Discard changes' }))
 
       expect(screen.getByRole('heading', { name: 'Instant Pot Chicken Burrito Bowls' })).toBeInTheDocument()
       const rows = await ingredientRows()
@@ -311,14 +312,14 @@ describe('RecipeDetail', () => {
     })
 
     it('does not ask when a change was undone before cancelling', async () => {
-      const confirm = vi.spyOn(window, 'confirm')
       const user = await startEditing()
 
       await changeTitle(user, 'My Bowls')
       await changeTitle(user, 'Instant Pot Chicken Burrito Bowls')
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
 
-      expect(confirm).not.toHaveBeenCalled()
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Instant Pot Chicken Burrito Bowls' })).toBeInTheDocument()
     })
 
     it('scrolls the error, then "Changes saved.", into view (Save is at the bottom of the form)', async () => {

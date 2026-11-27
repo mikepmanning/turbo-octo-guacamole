@@ -5,6 +5,8 @@ import AuthProvider from './auth/AuthProvider'
 import RequireAuth from './auth/RequireAuth'
 import LoginPage from './auth/LoginPage'
 import RegisterPage from './auth/RegisterPage'
+import NotFound from './components/NotFound'
+import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
 // The front page and the login pages are in the main bundle; the other pages download the first time they are
@@ -23,6 +25,8 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        {/* Last resort (e.g. the login pages); RequireAuth has its own for the logged-in pages. */}
+        <ErrorBoundary>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -38,8 +42,10 @@ function App() {
             <Route path="/shopping-lists" element={<ShoppingLists />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/family" element={<FamilyPage />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+        </ErrorBoundary>
       </Router>
     </AuthProvider>
   )

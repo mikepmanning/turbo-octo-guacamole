@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './authContext'
+import ErrorBoundary from '../components/ErrorBoundary'
 import './Auth.css'
 
 /**
@@ -23,10 +24,13 @@ export default function RequireAuth() {
         <Link to="/account" className="account-bar-link">My account</Link>
         <button type="button" className="account-bar-logout" onClick={logout}>Log out</button>
       </div>
-      {/* Most pages load on first use (App.jsx): the account bar stays while one downloads. */}
-      <Suspense fallback={<div className="loading">Loading...</div>}>
-        <Outlet />
-      </Suspense>
+      {/* Most pages load on first use (App.jsx): the account bar stays while one downloads, and also when a
+          page fails (the boundary starts over on the next page). */}
+      <ErrorBoundary key={location.pathname}>
+        <Suspense fallback={<div className="loading">Loading...</div>}>
+          <Outlet />
+        </Suspense>
+      </ErrorBoundary>
     </>
   )
 }

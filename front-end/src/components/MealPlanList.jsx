@@ -4,6 +4,7 @@ import { mealPlanApi, recipeApi } from '../services/api'
 import MealPlanSetupModal from './MealPlanSetupModal'
 import { defaultPlanName, formatDateRange, mealLabel, planStatus, todayString } from './mealPlan'
 import { creatorName } from './recipeSharing'
+import PageTitle from './PageTitle'
 import './RecipeList.css'
 import './MealPlan.css'
 
@@ -74,6 +75,7 @@ function MealPlanList() {
       {notice && <p className="list-notice" role="status">{notice}</p>}
 
       <header className="meal-plan-header">
+        <PageTitle title="Meal Plans" />
         <h1>Meal Plans</h1>
         <p className="meal-plan-range">Your saved meal plans, latest first.</p>
         <div className="header-actions">

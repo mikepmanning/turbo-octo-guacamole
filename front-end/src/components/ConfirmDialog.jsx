@@ -1,4 +1,5 @@
-import { useEffect, useId } from 'react'
+import { useId } from 'react'
+import Modal from './Modal'
 import './ConfirmDialog.css'
 
 /**
@@ -13,38 +14,28 @@ function ConfirmDialog({
   const titleId = useId()
   const messageId = useId()
 
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape' && !busy) onCancel()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [busy, onCancel])
-
   return (
-    <div className="confirm-overlay" onClick={busy ? undefined : onCancel}>
-      <div
-        className="confirm-dialog"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={messageId}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id={titleId}>{title}</h2>
-        <p id={messageId}>{message}</p>
-        {children}
-        {error && <p className="confirm-error" role="alert">{error}</p>}
-        <div className="confirm-actions">
-          <button type="button" className="confirm-cancel" onClick={onCancel} disabled={busy} autoFocus>
-            Cancel
-          </button>
-          <button type="button" className="confirm-danger" onClick={onConfirm} disabled={busy}>
-            {busy ? busyLabel : confirmLabel}
-          </button>
-        </div>
+    <Modal
+      className="confirm-dialog"
+      role="alertdialog"
+      labelledBy={titleId}
+      describedBy={messageId}
+      closeDisabled={busy}
+      onClose={onCancel}
+    >
+      <h2 id={titleId}>{title}</h2>
+      <p id={messageId}>{message}</p>
+      {children}
+      {error && <p className="confirm-error" role="alert">{error}</p>}
+      <div className="confirm-actions">
+        <button type="button" className="confirm-cancel" onClick={onCancel} disabled={busy} data-autofocus>
+          Cancel
+        </button>
+        <button type="button" className="confirm-danger" onClick={onConfirm} disabled={busy}>
+          {busy ? busyLabel : confirmLabel}
+        </button>
       </div>
-    </div>
+    </Modal>
   )
 }
 

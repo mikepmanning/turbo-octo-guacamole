@@ -67,6 +67,21 @@ describe('App routes', () => {
     expect(recipeApi.getRecipeById).toHaveBeenCalledWith('1')
   })
 
+  it('names the browser tab after the page', async () => {
+    renderAt('/recipe/1')
+
+    await screen.findByRole('heading', { name: savedBurritoBowls.title })
+    expect(document.title).toBe(`${savedBurritoBowls.title} · RecipeHome`)
+  })
+
+  it('an unknown address shows "Page not found" with a way back, under the account bar', async () => {
+    renderAt('/no/such/page')
+
+    expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Recipes' })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument()
+  })
+
   it('/meal-plan/new shows the meal plan review page', async () => {
     renderAt('/meal-plan/new')
 

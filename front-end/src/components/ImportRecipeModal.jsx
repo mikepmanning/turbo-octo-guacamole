@@ -1,8 +1,14 @@
-import React, { useState } from 'react'
+import { useId, useState } from 'react'
 import { recipeApi } from '../services/api'
+import Modal from './Modal'
 import './RecipeList.css'
 
+/**
+ * "Import Recipe": asks for a recipe page's URL, has the server read it, and passes the result to
+ * `onImportSuccess` (the recipe form opens with it). Nothing is saved yet.
+ */
 function ImportRecipeModal({ isOpen, onClose, onImportSuccess }) {
+  const titleId = useId()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -16,15 +22,12 @@ function ImportRecipeModal({ isOpen, onClose, onImportSuccess }) {
     try {
       setLoading(true)
       setError(null)
-      // Call your backend import endpoint
       const importedData = await recipeApi.importRecipeFromUrl(url)
-      
-      // Reset state, close modal, and pass data to parent
       setUrl('')
       onClose()
       onImportSuccess(importedData)
     } catch (err) {
-      // Map HTTP 422 / 502 error messages from backend
+      // The server explains 422 (no recipe found on the page) and 502 (the site couldn't be read).
       setError(err.message || 'Failed to import recipe from URL')
     } finally {
       setLoading(false)
@@ -37,30 +40,31 @@ function ImportRecipeModal({ isOpen, onClose, onImportSuccess }) {
     onClose()
   }
 
-  return React.createElement('div', { className: 'modal-overlay', onClick: handleClose },
-    React.createElement('div', { className: 'modal-content', onClick: (e) => e.stopPropagation() },
-      React.createElement('h2', null, 'Import Recipe from URL'),
-      React.createElement('p', null, 'Paste a recipe website link below to parse ingredients and instructions.'),
-      React.createElement('form', { onSubmit: handleSubmit },
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('input', {
-            type: 'url',
-            placeholder: 'https://example.com/recipe',
-            value: url,
-            onChange: (e) => setUrl(e.target.value),
-            required: true,
-            disabled: loading
-          })
-        ),
-        error && React.createElement('div', { className: 'error-message' }, error),
-        React.createElement('div', { className: 'modal-actions' },
-          React.createElement('button', { type: 'button', onClick: handleClose, disabled: loading }, 'Cancel'),
-          React.createElement('button', { type: 'submit', disabled: loading || !url.trim() },
-            loading ? 'Importing...' : 'Import'
-          )
-        )
-      )
-    )
+  return (
+    <Modal className="modal-content" labelledBy={titleId} closeDisabled={loading} onClose={handleClose}>
+      <h2 id={titleId}>Import Recipe from URL</h2>
+      <p>Paste a recipe website link below to parse ingredients and instructions.</p>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <input
+            type="url"
+            aria-label="Recipe URL"
+            placeholder="https://example.com/recipe"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            required
+            disabled={loading}
+          />
+        </div>
+        {error && <div className="error-message" role="alert">{error}</div>}
+        <div className="modal-actions">
+          <button type="button" onClick={handleClose} disabled={loading}>Cancel</button>
+          <button type="submit" disabled={loading || !url.trim()}>
+            {loading ? 'Importing...' : 'Import'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }
 

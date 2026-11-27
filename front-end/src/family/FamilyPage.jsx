@@ -5,6 +5,7 @@ import { useAuth } from '../auth/authContext'
 import ConfirmDialog from '../components/ConfirmDialog'
 import FormField from '../auth/FormField'
 import { formatInviteCode, fullName, ownerOf } from './familyFormat'
+import PageTitle from '../components/PageTitle'
 import '../auth/Auth.css'
 import './Family.css'
 
@@ -42,6 +43,7 @@ export default function FamilyPage() {
 
   return (
     <div className="family-page">
+      <PageTitle title={family?.name || 'Family'} />
       <Link to="/" className="account-back">← Back to recipes</Link>
       {loadError ? (
         <div className="family-load-error">

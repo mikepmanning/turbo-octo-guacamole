@@ -441,7 +441,7 @@ describe('MealPlanSetupModal', () => {
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }))
     await user.keyboard('{Escape}')
-    await user.click(screen.getByRole('dialog').parentElement)
+    await user.click(screen.getByRole('dialog'))
 
     expect(onClose).toHaveBeenCalledTimes(3)
     expect(onGenerate).not.toHaveBeenCalled()

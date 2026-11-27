@@ -116,7 +116,7 @@ describe('RecipePickerDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }))
     await user.keyboard('{Escape}')
-    await user.click(screen.getByRole('dialog').parentElement)
+    await user.click(screen.getByRole('dialog'))
 
     expect(onCancel).toHaveBeenCalledTimes(3)
     expect(onPick).not.toHaveBeenCalled()

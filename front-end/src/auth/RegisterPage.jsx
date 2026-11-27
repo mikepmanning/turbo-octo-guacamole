@@ -6,6 +6,7 @@ import {
 } from './accountRules'
 import { toDateString } from '../components/mealPlan'
 import FormField from './FormField'
+import PageTitle from '../components/PageTitle'
 import './Auth.css'
 
 const EMPTY = { firstName: '', lastName: '', email: '', dateOfBirth: '', password: '', confirmPassword: '' }
@@ -67,6 +68,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <PageTitle title="Create account" />
         <h1>RecipeHome</h1>
         <h2>Create your account</h2>
         <form onSubmit={handleSubmit} className="auth-form" noValidate>

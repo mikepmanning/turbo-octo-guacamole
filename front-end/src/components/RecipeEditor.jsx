@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { recipeApi } from '../services/api'
 import { recipeToFormState, formStateToPayload, blankIngredient, blankStep } from './recipeFormState'
+import ConfirmDialog from './ConfirmDialog'
 import './RecipeForm.css'
 
 // Dropdown groups, in display order. Units come from GET /api/units.
@@ -57,6 +58,7 @@ function RecipeEditor({
   const [units, setUnits] = useState([])
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [confirmingDiscard, setConfirmingDiscard] = useState(false)   // the "Discard your changes?" dialog
   const errorRef = useRef(null)
 
   // Save is at the bottom of a long form and the error is at the top: bring it into view.
@@ -142,8 +144,8 @@ function RecipeEditor({
 
   const handleCancel = () => {
     const changed = JSON.stringify(currentState()) !== JSON.stringify(initialState)
-    if (confirmDiscard && changed && !window.confirm('Discard your changes?')) return
-    onCancel()
+    if (confirmDiscard && changed) setConfirmingDiscard(true)
+    else onCancel()
   }
 
   const handleSubmit = async (e) => {
@@ -498,6 +500,17 @@ function RecipeEditor({
           </button>
         </div>
       </form>
+
+      {confirmingDiscard && (
+        <ConfirmDialog
+          title="Discard your changes?"
+          message="The recipe will stay as it was last saved."
+          confirmLabel="Discard changes"
+          busyLabel="Discard changes"
+          onConfirm={onCancel}
+          onCancel={() => setConfirmingDiscard(false)}
+        />
+      )}
     </>
   )
 }

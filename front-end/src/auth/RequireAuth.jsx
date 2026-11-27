@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './authContext'
 import './Auth.css'
@@ -22,7 +23,10 @@ export default function RequireAuth() {
         <Link to="/account" className="account-bar-link">My account</Link>
         <button type="button" className="account-bar-logout" onClick={logout}>Log out</button>
       </div>
-      <Outlet />
+      {/* Most pages load on first use (App.jsx): the account bar stays while one downloads. */}
+      <Suspense fallback={<div className="loading">Loading...</div>}>
+        <Outlet />
+      </Suspense>
     </>
   )
 }

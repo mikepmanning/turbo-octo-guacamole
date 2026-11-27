@@ -56,7 +56,7 @@ describe('App routes', () => {
   it('/recipe/new shows the recipe form', async () => {
     renderAt('/recipe/new')
 
-    expect(screen.getByRole('heading', { name: 'Add New Recipe' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Add New Recipe' })).toBeInTheDocument()
     await screen.findAllByRole('option', { name: 'ounce' })
   })
 
@@ -67,18 +67,18 @@ describe('App routes', () => {
     expect(recipeApi.getRecipeById).toHaveBeenCalledWith('1')
   })
 
-  it('/meal-plan/new shows the meal plan review page', () => {
+  it('/meal-plan/new shows the meal plan review page', async () => {
     renderAt('/meal-plan/new')
 
     // Opened directly there is no generated plan to review.
-    expect(screen.getByRole('heading', { name: 'Meal Plan' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Meal Plan' })).toBeInTheDocument()
     expect(screen.getByText(/No meal plan in progress/)).toBeInTheDocument()
   })
 
   it('/meal-plans lists the saved meal plans', async () => {
     renderAt('/meal-plans')
 
-    expect(screen.getByRole('heading', { name: 'Meal Plans' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Meal Plans' })).toBeInTheDocument()
     expect(await screen.findByRole('link', { name: /Summer week/ })).toHaveAttribute('href', '/meal-plans/12')
   })
 

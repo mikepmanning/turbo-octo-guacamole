@@ -8,12 +8,15 @@ import com.recipehome.api.dto.RecipeDTO;
 import com.recipehome.api.entity.Recipe;
 import com.recipehome.api.mapper.RecipeMapper;
 import com.recipehome.api.service.RecipeImportService;
+import com.recipehome.api.service.ImportRateLimiter;
 import com.recipehome.api.service.RecipeService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +37,11 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final RecipeMapper recipeMapper;
     private final RecipeImportService recipeImportService;
+    private final ImportRateLimiter importRateLimiter;
 
-    public RecipeController(RecipeService recipeService, RecipeMapper recipeMapper, RecipeImportService recipeImportService) {
+    public RecipeController(RecipeService recipeService, RecipeMapper recipeMapper, RecipeImportService recipeImportService,
+                            ImportRateLimiter importRateLimiter) {
+        this.importRateLimiter = importRateLimiter;
         this.recipeService = recipeService;
         this.recipeMapper = recipeMapper;
         this.recipeImportService = recipeImportService;
@@ -145,10 +151,11 @@ public class RecipeController {
     // No transaction: fetching the page can take seconds, and it would hold a database connection meanwhile.
     @GetMapping("/import")
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public ResponseEntity<RecipeDTO> importRecipe(@RequestParam String url) throws IOException {
+    public ResponseEntity<RecipeDTO> importRecipe(@RequestParam String url, @AuthenticationPrincipal Jwt jwt) throws IOException {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("URL parameter is required");
         }
+        importRateLimiter.acquire(jwt == null ? "anonymous" : jwt.getSubject());
 
         RecipeDTO importedRecipe = recipeImportService.importFromURL(url);
         return ResponseEntity.ok(importedRecipe);

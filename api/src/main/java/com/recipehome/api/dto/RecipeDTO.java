@@ -5,6 +5,7 @@ import com.recipehome.api.enums.RecipeVisibility;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,8 +18,10 @@ public class RecipeDTO {
     private Long id;
 
     @NotBlank(message = "Recipe title is required")
+    @Size(max = 255, message = "Title must be at most 255 characters")
     private String title;
 
+    @Size(max = 20000, message = "Description must be at most 20000 characters")
     private String description;
 
     @Positive(message = "Servings must be positive")
@@ -31,11 +34,16 @@ public class RecipeDTO {
     // Left out of the JSON when null: GET /api/recipes?view=summary sends recipes without their steps.
     @Valid
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Size(max = 100, message = "A recipe can have at most 100 steps")
     private List<StepDTO> steps = new ArrayList<>();
     @Valid
+    @Size(max = 100, message = "A recipe can have at most 100 ingredients")
     private List<IngredientDTO> ingredients = new ArrayList<>();
-    private List<String> equipment = new ArrayList<>();
-    private Set<String> categories = new HashSet<>();
+    @Size(max = 50, message = "A recipe can have at most 50 pieces of equipment")
+    private List<@Size(max = 255, message = "Equipment must be at most 255 characters") String> equipment = new ArrayList<>();
+    @Size(max = 30, message = "A recipe can have at most 30 categories")
+    private Set<@Size(max = 255, message = "Category must be at most 255 characters") String> categories = new HashSet<>();
+    @Size(max = 255, message = "Source URL must be at most 255 characters")
     private String sourceUrl;
 
     // Read-only here: whether the viewer's family (or the viewer, without a family) excluded it from

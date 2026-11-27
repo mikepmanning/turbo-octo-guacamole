@@ -11,6 +11,8 @@ import com.recipehome.api.entity.Step;
 import com.recipehome.api.exception.RecipeNotFoundException;
 import com.recipehome.api.mapper.RecipeMapper;
 import com.recipehome.api.service.RecipeImportService;
+import com.recipehome.api.service.ImportRateLimiter;
+import com.recipehome.api.exception.TooManyRequestsException;
 import com.recipehome.api.service.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,9 @@ class RecipeControllerTest {
 
     @MockitoBean
     private RecipeImportService recipeImportService;
+
+    @MockitoBean
+    private ImportRateLimiter importRateLimiter;
 
     private Recipe testRecipe;
     private RecipeDTO testRecipeDTO;
@@ -148,6 +153,31 @@ class RecipeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(status().isBadRequest());
+
+        verify(recipeService, never()).createRecipe(any(Recipe.class));
+    }
+
+    @Test
+    void createRecipe_ShouldReturnBadRequest_WhenTheRecipeIsTooBig() throws Exception {
+        RecipeDTO tooBig = new RecipeDTO();
+        tooBig.setTitle("x".repeat(256));
+        java.util.List<com.recipehome.api.dto.StepDTO> steps = new java.util.ArrayList<>();
+        for (int i = 1; i <= 101; i++) {
+            com.recipehome.api.dto.StepDTO step = new com.recipehome.api.dto.StepDTO();
+            step.setStepOrder(i);
+            step.setInstructionText("Stir");
+            steps.add(step);
+        }
+        tooBig.setSteps(steps);
+        tooBig.setCategories(java.util.Set.of("y".repeat(256)));
+
+        mockMvc.perform(post("/api/recipes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tooBig)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Title must be at most 255 characters"))
+                .andExpect(jsonPath("$.steps").value("A recipe can have at most 100 steps"))
+                .andExpect(jsonPath("$['categories[]']").value("Category must be at most 255 characters"));
 
         verify(recipeService, never()).createRecipe(any(Recipe.class));
     }
@@ -513,5 +543,17 @@ class RecipeControllerTest {
                 .andExpect(status().isBadGateway())
                 .andExpect(jsonPath("$.error")
                         .value("Failed to reach target website: Connection refused"));
+    }
+
+    @Test
+    void importRecipe_ShouldReturnTooManyRequests_WhenTheUserImportsTooOften() throws Exception {
+        doThrow(new TooManyRequestsException("Too many imports: try again in a minute", 42))
+                .when(importRateLimiter).acquire(anyString());
+
+        mockMvc.perform(get("/api/recipes/import").param("url", "https://example.com/recipe"))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(header().string("Retry-After", "42"))
+                .andExpect(jsonPath("$.error").value("Too many imports: try again in a minute"));
+        verify(recipeImportService, never()).importFromURL(anyString());
     }
 }

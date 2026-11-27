@@ -4,6 +4,7 @@ import com.recipehome.api.enums.Unit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
@@ -12,6 +13,7 @@ public class IngredientDTO {
     private Long id;
 
     @NotBlank(message = "Ingredient name is required")
+    @Size(max = 255, message = "Ingredient name must be at most 255 characters")
     private String name;
 
     @NotNull(message = "Quantity is required")

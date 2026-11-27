@@ -33,6 +33,7 @@ public record MealPlanRequest(
         Set<@NotNull(message = "Meal type is required") MealType> mealTypes,
 
         @NotEmpty(message = "Add at least one meal to the plan")
+        @Size(max = MealPlanRequest.MAX_DAYS * 4, message = "A plan can have at most " + MealPlanRequest.MAX_DAYS * 4 + " meals")
         List<@NotNull(message = "Meal is required") @Valid Entry> entries) {
 
     public static final int MAX_DAYS = 7;

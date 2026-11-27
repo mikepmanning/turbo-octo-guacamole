@@ -92,6 +92,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<Map<String, String>> handleTooManyRequests(TooManyRequestsException e) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header("Retry-After", String.valueOf(e.getRetryAfterSeconds()))
+                .body(Map.of("error", e.getMessage()));
+    }
+
     @ExceptionHandler(FamilyException.class)
     public ResponseEntity<Map<String, String>> handleFamily(FamilyException e) {
         return ResponseEntity.status(e.getStatus()).body(Map.of("error", e.getMessage()));

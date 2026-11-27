@@ -301,6 +301,20 @@ recipes and no meal plans. Access follows the creator's current family (leaving 
 - `GET /api/recipes/filter/prep-time?maxMinutes={minutes}` - Filter by max prep time
 - `GET /api/recipes/filter/total-time?maxMinutes={minutes}` - Filter by max total time
 - `GET /api/recipes/count` - Count active recipes
+- `GET /api/recipes/import?url={url}` - Read a recipe page's Schema.org JSON into a `RecipeDTO` (not saved).
+  `RecipeJsonFetcherService` only fetches public addresses: http(s) only, and 422 "Recipes can't be imported from
+  private or internal addresses" when the host resolves to a loopback, private, link-local (cloud metadata),
+  carrier-grade NAT, unique-local or reserved address. Redirects (up to 5) are followed one hop at a time and each is
+  checked. Each user may import 10 times a minute (`ImportRateLimiter`, `IMPORT_MAX_PER_MINUTE`), then 429 with
+  `Retry-After`; the count is in memory, per server instance
+- Size limits (400 field errors): title, ingredient names, equipment, categories and source URL 255 characters (the
+  column sizes); description 20000; a step 5000; at most 100 steps, 100 ingredients, 50 pieces of equipment and 30
+  categories per recipe; a meal plan at most 28 entries (7 days x 4 meals)
+
+**Running it** - requests run on virtual threads (`spring.threads.virtual.enabled`), so the database pool
+(`DB_POOL_SIZE`, default 10; requests wait up to 10 s for a connection) is what limits concurrent database work. Keep
+`DB_POOL_SIZE` times the number of instances under PostgreSQL's `max_connections` (100 by default). With more than
+one instance, set the same `JWT_SECRET` on all of them, or a login from one is rejected by the others
 
 **API Design Notes**
 - Steps and ingredients are embedded within Recipe payloads (no separate endpoints)

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class RecipeJsonFetcherServiceTest {
 
-    private final RecipeJsonFetcherService fetcherService = new RecipeJsonFetcherService();
+    // Loopback is allowed here so the tests can fetch from a local server; everything else follows the real rule.
+    private final RecipeJsonFetcherService fetcherService =
+            new RecipeJsonFetcherService(address -> address.isLoopbackAddress() || RecipeJsonFetcherService.isPublic(address));
 
     private HttpServer server;
 
@@ -126,6 +130,66 @@ class RecipeJsonFetcherServiceTest {
                 .isInstanceOf(IOException.class);
     }
 
+    // --- public addresses only ---
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "http://127.0.0.1/recipe", "http://localhost/recipe", "http://[::1]/recipe",
+            "http://10.1.2.3/recipe", "http://172.16.0.1/recipe", "http://192.168.1.1/recipe",
+            "http://169.254.169.254/latest/meta-data/", "http://0.0.0.0/recipe", "http://100.64.0.1/recipe",
+            "http://[fd00::1]/recipe", "http://[fe80::1]/recipe"})
+    void fetchRecipeJson_RefusesInternalAddresses(String url) {
+        RecipeJsonFetcherService strict = new RecipeJsonFetcherService();
+
+        assertThatThrownBy(() -> strict.fetchRecipeJson(url))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(RecipeJsonFetcherService.INTERNAL_ADDRESS);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"file:///etc/passwd", "ftp://example.com/recipe", "jar:http://example.com!/x", "example.com/recipe"})
+    void fetchRecipeJson_OnlyFetchesHttpAddresses(String url) {
+        assertThatThrownBy(() -> new RecipeJsonFetcherService().fetchRecipeJson(url))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Only http and https addresses can be imported");
+    }
+
+    @Test
+    void isPublic_AllowsInternetAddresses() throws Exception {
+        assertThat(RecipeJsonFetcherService.isPublic(InetAddress.getByName("8.8.8.8"))).isTrue();
+        assertThat(RecipeJsonFetcherService.isPublic(InetAddress.getByName("2606:4700::1111"))).isTrue();
+        assertThat(RecipeJsonFetcherService.isPublic(InetAddress.getByName("198.18.0.1"))).isFalse();
+        assertThat(RecipeJsonFetcherService.isPublic(InetAddress.getByName("255.255.255.255"))).isFalse();
+    }
+
+    @Test
+    void fetchRecipeJson_FollowsRedirects() throws Exception {
+        serve("/recipe", 200, page("""
+                { "@type": "Recipe", "name": "Moved Soup" }
+                """));
+        String url = redirect("/old", "/recipe");
+
+        assertThat(fetcherService.fetchRecipeJson(url).get("name").asText()).isEqualTo("Moved Soup");
+    }
+
+    @Test
+    void fetchRecipeJson_ChecksWhereARedirectGoes() {
+        String url = redirect("/sneaky", "http://169.254.169.254/latest/meta-data/");
+
+        assertThatThrownBy(() -> fetcherService.fetchRecipeJson(url))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(RecipeJsonFetcherService.INTERNAL_ADDRESS);
+    }
+
+    @Test
+    void fetchRecipeJson_StopsAfterTooManyRedirects() {
+        String url = redirect("/loop", "/loop");
+
+        assertThatThrownBy(() -> fetcherService.fetchRecipeJson(url))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("Too many redirects");
+    }
+
     /**
      * Hits a real recipe site. Skipped by default; run with
      * RECIPEHOME_LIVE_TESTS=true to check scraping still works against the live page.
@@ -151,6 +215,16 @@ class RecipeJsonFetcherServiceTest {
             try (OutputStream out = exchange.getResponseBody()) {
                 out.write(bytes);
             }
+        });
+        return "http://127.0.0.1:" + server.getAddress().getPort() + path;
+    }
+
+    /** Redirects {@code path} to {@code location} (302) and returns the full URL of {@code path}. */
+    private String redirect(String path, String location) {
+        server.createContext(path, exchange -> {
+            exchange.getResponseHeaders().set("Location", location);
+            exchange.sendResponseHeaders(302, -1);
+            exchange.close();
         });
         return "http://127.0.0.1:" + server.getAddress().getPort() + path;
     }

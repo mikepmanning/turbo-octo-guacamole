@@ -3,6 +3,7 @@ package com.recipehome.api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ public class StepDTO {
     private Integer stepOrder;
 
     @NotBlank(message = "Instruction text is required")
+    @Size(max = 5000, message = "A step must be at most 5000 characters")
     private String instructionText;
 
     private Integer estimatedTimeMinutes;

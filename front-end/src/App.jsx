@@ -1,19 +1,23 @@
+import { lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import RecipeList from './components/RecipeList'
-import RecipeDetail from './components/RecipeDetail'
-import RecipeForm from './components/RecipeForm'
-import NewMealPlan from './components/NewMealPlan'
-import MealPlanList from './components/MealPlanList'
-import MealPlanView from './components/MealPlanView'
-import ShoppingList from './components/ShoppingList'
-import ShoppingLists from './components/ShoppingLists'
 import AuthProvider from './auth/AuthProvider'
 import RequireAuth from './auth/RequireAuth'
 import LoginPage from './auth/LoginPage'
 import RegisterPage from './auth/RegisterPage'
-import AccountPage from './auth/AccountPage'
-import FamilyPage from './family/FamilyPage'
 import './App.css'
+
+// The front page and the login pages are in the main bundle; the other pages download the first time they are
+// opened (RequireAuth shows "Loading..." meanwhile), so the first visit loads less.
+const RecipeDetail = lazy(() => import('./components/RecipeDetail'))
+const RecipeForm = lazy(() => import('./components/RecipeForm'))
+const NewMealPlan = lazy(() => import('./components/NewMealPlan'))
+const MealPlanList = lazy(() => import('./components/MealPlanList'))
+const MealPlanView = lazy(() => import('./components/MealPlanView'))
+const ShoppingList = lazy(() => import('./components/ShoppingList'))
+const ShoppingLists = lazy(() => import('./components/ShoppingLists'))
+const AccountPage = lazy(() => import('./auth/AccountPage'))
+const FamilyPage = lazy(() => import('./family/FamilyPage'))
 
 function App() {
   return (

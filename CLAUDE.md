@@ -130,6 +130,9 @@ To run both backend and frontend together:
   - `App.css` - Application styles
   - `main.jsx` - Application entry point
 
+### Page Loading
+`App.jsx` loads the recipe list and the login pages with the main bundle; every other page is `React.lazy` and downloads the first time it is opened, with "Loading..." from the `Suspense` in `RequireAuth` (the account bar stays). Tests that render `App` at those paths must wait for the page (`findBy...`).
+
 ### API Integration
 The frontend communicates with the Spring Boot backend via the API service layer (`src/services/api.js`). The Vite dev server is configured to proxy requests starting with `/api` to `http://localhost:8080`.
 
